@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -20,46 +20,106 @@ interface Project {
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
-  console.log('🚀 ProjectsPage component rendered', projects);
+  const [newProjectName, setNewProjectName] = useState('');
+  const [newClient, setNewClient] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/projects')
-      .then(res => setProjects(res.data.data))
-      .catch(err => console.error('❌ Error fetching projects:', err));
+    fetchProjects();
   }, []);
 
+  const fetchProjects = () => {
+    axios.get('http://127.0.0.1:8000/api/projects')
+      .then((res) => setProjects(res.data.data))
+      .catch((err) => console.error(err));
+  };
+
+  const handleCreateProject = async () => {
+    try {
+      await axios.post('http://127.0.0.1:8000/api/projects', {
+        project_name: newProjectName,
+        client: newClient,
+      });
+      setNewProjectName('');
+      setNewClient('');
+      setIsModalOpen(false); // Закрити модалку після створення
+      fetchProjects(); // Оновити список
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
-    <div className="p-10 min-h-screen bg-gray-100">
-      <div className="flex justify-between items-center mb-8">
+    <div className="p-10 bg-gray-100 min-h-screen">
+      <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800">📁 Projects</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-          + Add Project
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          ➕ Add Project
         </button>
       </div>
 
-      {projects.length === 0 ? (
-        <p className="text-gray-500">No projects found.</p>
-      ) : (
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map(project => (
-            <div key={project.id} className="bg-white rounded-lg shadow p-6 border border-gray-200">
-              <h2 className="text-xl font-semibold text-blue-700">{project.project_name}</h2>
-              <p className="text-sm text-gray-600 mb-1">Client: {project.client}</p>
-              <p className="text-sm text-gray-600 mb-2">Status: <span className="font-medium">{project.status}</span></p>
+      {/* 🔵 Модалка */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded shadow-md w-96 relative">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl"
+            >
+              ×
+            </button>
+            <h2 className="text-2xl font-semibold mb-6">➕ Create New Project</h2>
 
-              {project.inspections.length > 0 && (
-                <div className="text-sm text-gray-700 mt-3">
-                  <p className="font-medium mb-1">🔍 Latest Inspection</p>
-                  <ul className="list-disc ml-5">
-                    <li>Number: {project.inspections[0].inspection_number}</li>
-                    <li>Date: {project.inspections[0].inspection_date}</li>
-                    <li>Inspector: {project.inspections[0].inspector_name}</li>
-                  </ul>
-                </div>
-              )}
+            <div className="flex flex-col gap-4">
+              <input
+                type="text"
+                placeholder="Project Name"
+                value={newProjectName}
+                onChange={(e) => setNewProjectName(e.target.value)}
+                className="border p-2 rounded"
+              />
+              <input
+                type="text"
+                placeholder="Client"
+                value={newClient}
+                onChange={(e) => setNewClient(e.target.value)}
+                className="border p-2 rounded"
+              />
+              <button
+                onClick={handleCreateProject}
+                className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+              >
+                ✅ Save Project
+              </button>
             </div>
-          ))}
+          </div>
         </div>
       )}
+
+      {/* 🔵 Список проектів */}
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {projects.map((project) => (
+          <div key={project.id} className="bg-white shadow-md rounded p-5 border border-gray-200">
+            <h2 className="text-xl font-semibold text-blue-800">{project.project_name}</h2>
+            <p className="text-sm text-gray-600 mb-2">Client: {project.client}</p>
+            <p className="text-sm mb-2">Status: <span className="font-medium">{project.status}</span></p>
+
+            {project.inspections.length > 0 && (
+              <div className="mt-2 text-sm">
+                <p><strong>Latest Inspection:</strong></p>
+                <ul className="list-disc ml-4">
+                  <li>Number: {project.inspections[0].inspection_number}</li>
+                  <li>Date: {project.inspections[0].inspection_date}</li>
+                  <li>Inspector: {project.inspections[0].inspector_name}</li>
+                </ul>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

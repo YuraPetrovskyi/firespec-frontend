@@ -1,8 +1,7 @@
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col p-24">
-      <h1>hohohoh</h1>
+    <div className="flex min-h-screen items-center justify-center">
+      <h1 className="text-4xl font-bold">🔥 Welcome to FireSpec!</h1>
     </div>
-  );
+  )
 }
