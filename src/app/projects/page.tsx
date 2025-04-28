@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
+
 
 interface Inspection {
   inspection_number: string;
@@ -35,6 +37,11 @@ export default function ProjectsPage() {
   };
 
   const handleCreateProject = async () => {
+    if (!newProjectName.trim()) {
+      toast.error('❌ Project name is required.');
+      return;
+    }
+  
     try {
       await axios.post('http://127.0.0.1:8000/api/projects', {
         project_name: newProjectName,
@@ -42,12 +49,15 @@ export default function ProjectsPage() {
       });
       setNewProjectName('');
       setNewClient('');
-      setIsModalOpen(false); // Закрити модалку після створення
-      fetchProjects(); // Оновити список
+      setIsModalOpen(false);
+      fetchProjects();
+      toast.success('✅ Project created successfully!');
     } catch (err) {
       console.error(err);
+      toast.error('❌ Failed to create project. Please try again.');
     }
   };
+  
 
   return (
     <div className="p-10 bg-gray-100 min-h-screen">
@@ -103,21 +113,31 @@ export default function ProjectsPage() {
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
           <div key={project.id} className="bg-white shadow-md rounded p-5 border border-gray-200">
-            <h2 className="text-xl font-semibold text-blue-800">{project.project_name}</h2>
-            <p className="text-sm text-gray-600 mb-2">Client: {project.client}</p>
-            <p className="text-sm mb-2">Status: <span className="font-medium">{project.status}</span></p>
-
-            {project.inspections.length > 0 && (
-              <div className="mt-2 text-sm">
-                <p><strong>Latest Inspection:</strong></p>
-                <ul className="list-disc ml-4">
-                  <li>Number: {project.inspections[0].inspection_number}</li>
-                  <li>Date: {project.inspections[0].inspection_date}</li>
-                  <li>Inspector: {project.inspections[0].inspector_name}</li>
-                </ul>
-              </div>
-            )}
+          <h2 className="text-xl font-semibold text-blue-800">{project.project_name}</h2>
+          <p className="text-sm text-gray-600 mb-2">Client: {project.client}</p>
+          <p className="text-sm mb-2">Status: <span className="font-medium">{project.status}</span></p>
+        
+          {project.inspections.length > 0 && (
+            <div className="mt-2 text-sm">
+              <p><strong>Latest Inspection:</strong></p>
+              <ul className="list-disc ml-4">
+                <li>Number: {project.inspections[0].inspection_number}</li>
+                <li>Date: {project.inspections[0].inspection_date}</li>
+                <li>Inspector: {project.inspections[0].inspector_name}</li>
+              </ul>
+            </div>
+          )}
+        
+          {/* 🔵 Кнопка перегляду інспекцій */}
+          <div className="mt-4 flex flex-col gap-2">
+            <a
+              href={`/projects/${project.id}/inspections`}
+              className="bg-blue-500 text-white py-2 px-4 rounded text-center hover:bg-blue-600 transition"
+            >
+              🔍 View Inspections
+            </a>
           </div>
+        </div>
         ))}
       </div>
     </div>
