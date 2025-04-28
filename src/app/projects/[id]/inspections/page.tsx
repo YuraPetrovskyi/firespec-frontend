@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-
 
 interface Inspection {
   id: number;
@@ -28,11 +28,18 @@ export default function ProjectInspectionsPage() {
         });
     }
   }, [id]);
-  console.log(inspections);
 
   return (
     <div className="p-10 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">📋 Inspections</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800">📋 Inspections</h1>
+        <Link
+          href={`/projects/${id}/inspections/create`}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+        >
+          ➕ Add Inspection
+        </Link>
+      </div>
 
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {inspections.map((inspection) => (
@@ -41,7 +48,6 @@ export default function ProjectInspectionsPage() {
             <p className="text-sm text-gray-600 mb-2">Version: {inspection.version}</p>
             <p className="text-sm text-gray-600 mb-2">Date: {inspection.inspection_date}</p>
             <p className="text-sm mb-2">Inspector: {inspection.inspector_name}</p>
-            {/* (пізніше додамо кнопку перегляду / редагування інспекції) */}
           </div>
         ))}
       </div>
