@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from 'react';
-
 interface SiteInspectionsSectionProps {
   data: any;
   onChange: (data: any) => void;
@@ -28,9 +26,8 @@ const siteInspectionCategories = [
 ];
 
 export default function SiteInspectionsSection({ data, onChange }: SiteInspectionsSectionProps) {
-  
+
   const handleMainStatusChange = (category: string, value: string) => {
-    console.log('checked', value);
     const updated = { ...data };
     updated[category] = { ...(updated[category] || {}), main: value };
     onChange(updated);
@@ -60,31 +57,14 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold">{category.name}</h3>
 
-                {isDestructive ? (
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={data[category.name]?.result === 'yes'}
-                      onChange={(e) => {
-                        const updated = { ...data };
-                        updated[category.name] = { result: e.target.checked ? 'yes' : 'no' };
-                        onChange(updated);
-                      }}
-                      className="w-5 h-5"
-                    />
-                    {/* <span>{data[category.name]?.result === 'yes' ? '✅ Yes' : '❌ No'}</span> */}
-                  </label>
-                ) : (
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={mainStatus === 'checked'}
-                      onChange={(e) => handleMainStatusChange(category.name, e.target.checked ? 'checked' : 'not_checked')}
-                      className="w-5 h-5"
-                    />
-                    {/* <span>{mainStatus === 'checked' ? '✅ Checked' : '❔ Not Checked'}</span> */}
-                  </label>
-                )}
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={mainStatus === 'checked'}
+                    onChange={(e) => handleMainStatusChange(category.name, e.target.checked ? 'checked' : 'not_checked')}
+                    className="w-5 h-5"
+                  />
+                </label>
               </div>
 
               {/* Підпункти */}
