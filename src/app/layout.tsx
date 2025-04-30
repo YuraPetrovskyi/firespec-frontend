@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Toaster } from 'react-hot-toast';
+import ToasterProvider from "@/components/ToasterProvider";
 
 export const metadata: Metadata = {
   title: "FireSpec",
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-          <Toaster position="top-right" reverseOrder={false} />
+        <ToasterProvider />
           {children}
       </body>
     </html>
