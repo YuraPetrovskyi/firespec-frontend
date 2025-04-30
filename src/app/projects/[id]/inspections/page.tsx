@@ -32,6 +32,12 @@ export default function ProjectInspectionsPage() {
   return (
     <div className="p-10 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-6">
+        <Link
+          href={`/projects`}
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+        >
+          Back to Project
+        </Link>
         <h1 className="text-3xl font-bold text-gray-800">📋 Inspections</h1>
         <Link
           href={`/projects/${id}/inspections/create`}
@@ -39,6 +45,7 @@ export default function ProjectInspectionsPage() {
         >
           ➕ Add Inspection
         </Link>
+        
       </div>
 
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -48,6 +55,12 @@ export default function ProjectInspectionsPage() {
             <p className="text-sm text-gray-600 mb-2">Version: {inspection.version}</p>
             <p className="text-sm text-gray-600 mb-2">Date: {inspection.inspection_date}</p>
             <p className="text-sm mb-2">Inspector: {inspection.inspector_name}</p>
+            <Link
+              href={`/projects/${id}/inspections/${inspection.id}`}
+              className="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 transition"
+            >
+              🔎 View
+            </Link>
           </div>
         ))}
       </div>
