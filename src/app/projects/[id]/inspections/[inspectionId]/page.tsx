@@ -45,7 +45,7 @@ export default function ViewInspectionPage() {
 
   const { pre_inspection, project_information, site_inspections, post_inspection, inspection_number } = inspection;
   console.log('Inspection data:', inspection);
-  
+
   return (
     <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-8">
       <h1 className="text-3xl font-bold text-center mb-8">Inspection Details</h1>
@@ -123,7 +123,7 @@ export default function ViewInspectionPage() {
                   <h3 className="font-semibold">{category}</h3>
                   <span className={`px-3 py-1 rounded text-white ${isChecked ? 'bg-green-600' : 'bg-red-500'}`}>
                     {category === 'Destructive Tests Carried out?'
-                      ? mainStatus === 'yes' ? 'Yes' : 'No'
+                      ? mainStatus === 'checked' ? 'Yes' : 'No'
                       : mainStatus.replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
