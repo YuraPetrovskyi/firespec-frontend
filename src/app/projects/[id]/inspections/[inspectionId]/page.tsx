@@ -31,10 +31,10 @@ export default function ViewInspectionPage() {
   const [inspection, setInspection] = useState<any>(null);
 
   useEffect(() => {
-    console.log('id', id, 'inspectionId', inspectionId);
     if (id && inspectionId) {
-      axios.get(`http://127.0.0.1:8000/api/projects/${id}/inspections/${inspectionId}`)
-        .then(res => setInspection(res.data.data))
+      axios
+        .get(`http://127.0.0.1:8000/api/projects/${id}/inspections/${inspectionId}`)
+        .then((res) => setInspection(res.data.data))
         .catch(() => toast.error('❌ Failed to load inspection'));
     }
   }, [id, inspectionId]);
@@ -43,16 +43,15 @@ export default function ViewInspectionPage() {
     return <div className="p-10 text-center">Loading...</div>;
   }
 
-  const { pre_inspection, project_information, site_inspections, post_inspection } = inspection;
-  console.log('inspection', inspection);
-
+  const { pre_inspection, project_information, site_inspections, post_inspection, inspection_number } = inspection;
+  console.log('Inspection data:', inspection);
+  
   return (
     <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-8">
-
       <h1 className="text-3xl font-bold text-center mb-8">Inspection Details</h1>
 
       {/* ✅ PRE-INSPECTION */}
-      <div className="bg-white rounded shadow p-6">
+      <section className="bg-white rounded shadow p-6">
         <h2 className="text-2xl font-semibold mb-4">✅ Pre-Inspection</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
@@ -75,16 +74,16 @@ export default function ViewInspectionPage() {
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* ✅ PROJECT INFORMATION */}
-      <div className="bg-white rounded shadow p-6">
+      <section className="bg-white rounded shadow p-6">
         <h2 className="text-2xl font-semibold mb-4">✅ Project Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
             { label: 'Project Name', value: project_information?.project_name },
             { label: 'Inspection Date', value: project_information?.inspection_date },
-            { label: 'Inspection Number', value: inspection.inspection_number },
+            { label: 'Inspection Number', value: inspection_number },
             { label: 'Client', value: project_information?.client },
             { label: 'Client Contact & Title', value: project_information?.client_contact },
             { label: 'Client Site Rep & Title', value: project_information?.client_rep },
@@ -107,10 +106,10 @@ export default function ViewInspectionPage() {
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* ✅ SITE INSPECTIONS */}
-      <div className="bg-white rounded shadow p-6">
+      <section className="bg-white rounded shadow p-6">
         <h2 className="text-2xl font-semibold mb-4">✅ Site Inspections</h2>
         <div className="flex flex-col gap-4">
           {siteInspectionCategories.map((category) => {
@@ -123,18 +122,18 @@ export default function ViewInspectionPage() {
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-semibold">{category}</h3>
                   <span className={`px-3 py-1 rounded text-white ${isChecked ? 'bg-green-600' : 'bg-red-500'}`}>
-                    {mainStatus.replace('_', ' ').toUpperCase()}
+                    {category === 'Destructive Tests Carried out?'
+                      ? mainStatus === 'yes' ? 'Yes' : 'No'
+                      : mainStatus.replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
 
-                {/* Підопції тільки якщо пункт був перевірений */}
                 {isChecked && Object.entries(options).filter(([k]) => k !== 'main' && k !== 'result').length > 0 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
                     {Object.entries(options)
-                      .filter(([key]) => key !== 'main' && key !== 'result') // прибираємо службові поля
+                      .filter(([key]) => key !== 'main' && key !== 'result')
                       .map(([option, status]) => {
-                        let badgeColor = 'bg-gray-400'; // за замовчуванням — сірий
-
+                        let badgeColor = 'bg-gray-400';
                         switch (status) {
                           case 'checked':
                           case 'yes':
@@ -162,17 +161,16 @@ export default function ViewInspectionPage() {
                           </div>
                         );
                       })}
-
                   </div>
                 )}
               </div>
             );
           })}
         </div>
-      </div>
+      </section>
 
       {/* ✅ POST-INSPECTION */}
-      <div className="bg-white rounded shadow p-6">
+      <section className="bg-white rounded shadow p-6">
         <h2 className="text-2xl font-semibold mb-4">✅ Post-Inspection</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
@@ -188,7 +186,7 @@ export default function ViewInspectionPage() {
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* 🔘 КНОПКИ */}
       <div className="flex flex-wrap gap-4 justify-center mt-8">
@@ -196,16 +194,15 @@ export default function ViewInspectionPage() {
           onClick={() => router.push(`/projects/${id}/inspections`)}
           className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
         >
-          ← Back to Inspections
+          ← Back
         </button>
         <button
           onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
           className="bg-yellow-500 text-white py-2 px-6 rounded hover:bg-yellow-600"
         >
-          ✏️ Edit Inspection
+          ✏️ Edit
         </button>
       </div>
-
     </div>
   );
 }
