@@ -68,12 +68,12 @@ export default function ProjectInspectionsPage() {
                 <p className="text-sm text-gray-600 mb-2">Version: {inspection.version}</p>
                 <p className="text-sm text-gray-600 mb-2">Date: {inspection.inspection_date}</p>
                 <p className="text-sm mb-2">Inspector: {inspection.inspector_name}</p>
-                <a
+                <Link
                   href={`/projects/${id}/inspections/${inspection.id}`}
                   className="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 transition"
                 >
                   View
-                </a>
+                </Link>
               </div>
             ))
             : <div className="text-center text-gray-600 mt-20">

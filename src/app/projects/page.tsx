@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 
 interface Inspection {
@@ -57,7 +58,44 @@ export default function ProjectsPage() {
       toast.error('❌ Failed to create project. Please try again.');
     }
   };
+
+  const handleDeleteProject = (projectId: number) => {
+    toast.custom((t) => (
+      <div className="bg-white shadow-lg rounded p-5 w-[300px] border border-gray-200">
+        <p className="text-sm text-gray-800 font-medium mb-4">
+          Are you sure you want to delete this project?
+        </p>
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => {
+              toast.dismiss(t.id);
+              deleteProject(projectId);
+            }}
+            className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+          >
+            Delete
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400 transition"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ));
+  };
   
+  const deleteProject = async (projectId: number) => {
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/projects/${projectId}`);
+      toast.success('✅ Project deleted!');
+      fetchProjects(); // оновлення списку
+    } catch (error) {
+      console.error(error);
+      toast.error('❌ Failed to delete project');
+    }
+  };
 
   return (
     <div className="p-10 bg-gray-100 min-h-screen">
@@ -130,12 +168,18 @@ export default function ProjectsPage() {
         
           {/* 🔵 Кнопка перегляду інспекцій */}
           <div className="mt-4 flex flex-col gap-2">
-            <a
+            <Link
               href={`/projects/${project.id}/inspections`}
               className="bg-blue-500 text-white py-2 px-4 rounded text-center hover:bg-blue-600 transition"
             >
               🔍 View Inspections
-            </a>
+            </Link>
+            <button
+              onClick={() => handleDeleteProject(project.id)}
+              className="bg-red-600 text-white py-2 px-4 rounded text-center hover:bg-red-700 transition"
+            >
+              🗑️ Delete Project
+            </button>
           </div>
         </div>
         ))}
