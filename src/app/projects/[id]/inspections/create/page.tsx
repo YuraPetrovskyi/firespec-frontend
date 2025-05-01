@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-import PreInspectionSection from './PreInspectionSection';
-import ProjectInformationSection from './ProjectInformationSection';
-import SiteInspectionsSection from './SiteInspectionsSection';
-import PostInspectionSection from './PostInspectionSection';
+import PreInspectionSection from '@/components/inspection/PreInspectionSection';
+import ProjectInformationSection from '@/components/inspection/ProjectInformationSection';
+import SiteInspectionsSection from '@/components/inspection/SiteInspectionsSection';
+import PostInspectionSection from '@/components/inspection/PostInspectionSection';
 
 type ProjectData = {
   project_name: string;

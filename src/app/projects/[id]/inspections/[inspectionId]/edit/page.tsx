@@ -5,10 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-import PreInspectionSection from '../../create/PreInspectionSection';
-import ProjectInformationSection from '../../create/ProjectInformationSection';
-import SiteInspectionsSection from '../../create/SiteInspectionsSection';
-import PostInspectionSection from '../../create/PostInspectionSection';
+import PreInspectionSection from '@/components/inspection/PreInspectionSection';
+import ProjectInformationSection from '@/components/inspection/ProjectInformationSection';
+import SiteInspectionsSection from '@/components/inspection/SiteInspectionsSection';
+import PostInspectionSection from '@/components/inspection/PostInspectionSection';
 
 type SectionData = { [key: string]: any };
 
