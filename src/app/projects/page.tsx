@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
-
+import ModalConfirm from '@/components/ModalConfirm';
 
 interface Inspection {
   inspection_number: string;
@@ -26,6 +26,10 @@ export default function ProjectsPage() {
   const [newProjectName, setNewProjectName] = useState('');
   const [newClient, setNewClient] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
+
 
   useEffect(() => {
     fetchProjects();
@@ -59,41 +63,23 @@ export default function ProjectsPage() {
     }
   };
 
-  const handleDeleteProject = (projectId: number) => {
-    toast.custom((t) => (
-      <div className="bg-white shadow-lg rounded p-5 w-[300px] border border-gray-200">
-        <p className="text-sm text-gray-800 font-medium mb-4">
-          Are you sure you want to delete this project?
-        </p>
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={() => {
-              toast.dismiss(t.id);
-              deleteProject(projectId);
-            }}
-            className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
-          >
-            Delete
-          </button>
-          <button
-            onClick={() => toast.dismiss(t.id)}
-            className="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400 transition"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    ));
+  const confirmDelete = (id: number) => {
+    setProjectToDelete(id);
+    setModalOpen(true);
   };
   
-  const deleteProject = async (projectId: number) => {
+  const handleConfirmDelete = async () => {
+    if (!projectToDelete) return;
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/projects/${projectId}`);
+      await axios.delete(`http://127.0.0.1:8000/api/projects/${projectToDelete}`);
       toast.success('✅ Project deleted!');
-      fetchProjects(); // оновлення списку
-    } catch (error) {
-      console.error(error);
-      toast.error('❌ Failed to delete project');
+      fetchProjects();
+    } catch (err) {
+      console.error(err);
+      toast.error('❌ Failed to delete project.');
+    } finally {
+      setModalOpen(false);
+      setProjectToDelete(null);
     }
   };
 
@@ -108,6 +94,17 @@ export default function ProjectsPage() {
           ➕ Add Project
         </button>
       </div>
+
+      {modalOpen && (
+        <ModalConfirm
+          message="Are you sure you want to delete this project?"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => {
+            setModalOpen(false);
+            setProjectToDelete(null);
+          }}
+        />
+      )}
 
       {/* 🔵 Модалка */}
       {isModalOpen && (
@@ -175,11 +172,12 @@ export default function ProjectsPage() {
               🔍 View Inspections
             </Link>
             <button
-              onClick={() => handleDeleteProject(project.id)}
-              className="bg-red-600 text-white py-2 px-4 rounded text-center hover:bg-red-700 transition"
+              onClick={() => confirmDelete(project.id)}
+              className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition"
             >
-              🗑️ Delete Project
+              🗑️ Delete Modal
             </button>
+
           </div>
         </div>
         ))}

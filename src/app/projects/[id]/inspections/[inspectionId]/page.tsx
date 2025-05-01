@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
+import ModalConfirm from '@/components/ModalConfirm';
+
 const siteInspectionCategories = [
   'Encasements',
   'Wall Makeup',
@@ -29,6 +31,7 @@ export default function ViewInspectionPage() {
   const router = useRouter();
 
   const [inspection, setInspection] = useState<any>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (id && inspectionId) {
@@ -46,44 +49,18 @@ export default function ViewInspectionPage() {
   const { pre_inspection, project_information, site_inspections, post_inspection, inspection_number } = inspection;
   console.log('Inspection data:', inspection);
 
-  const handleDeleteConfirmation = (inspectionId: number) => {
-    toast.custom((t) => (
-      <div className="bg-white shadow-lg rounded p-5 w-[300px] border border-gray-200">
-        <p className="text-sm text-gray-800 font-medium mb-4">
-          Are you sure you want to delete this inspection?
-        </p>
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={() => {
-              toast.dismiss(t.id);
-              deleteInspection(inspectionId);
-            }}
-            className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
-          >
-            Delete
-          </button>
-          <button
-            onClick={() => toast.dismiss(t.id)}
-            className="bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400 transition"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    ));
-  };
-
-  const deleteInspection = async (inspectionId: number) => {
+  const handleDeleteInspection = async () => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/projects/${id}/inspections/${inspectionId}`);
-      toast.success('✅ Inspection deleted');
+      toast.success('✅ Inspection deleted!');
       router.push(`/projects/${id}/inspections`);
     } catch (error) {
       console.error(error);
       toast.error('❌ Failed to delete inspection');
+    } finally {
+      setModalOpen(false);
     }
   };
-
 
   return (
     <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-8">
@@ -243,13 +220,21 @@ export default function ViewInspectionPage() {
         </button>
 
         <button
-          onClick={() => handleDeleteConfirmation (inspection.id)}
+          onClick={() => setModalOpen(true)}
           className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700 transition mt-2"
         >
           🗑️ Delete
         </button>
-
       </div>
+
+      {modalOpen && (
+        <ModalConfirm
+          message="Are you sure you want to delete this inspection?"
+          onConfirm={handleDeleteInspection}
+          onCancel={() => setModalOpen(false)}
+        />
+      )}
+
     </div>
   );
 }
