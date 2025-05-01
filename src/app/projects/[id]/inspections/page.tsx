@@ -7,6 +7,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 import SkeletonCard from '@/components/SkeletonCard';
+import ModalConfirm from '@/components/ModalConfirm';
 
 interface Inspection {
   id: number;
@@ -21,6 +22,25 @@ export default function ProjectInspectionsPage() {
   const [inspections, setInspections] = useState<Inspection[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedInspectionId, setSelectedInspectionId] = useState<number | null>(null);
+
+  const handleDeleteInspection = async () => {
+    if (!selectedInspectionId) return;
+  
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/projects/${id}/inspections/${selectedInspectionId}`);
+      toast.success('✅ Inspection deleted!');
+      setInspections(prev => prev.filter(i => i.id !== selectedInspectionId));
+    } catch (error) {
+      console.error(error);
+      toast.error('❌ Failed to delete inspection.');
+    } finally {
+      setModalOpen(false);
+      setSelectedInspectionId(null);
+    }
+  };
+  
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -74,6 +94,15 @@ export default function ProjectInspectionsPage() {
                 >
                   View
                 </Link>
+                <button
+                  onClick={() => {
+                    setSelectedInspectionId(inspection.id);
+                    setModalOpen(true);
+                  }}
+                  className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700 transition ml-2"
+                >
+                  🗑️ Delete
+                </button>
               </div>
             ))
             : <div className="text-center text-gray-600 mt-20">
@@ -82,6 +111,17 @@ export default function ProjectInspectionsPage() {
               </div>       
           }
       </div>
+
+      {modalOpen && (
+        <ModalConfirm
+          message="Are you sure you want to delete this inspection?"
+          onConfirm={handleDeleteInspection}
+          onCancel={() => {
+            setModalOpen(false);
+            setSelectedInspectionId(null);
+          }}
+        />
+      )}
           
     </div>
   );
