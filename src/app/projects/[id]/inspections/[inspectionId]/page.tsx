@@ -206,6 +206,7 @@ export default function ViewInspectionPage() {
 
       {/* 🔘 КНОПКИ */}
       <div className="flex flex-wrap gap-4 justify-center mt-8">
+        
         <button
           onClick={() => router.push(`/projects/${id}/inspections`)}
           className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
@@ -225,6 +226,13 @@ export default function ViewInspectionPage() {
         >
           🗑️ Delete
         </button>
+        <button
+          onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/logs`)}
+          className="bg-indigo-600 text-white py-2 px-6 rounded hover:bg-indigo-700 transition"
+        >
+          🕒 View Change Log
+        </button>
+
       </div>
 
       {modalOpen && (
