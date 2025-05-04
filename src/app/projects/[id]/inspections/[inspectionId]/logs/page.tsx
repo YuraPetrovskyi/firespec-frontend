@@ -17,6 +17,7 @@ type Change = {
   category: string;
   subcategory?: string;
   field: string;
+  label?: string;
   from?: any;
   to: any;
 };
@@ -52,10 +53,10 @@ export default function LogsPage() {
     }
   }, [id, inspectionId]);
 
-  if (loading) return <div className="p-10 text-center">Loading...</div>;
+  if (loading) return <div className="p-10 text-center animate-pulse text-blue-700">Loading logs...</div>;
 
   if (logs.length === 0) {
-    return <p className="text-center text-gray-500">No change logs found for this inspection.</p>;
+    return <p className="p-8 text-center text-gray-500">No change logs found for this inspection.</p>;
   }
 
   return (
@@ -79,14 +80,15 @@ export default function LogsPage() {
               <span>🕒 {new Date(log.changed_at).toLocaleString()}</span>
             </div>
 
+            {/* Pre-Inspection */}
             <div>
               <h2 className="text-xl font-semibold text-blue-700 mb-2">{preIns}</h2>
               {grouped[preIns].length > 0 ? (
                   <ul className="space-y-1 mb-2 bg-sky-500/5 p-2 rounded-md">
                     {grouped[preIns].map((c, i) => (
                       <li key={i} className="text-sm flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                        <div className='flex flex-row sm:flex-row sm:gap-2 ml-4'>
-                          <div className="font-medium text-gray-500">{c.field}: </div>
+                        <div className='flex flex-wrap gap-2 ml-2'>
+                          <div className="font-medium text-gray-500">{c.label}: </div>
                           <div className='flex flex-wrap ml-2'>
                             <span className='text-red-600'>{c.from == 0 ? 'no' : 'yes'}</span>
                             <span className='mx-2'>→</span>
@@ -101,6 +103,7 @@ export default function LogsPage() {
                 )}
             </div>
 
+            {/* Project Information */}
             <div>
               <h2 className="text-xl font-semibold text-blue-700 mb-2">{projInf}</h2>
               {grouped[projInf].length > 0 ? (
@@ -110,8 +113,8 @@ export default function LogsPage() {
                         {
                           String(c.field).includes("digital_recording") 
                             ? 
-                            <div>
-                              <span className="font-medium text-gray-500">{c.field}:</span>
+                            <div className='flex flex-wrap gap-2'>
+                              <span className="font-medium text-gray-500">{c.label}:</span>
                               <div className='flex flex-wrap ml-2'>
                                 <span className="text-red-600 ">{c.from == 0 ? 'no' : 'yes'}</span>
                                 <span className='mx-2'>→</span>
@@ -119,8 +122,8 @@ export default function LogsPage() {
                               </div>
                             </div> 
                             :                        
-                          <div>
-                            <span className="font-medium text-gray-500">{c.field}:</span>
+                          <div className='flex flex-wrap gap-2'>
+                            <span className="font-medium text-gray-500">{c.label}:</span>
                             <div className='flex flex-wrap ml-2'>
                               <span className="text-red-600 ">{c.from ?? '---'} </span>
                               <span className='mx-2'>→</span>
@@ -136,34 +139,52 @@ export default function LogsPage() {
                 )}
             </div>
 
+            {/* Site Inspections */}
             <div>
-              <h2 className="text-xl font-semibold text-blue-700 mb-2">Site Inspections</h2>
+              <h2 className="text-xl font-semibold text-blue-700 mb-2">{siteIns}</h2>
               {grouped[siteIns].length > 0 ? (
-                  <ul className="space-y-1 mb-2 bg-sky-500/5 p-2 rounded-md">
-                    {grouped[siteIns].map((c, i) => (
-                      <li key={i} className="text-sm flex flex-col gap-2 ml-2">
-                        <span className="font-medium">{c.subcategory || ''}:</span>
-                        <span className="font-medium text-gray-500 ml-2">{c.field}</span>
-                        <div className='flex flex-wrap ml-4'>
-                          <span className="text-red-600 ">{c.from ?? '---'} </span>
-                          <span className='mx-2'>→</span>
-                          <span className="text-green-600">{c.to ?? '---'}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-400 text-sm mb-2 ml-2">No changes in this section.</p>
-                )}
+                <div className="space-y-4 bg-sky-500/5 p-3 rounded-md">
+
+                  {/* 🔹 Групування за subcategory */}
+                  {Object.entries(
+                    grouped[siteIns].reduce((acc: Record<string, Change[]>, change) => {
+                      const key = change.subcategory || 'Uncategorized';
+                      if (!acc[key]) acc[key] = [];
+                      acc[key].push(change);
+                      return acc;
+                    }, {})
+                  ).map(([subcategory, items]) => (
+                    <div key={subcategory}>
+                      <h3 className="font-semibold text-gray-800 mb-1">{subcategory}</h3>
+                      <ul className="space-y-1 ml-4">
+                        {items.map((c, i) => (
+                          <li key={i} className="text-sm flex flex-wrap gap-2">
+                            <span className="text-gray-600">{c.field}:</span>
+                            <div className='flex flex-wrap ml-2'>
+                              <span className="text-red-600 ml-2">{c.from ?? '---'}</span>
+                              <span className="mx-1">→</span>
+                              <span className="text-green-600">{c.to ?? '---'}</span>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+
+                </div>
+              ) : (
+                <p className="text-gray-400 text-sm mb-2 ml-2">No changes in this section.</p>
+              )}
             </div>
 
+            {/* Post-Inspection */}
             <div>
               <h2 className="text-xl font-semibold text-blue-700 mb-2">{postIns}</h2>
               {grouped[postIns].length > 0 ? (
-                  <ul className="space-y-1 mb-4 bg-sky-500/5 p-2 rounded-md">
+                  <ul className="space-y-1 mb-4 bg-sky-500/5 p-2 rounded-md break-words">
                     {grouped[postIns].map((c, i) => (
                       <li key={i} className="text-sm flex flex-col gap-2">
-                        <span className="font-medium text-gray-700">{c.field}:</span>
+                        <span className="font-medium text-gray-700">{c.label}:</span>
                         <span className="text-red-600 border-2 border-dashed ml-4 p-1">{c.from ?? '---'}</span>
                         <span className="text-green-600 border-2 border-dashed ml-4 p-1">{c.to ?? '---'}</span>
                       </li>

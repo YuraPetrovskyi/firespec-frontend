@@ -20,6 +20,49 @@ type InspectionData = {
   site_inspections: SectionData;
 };
 
+// Додаємо мапи лейблів:
+const PRE_INSPECTION_LABELS: Record<string, string> = {
+  rams_info_submitted: 'RAMS information submitted',
+  induction_arranged: 'Induction arranged',
+  induction_attended: 'Induction attended',
+  ppe_checked: 'PPE (incl glasses and sleeves for Wates)',
+  client_meeting: 'Meet with client representative',
+  fire_drawings_available: 'Latest fire strategy drawings available',
+  bolster_uploads: 'Bolster uploads completed',
+  bolster_synced: 'Bolster down synced and checked',
+  latest_eta_available: 'Latest Manufacturer ETAs',
+  walkthrough_done: 'Walk through and cursory inspection',
+};
+
+const PROJECT_INFO_LABELS: Record<string, string> = {
+  project_name: 'Project Name',
+  inspection_date: 'Inspection Date',
+  client: 'Client',
+  client_contact: 'Client Contact & Title',
+  client_rep: 'Client Site Rep & Title',
+  installer: 'Installer/contractor',
+  third_party_acr: '3rd Party Acr. Body',
+  storeys: 'Storeys',
+  structural_frame: 'Structural Frame',
+  façade: 'Façade',
+  floor_type: 'Floor Type',
+  internal_walls: 'Internal Walls Types',
+  fire_stopping_materials: 'Fire Stopping Materials',
+  barrier_materials: 'Barrier Materials',
+  dampers: 'Dampers',
+  encasements: 'Encasements',
+  digital_recording: 'Digital Recording',
+};
+
+const POST_INSPECTION_LABELS: Record<string, string> = {
+  next_inspection_date: 'Date of next inspection visit',
+  client_meeting_done: 'Meet with client representative',
+  urgent_matters: 'Communicate urgent matters',
+  bolster_notes: 'Up-sync Bolster',
+  comment: 'Comment',
+};
+
+
 export default function EditInspectionPage() {
   const { id, inspectionId } = useParams();
   const router = useRouter();
@@ -90,34 +133,36 @@ export default function EditInspectionPage() {
       category: string;
       subcategory?: string;
       field: string;
+      label?: string;
       from: any;
       to: any;
     }[] = [];
   
-    const compare = (category: string, field: string, oldVal: any, newVal: any) => {
+    const compare = (category: string, field: string, oldVal: any, newVal: any, label?: string) => {
       if (String(oldVal ?? '') !== String(newVal ?? '')) {
         changes.push({
           category,
           field,
           from: oldVal,
           to: newVal,
+          label,
         });
       }
     };
   
     // Project Info
     Object.entries(newData.projectInformation).forEach(([key, val]) => {
-      compare('Project Information', key, oldData.projectInformation?.[key], val);
+      compare('Project Information', key, oldData.projectInformation?.[key], val, PROJECT_INFO_LABELS[key]);
     });
   
     // Pre-inspection
     Object.entries(newData.preInspection).forEach(([key, val]) => {
-      compare('Pre-Inspection', key, oldData.preInspection?.[key], val);
+      compare('Pre-Inspection', key, oldData.preInspection?.[key], val, PRE_INSPECTION_LABELS[key]);
     });
   
     // Post-inspection
     Object.entries(newData.postInspection).forEach(([key, val]) => {
-      compare('Post-Inspection', key, oldData.postInspection?.[key], val);
+      compare('Post-Inspection', key, oldData.postInspection?.[key], val, POST_INSPECTION_LABELS[key]);
     });
   
     // 🔹 Site Inspections
