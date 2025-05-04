@@ -61,48 +61,54 @@ export default function ProjectInspectionsPage() {
 
   return (
     <div className="p-10 bg-gray-100 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <Link
-          href={`/projects`}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-        >
-          Back
-        </Link>
-        <h1 className="text-3xl font-bold text-gray-800">Inspections</h1>
+      <Link
+        href={`/projects`}
+        className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-5"
+      >
+        Back
+      </Link>
+      <div className="flex flex-wrap gap-2 justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800 uppercase">Inspections</h1>
         <Link
           href={`/projects/${id}/inspections/create`}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 transition"
         >
-          ➕ Add
+          Add
         </Link>
-        
       </div>
 
-      <div className='flex flex-col gap-3'>
+      <div className='flex flex-col gap-3 mb-6'>
         {loading
           ? Array.from({ length: 1 }).map((_, i) => <SkeletonCard key={i} />)
           : inspections.length > 0
             ? inspections.map((inspection) => (
               <div key={inspection.id} className="bg-white shadow-md rounded p-5 border border-gray-200">
-                <h2 className="text-xl font-semibold text-blue-800">Inspection #{inspection.inspection_number}</h2>
-                <p className="text-sm text-gray-600 mb-2">Version: {inspection.version}</p>
+                <div className='flex flex-row flex-wrap justify-between items-center gap-2 mb-2'>
+                  <h2 className="text-xl font-semibold text-blue-800">Inspection {inspection.inspection_number}</h2>
+                  <p className="text-xl font-bold">Version {inspection.version}</p>
+                </div>
+                {inspection.version > 1 && (
+                  <p className="text-sm text-green-500 mb-2">edited version ...</p>
+                )}
                 <p className="text-sm text-gray-600 mb-2">Date: {inspection.inspection_date}</p>
                 <p className="text-sm mb-2">Inspector: {inspection.inspector_name}</p>
-                <Link
-                  href={`/projects/${id}/inspections/${inspection.id}`}
-                  className="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 transition"
-                >
-                  View
-                </Link>
-                <button
-                  onClick={() => {
-                    setSelectedInspectionId(inspection.id);
-                    setModalOpen(true);
-                  }}
-                  className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700 transition ml-2"
-                >
-                  🗑️ Delete
-                </button>
+                <div className="flex justify-between items-center mt-4">
+                  <button
+                    onClick={() => {
+                      setSelectedInspectionId(inspection.id);
+                      setModalOpen(true);
+                    }}
+                    className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700 transition"
+                  >
+                    Delete
+                  </button>
+                  <Link
+                    href={`/projects/${id}/inspections/${inspection.id}`}
+                    className="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 transition"
+                  >
+                    View
+                  </Link>
+                </div>
               </div>
             ))
             : <div className="text-center text-gray-600 mt-20">
