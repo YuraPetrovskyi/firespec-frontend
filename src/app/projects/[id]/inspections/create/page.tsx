@@ -106,7 +106,7 @@ export default function CreateInspectionPage() {
 
   return (
     <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-6">
-      <h1 className="text-3xl font-bold text-gray-800">➕ Create New Inspection</h1>
+      <h1 className="text-xl font-bold text-gray-800 text-center">Create New Inspection</h1>
 
       <PreInspectionSection data={preInspection} onChange={setPreInspection} />
       <ProjectInformationSection data={projectInformation} onChange={setProjectInformation} />
