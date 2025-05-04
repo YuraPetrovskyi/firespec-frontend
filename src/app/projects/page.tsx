@@ -87,12 +87,12 @@ export default function ProjectsPage() {
   return (
     <div className="p-10 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">📁 Projects</h1>
+        <h1 className="text-3xl font-bold text-gray-800 uppercase">Projects</h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          className="bg-blue-600 text-white font-bold px-4 py-2 rounded hover:bg-blue-700 transition"
         >
-          ➕ Add Project
+          Add Project
         </button>
       </div>
 
@@ -114,41 +114,42 @@ export default function ProjectsPage() {
       />
 
       {/* 🔵 Список проектів */}
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-col gap-4">
 
         {projects.map((project) => (
           <div key={project.id} className="bg-white shadow-md rounded p-5 border border-gray-200">
-          <h2 className="text-xl font-semibold text-blue-800">{project.project_name}</h2>
-          <p className="text-sm text-gray-600 mb-2">Client: {project.client}</p>
-          <p className="text-sm mb-2">Status: <span className="font-medium">{project.status}</span></p>
-        
-          {project.inspections.length > 0 && (
-            <div className="mt-2 text-sm">
-              <p><strong>Latest Inspection:</strong></p>
-              <ul className="list-disc ml-4">
-                <li>Number: {project.inspections[0].inspection_number}</li>
-                <li>Date: {project.inspections[0].inspection_date}</li>
-                <li>Inspector: {project.inspections[0].inspector_name}</li>
-              </ul>
+            <h2 className="text-xl font-semibold text-blue-800 text-center">{project.project_name}</h2>
+            <div className='flex flex-row justify-between items-center mb-4 gap-2'>
+              <span className="text-xs text-gray-600 mb-2">Client: {project.client}</span>
+              <span className="text-xs text-gray-600 mb-2">{project.status}</span>
             </div>
-          )}
-        
-          <div className="mt-4 flex flex-col gap-2">
-            <Link
-              href={`/projects/${project.id}/inspections`}
-              className="bg-blue-500 text-white py-2 px-4 rounded text-center hover:bg-blue-600 transition"
-            >
-              🔍 View Inspections
-            </Link>
-            <button
-              onClick={() => confirmDelete(project.id)}
-              className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition"
-            >
-              🗑️ Delete Modal
-            </button>
+            
+          
+            {project.inspections.length > 0 && (
+              <div className="mt-2 text-sm">
+                <p><strong>Latest Inspection:</strong></p>
+                <ul className="list-disc ml-4">
+                  <li>Date: {new Date(project.inspections[0].inspection_date).toLocaleDateString("en-GB")}</li>
+                  <li>Inspector: {project.inspections[0].inspector_name}</li>
+                </ul>
+              </div>
+            )}
+          
+            <div className="mt-4 flex flex-row justify-between gap-2">
+              <button
+                onClick={() => confirmDelete(project.id)}
+                className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition"
+              >
+                Delete
+              </button>
+              <Link
+                href={`/projects/${project.id}/inspections`}
+                className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 transition"
+              >
+                All Inspections
+              </Link>
+            </div>
           </div>
-
-        </div>
         ))}
       </div>
     </div>
