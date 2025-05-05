@@ -1,4 +1,5 @@
 "use client";
+import { useState } from 'react';
 
 interface ProjectInformationSectionProps {
   data: any;
@@ -23,10 +24,19 @@ const projectInfoFields = [
   { name: 'dampers', label: 'Dampers' },
   { name: 'encasements', label: 'Encasements' },
 ];
+const digital_recording = {name: 'digital_recording', label: 'Digital Recording'}
 
 export default function ProjectInformationSection({ data, onChange }: ProjectInformationSectionProps) {
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({});
+
   const handleChange = (field: string, value: any) => {
-    onChange({ ...data, [field]: value });
+    onChange({ ...data, [field]: field === 'digital_recording' ? Number(value) : value });
+
+    if (field === 'project_name' && value.trim() === '') {
+      setErrors((prev) => ({ ...prev, project_name: 'Project name is required' }));
+    } else {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
   };
 
   return (
@@ -42,16 +52,16 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
               onChange={(e) => handleChange(name, e.target.value)}
               className="border p-2 rounded"
             />
+            {errors[name] && <span className="text-red-600 text-sm mt-1">{errors[name]}</span>}
           </div>
         ))}
         <div className="flex flex-col">
-          <label className="font-semibold mb-1">Digital Recording</label>
+          <label className="font-semibold mb-1">{digital_recording.label}</label>
           <select
-            value={data.digital_recording ?? ''}
-            onChange={(e) => handleChange('digital_recording', e.target.value)}
+            value={String(data.digital_recording ?? 0)}
+            onChange={(e) => handleChange(digital_recording.name, e.target.value)}
             className="border p-2 rounded"
           >
-            <option value="">-- Select --</option>
             <option value="1">✅ Yes</option>
             <option value="0">❌ No</option>
           </select>
