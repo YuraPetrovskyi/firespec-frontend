@@ -92,7 +92,7 @@ export default function LogsPage() {
                           <div className='flex flex-wrap ml-2'>
                             <span className='text-red-600'>{c.from == 0 ? 'no' : 'yes'}</span>
                             <span className='mx-2'>→</span>
-                            <span className='text-green-600'>{c.from == 0 ? 'no' : 'yes'}</span>
+                            <span className='text-green-600'>{c.to == 0 ? 'no' : 'yes'}</span>
                           </div>
                         </div>
                       </li>
