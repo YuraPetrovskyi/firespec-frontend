@@ -5,7 +5,6 @@ interface SiteInspectionsSectionProps {
   onChange: (data: any) => void;
 }
 
-// Категорії з підопціями
 const siteInspectionCategories = [
   { name: 'Encasements', options: ['thickness', 'fixing type/centres/orientation', 'framing', 'joints', 'junctions', 'overlaps', 'any penetrations'] },
   { name: 'Wall Makeup', options: ['Layers', 'thickness', 'framing system'] },
@@ -22,23 +21,30 @@ const siteInspectionCategories = [
   { name: 'Cavity Barriers, Ceiling Void', options: ['substrate', 'brackets', 'fixings', 'joints', 'overlaps', 'stitching', 'stapling', 'penetrations'] },
   { name: 'Cavity Barriers, RAF', options: ['compression', 'brackets', 'fixings', 'joints', 'sealants', 'tapes'] },
   { name: 'Cavity Barriers External', options: ['substrate', 'compression', 'brackets', 'fixings', 'joints', 'sealants', 'tapes'] },
-  { name: 'Destructive Tests Carried out?', options: [] },
+  { name: 'Destructive Tests', options: ['Carried Out?'] },
 ];
 
 export default function SiteInspectionsSection({ data, onChange }: SiteInspectionsSectionProps) {
+  const updateMainStatus = (category: string, updatedOptions: Record<string, any>) => {
+    const values = Object.entries(updatedOptions).filter(([key]) => key !== 'main');
+    const hasSelected = values.some(([_, v]) => v && v !== 'not_selected');
+    const main = hasSelected ? 'checked' : 'not_checked';
 
-  const handleMainStatusChange = (category: string, value: string) => {
-    const updated = { ...data };
-    updated[category] = { ...(updated[category] || {}), main: value };
-    onChange(updated);
+    return { ...updatedOptions, main };
   };
 
   const handleOptionStatusChange = (category: string, optionName: string, value: string) => {
     const updated = { ...data };
-    if (!updated[category]) {
-      updated[category] = {};
-    }
-    updated[category][optionName] = value;
+    const categoryData = updated[category] || {};
+    categoryData[optionName] = value;
+    updated[category] = updateMainStatus(category, categoryData);
+    onChange(updated);
+  };
+
+  const clearAllOptions = (category: string, options: string[]) => {
+    const cleared = options.reduce((acc, key) => ({ ...acc, [key]: 'not_selected' }), {});
+    const updated = { ...data };
+    updated[category] = updateMainStatus(category, cleared);
     onChange(updated);
   };
 
@@ -48,47 +54,65 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
 
       <div className="flex flex-col gap-6">
         {siteInspectionCategories.map((category) => {
-          const isDestructive = category.name === 'Destructive Tests Carried out?';
-          const mainStatus = data[category.name]?.main || 'not_checked';
+          // const isDestructive = category.name === 'Destructive Tests Carried out?';
+          const categoryData = data[category.name] || {};
+          const mainStatus = categoryData.main || 'not_checked';
 
           return (
             <div key={category.name} className="border p-4 rounded shadow-sm">
-              {/* Заголовок + головний перемикач */}
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold">{category.name}</h3>
+              <details>
+                <summary className="cursor-pointer select-none">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-semibold">{category.name}</h3>
+                    <span
+                      className={`text-sm font-medium px-2 py-1 rounded-full ${
+                        mainStatus === 'checked' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                      }`}
+                    >
+                      {mainStatus}
+                    </span>
+                  </div>
+                </summary>
 
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={mainStatus === 'checked'}
-                    onChange={(e) => handleMainStatusChange(category.name, e.target.checked ? 'checked' : 'not_checked')}
-                    className="w-5 h-5"
-                  />
-                </label>
-              </div>
-
-              {/* Підпункти */}
-              {!isDestructive && mainStatus === 'checked' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {category.options.map((option) => (
-                    <div key={option} className="flex flex-col">
-                      <label className="font-semibold mb-1">{option}</label>
-                      <select
-                        value={data[category.name]?.[option] || ''}
-                        onChange={(e) => handleOptionStatusChange(category.name, option, e.target.value)}
-                        className="border p-2 rounded w-[180px]"
-                      >
-                        <option value="">-- Select --</option>
-                        <option value="checked">✅ Checked</option>
-                        <option value="not_checked">❔ Not Checked</option>
-                        <option value="not_required">❌ Not Required</option>
-                        <option value="absent">⚪ Absent</option>
-                        <option value="not_applicable">⛔ Not Applicable</option>
-                      </select>
-                    </div>
-                  ))}
+                <div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    {category.options.map((option) => (
+                      <div key={option} className="flex flex-col">
+                        <label className="font-semibold mb-1">{option}</label>
+                        <select
+                          value={categoryData[option] || 'not_selected'}
+                          onChange={(e) => handleOptionStatusChange(category.name, option, e.target.value)}
+                          className="border p-2 rounded w-[180px]"
+                        >
+                          <option value="not_selected">-- Select --</option>
+                          {category.name === 'Destructive Tests' && option === 'Carried Out?' ? (
+                            <>
+                              <option value="no">❌ No</option>
+                              <option value="yes">✅ Yes</option>
+                            </>
+                          ) : (
+                            <>
+                              <option value="checked">✅ Checked</option>
+                              <option value="not_checked">❔ Not Checked</option>
+                              <option value="not_required">❌ Not Required</option>
+                              <option value="absent">⚪ Absent</option>
+                              <option value="not_applicable">⛔ Not Applicable</option>
+                            </>
+                          )}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+  
+                  <button
+                    type="button"
+                    onClick={() => clearAllOptions(category.name, category.options)}
+                    className="mt-4 text-sm text-red-600 hover:underline"
+                  >
+                    🧹 Clear all options
+                  </button>
                 </div>
-              )}
+              </details>
             </div>
           );
         })}
