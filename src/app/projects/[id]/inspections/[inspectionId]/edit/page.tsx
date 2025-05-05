@@ -106,7 +106,7 @@ export default function EditInspectionPage() {
           setProjectInformation(cleanedProjectInfo);
           setOldProjectInformation(cleanedProjectInfo);
           setSiteInspections(data.site_inspections || {});
-          setOldSiteInspections(data.site_inspections || {});
+          setOldSiteInspections(JSON.parse(JSON.stringify(data.site_inspections || {}))); //глибоке копіювання (deep clone) об'єкта щоб уникнути проблем з порівнянням сторго і нового обєкту
           
           console.log('Edit Inspection data:', data);
         })
