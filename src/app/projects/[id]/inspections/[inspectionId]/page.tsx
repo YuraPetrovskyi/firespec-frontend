@@ -23,7 +23,7 @@ const siteInspectionCategories = [
   'Cavity Barriers, Ceiling Void',
   'Cavity Barriers, RAF',
   'Cavity Barriers External',
-  'Destructive Tests Carried out?',
+  'Destructive Tests',
 ];
 
 export default function ViewInspectionPage() {
@@ -65,6 +65,20 @@ export default function ViewInspectionPage() {
   return (
     <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-8">
       <h1 className="text-3xl font-bold text-center mb-8">Inspection Details</h1>
+      <div className='flex justify-between items-center gab-2'>
+        <button
+          onClick={() => router.push(`/projects/${id}/inspections`)}
+          className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
+        >
+          ← Back
+        </button>
+        <button
+          onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
+          className="bg-yellow-500 text-white py-2 px-6 rounded hover:bg-yellow-600"
+        >
+          ✏️ Edit
+        </button>
+      </div>
 
       {/* ✅ PRE-INSPECTION */}
       <section className="bg-white rounded shadow p-6">
@@ -138,9 +152,7 @@ export default function ViewInspectionPage() {
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-semibold">{category}</h3>
                   <span className={`px-3 py-1 rounded text-white ${isChecked ? 'bg-green-600' : 'bg-red-500'}`}>
-                    {category === 'Destructive Tests Carried out?'
-                      ? mainStatus === 'checked' ? 'Yes' : 'No'
-                      : mainStatus.replace('_', ' ').toUpperCase()}
+                    {mainStatus.replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
 
@@ -206,7 +218,7 @@ export default function ViewInspectionPage() {
 
       {/* 🔘 КНОПКИ */}
       <div className="flex flex-wrap gap-4 justify-center mt-8">
-        
+
         <button
           onClick={() => router.push(`/projects/${id}/inspections`)}
           className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
