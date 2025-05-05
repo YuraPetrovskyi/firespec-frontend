@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import Link from 'next/link';
 import ModalConfirm from '@/components/ModalConfirm';
 import CreateProjectModal from '@/components/CreateProjectModal';
+import SkeletonCard from '@/components/SkeletonCard';
 
 interface Inspection {
   inspection_number: string;
@@ -27,19 +28,28 @@ export default function ProjectsPage() {
   const [newProjectName, setNewProjectName] = useState('');
   const [newClient, setNewClient] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
 
 
   useEffect(() => {
+    setLoading(true);
     fetchProjects();
   }, []);
 
   const fetchProjects = () => {
     axios.get('http://127.0.0.1:8000/api/projects')
-      .then((res) => setProjects(res.data.data))
-      .catch((err) => console.error(err));
+      .then((res) => {
+        setProjects(res.data.data)
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast.error('❌ Failed to load projects.');
+        console.error(err)
+      });
   };
 
   const handleCreateProject = async () => {
@@ -115,42 +125,49 @@ export default function ProjectsPage() {
 
       {/* 🔵 Список проектів */}
       <div className="flex flex-col gap-4">
-
-        {projects.map((project) => (
-          <div key={project.id} className="bg-white shadow-md rounded p-5 border border-gray-200">
-            <h2 className="text-xl font-semibold text-blue-800 text-center">{project.project_name}</h2>
-            <div className='flex flex-row justify-between items-center mb-4 gap-2'>
-              <span className="text-xs text-gray-600 mb-2">Client: {project.client}</span>
-              <span className="text-xs text-gray-600 mb-2">{project.status}</span>
-            </div>
-            
-          
-            {project.inspections.length > 0 && (
-              <div className="mt-2 text-sm">
-                <p><strong>Latest Inspection:</strong></p>
-                <ul className="list-disc ml-4">
-                  <li>Date: {new Date(project.inspections[0].inspection_date).toLocaleDateString("en-GB")}</li>
-                  <li>Inspector: {project.inspections[0].inspector_name}</li>
-                </ul>
+        {loading
+          ? Array.from({ length: 1 }).map((_, i) => <SkeletonCard key={i} />)
+          : projects.length > 0
+            ? projects.map((project) => (
+              <div key={project.id} className="bg-white shadow-md rounded p-5 border border-gray-200">
+                <h2 className="text-xl font-semibold text-blue-800 text-center">{project.project_name}</h2>
+                <div className='flex flex-row justify-between items-center mb-4 gap-2'>
+                  <span className="text-xs text-gray-600 mb-2">Client: {project.client}</span>
+                  <span className="text-xs text-gray-600 mb-2">{project.status}</span>
+                </div>
+                
+              
+                {project.inspections.length > 0 && (
+                  <div className="mt-2 text-sm">
+                    <p><strong>Latest Inspection:</strong></p>
+                    <ul className="list-disc ml-4">
+                      <li>Date: {new Date(project.inspections[0].inspection_date).toLocaleDateString("en-GB")}</li>
+                      <li>Inspector: {project.inspections[0].inspector_name}</li>
+                    </ul>
+                  </div>
+                )}
+              
+                <div className="mt-4 flex flex-row justify-between gap-2">
+                  <button
+                    onClick={() => confirmDelete(project.id)}
+                    className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition"
+                  >
+                    Delete
+                  </button>
+                  <Link
+                    href={`/projects/${project.id}/inspections`}
+                    className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 transition"
+                  >
+                    All Inspections
+                  </Link>
+                </div>
               </div>
-            )}
-          
-            <div className="mt-4 flex flex-row justify-between gap-2">
-              <button
-                onClick={() => confirmDelete(project.id)}
-                className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition"
-              >
-                Delete
-              </button>
-              <Link
-                href={`/projects/${project.id}/inspections`}
-                className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 transition"
-              >
-                All Inspections
-              </Link>
-            </div>
-          </div>
-        ))}
+            ))
+          : <div className="text-center text-gray-600 mt-20">
+              <p className="text-xl font-semibold">No projects yet</p>
+              <p className="mt-2">Start by adding your first project</p>
+            </div>       
+        }
       </div>
     </div>
   );
