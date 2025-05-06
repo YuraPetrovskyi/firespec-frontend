@@ -25,8 +25,6 @@ interface Project {
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [newProjectName, setNewProjectName] = useState('');
-  const [newClient, setNewClient] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -50,28 +48,6 @@ export default function ProjectsPage() {
         toast.error('❌ Failed to load projects.');
         console.error(err)
       });
-  };
-
-  const handleCreateProject = async () => {
-    if (!newProjectName.trim()) {
-      toast.error('❌ Project name is required.');
-      return;
-    }
-  
-    try {
-      await axios.post('http://127.0.0.1:8000/api/projects', {
-        project_name: newProjectName,
-        client: newClient,
-      });
-      setNewProjectName('');
-      setNewClient('');
-      setIsModalOpen(false);
-      fetchProjects();
-      toast.success('✅ Project created successfully!');
-    } catch (err) {
-      console.error(err);
-      toast.error('❌ Failed to create project. Please try again.');
-    }
   };
 
   const confirmDelete = (id: number) => {
