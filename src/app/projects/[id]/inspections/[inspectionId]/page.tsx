@@ -64,7 +64,7 @@ export default function ViewInspectionPage() {
 
   return (
     <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Inspection Details</h1>
+      <h1 className="text-3xl font-bold text-center mb-2">Inspection Details</h1>
       <div className='flex justify-between items-center gab-2'>
         <button
           onClick={() => router.push(`/projects/${id}/inspections`)}
@@ -81,35 +81,48 @@ export default function ViewInspectionPage() {
       </div>
 
       {/* ✅ PRE-INSPECTION */}
-      <section className="bg-white rounded shadow p-6">
-        <h2 className="text-2xl font-semibold mb-4">✅ Pre-Inspection</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { label: 'RAMS information submitted', field: 'rams_info_submitted' },
-            { label: 'Induction arranged', field: 'induction_arranged' },
-            { label: 'Induction attended', field: 'induction_attended' },
-            { label: 'PPE (incl glasses and sleeves for Wates)', field: 'ppe_checked' },
-            { label: 'Meet with client representative', field: 'client_meeting' },
-            { label: 'Latest fire strategy drawings available', field: 'fire_drawings_available' },
-            { label: 'Bolster uploads completed', field: 'bolster_uploads' },
-            { label: 'Bolster down synced and checked', field: 'bolster_synced' },
-            { label: 'Latest Manufacturer ETAs', field: 'latest_eta_available' },
-            { label: 'Walk through and cursory inspection', field: 'walkthrough_done' },
-          ].map(({ label, field }) => (
-            <div key={field} className="flex justify-between items-center border-b py-2">
-              <span>{label}</span>
-              <span className={`px-3 py-1 rounded text-white ${pre_inspection?.[field] ? 'bg-green-600' : 'bg-red-500'}`}>
-                {pre_inspection?.[field] ? 'Yes' : 'No'}
-              </span>
-            </div>
-          ))}
+      <section className="bg-white rounded shadow">
+        <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Pre-Inspection</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 p-4">
+          <div>
+            {[
+              { label: 'RAMS information submitted', field: 'rams_info_submitted' },
+              { label: 'Induction arranged', field: 'induction_arranged' },
+              { label: 'Induction attended', field: 'induction_attended' },
+              { label: 'PPE (incl glasses and sleeves for Wates)', field: 'ppe_checked' },
+              { label: 'Meet with client representative', field: 'client_meeting' },
+            ].map(({ label, field }) => (
+              <div key={field} className="flex justify-between items-center border-b py-2 mx-2 gap-2">
+                <div className='font-extrabold text-gray-800'>{label}</div>
+                <div className={`min-w-[60px] px-3 py-1 rounded text-white text-center ${pre_inspection?.[field] ? 'bg-green-600' : 'bg-red-500'}`}>
+                  {pre_inspection?.[field] ? 'Yes' : 'No'}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div>
+            {[
+              { label: 'Latest fire strategy drawings available', field: 'fire_drawings_available' },
+              { label: 'Bolster uploads completed', field: 'bolster_uploads' },
+              { label: 'Bolster down synced and checked', field: 'bolster_synced' },
+              { label: 'Latest Manufacturer ETAs', field: 'latest_eta_available' },
+              { label: 'Walk through and cursory inspection', field: 'walkthrough_done' },
+            ].map(({ label, field }) => (
+              <div key={field} className="flex justify-between items-center border-b py-2 mx-2 gap-2">
+                <div className='font-extrabold text-gray-800'>{label}</div>
+                <div className={`min-w-[60px] px-3 py-1 rounded text-white text-center ${pre_inspection?.[field] ? 'bg-green-600' : 'bg-red-500'}`}>
+                  {pre_inspection?.[field] ? 'Yes' : 'No'}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ✅ PROJECT INFORMATION */}
-      <section className="bg-white rounded shadow p-6">
-        <h2 className="text-2xl font-semibold mb-4">✅ Project Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section className="bg-white rounded shadow">
+        <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Project Information</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
           {[
             { label: 'Project Name', value: project_information?.project_name },
             { label: 'Inspection Date', value: project_information?.inspection_date },
@@ -130,18 +143,18 @@ export default function ViewInspectionPage() {
             { label: 'Dampers', value: project_information?.dampers },
             { label: 'Encasements', value: project_information?.encasements },
           ].map(({ label, value }) => (
-            <div key={label} className="flex justify-between items-center border-b py-2">
-              <span>{label}</span>
-              <span>{value ?? 'N/A'}</span>
+            <div key={label} className="flex flex-row border-b py-2 mx-2 gap-4">
+              <span className='font-extrabold text-gray-800 overflow-hidden text-ellipsis border-r p-1 basis-1/3 min-w-[130px] '>{label}</span>
+              <span className='overflow-hidden text-ellipsis text-gray-500 text-left basis-2/3'>{value ?? 'N/A'}</span>
             </div>
           ))}
         </div>
       </section>
 
       {/* ✅ SITE INSPECTIONS */}
-      <section className="bg-white rounded shadow p-6">
-        <h2 className="text-2xl font-semibold mb-4">✅ Site Inspections</h2>
-        <div className="flex flex-col gap-4">
+      <section className="bg-white rounded shadow">
+        <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Site Inspections</h2>
+        <div className="flex flex-col gap-4 p-4">
           {siteInspectionCategories.map((category) => {
             const options = site_inspections?.[category] || {};
             const mainStatus = options.main || options.result || 'not_checked';
@@ -150,14 +163,14 @@ export default function ViewInspectionPage() {
             return (
               <div key={category} className="border rounded p-4 bg-gray-50">
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-semibold">{category}</h3>
-                  <span className={`px-3 py-1 rounded text-white ${isChecked ? 'bg-green-600' : 'bg-red-500'}`}>
+                  <h3 className="font-semibold text-base">{category}</h3>
+                  <span className={`px-3 py-1 rounded ${isChecked ? 'text-green-500' : 'text-red-500'}`}>
                     {mainStatus.replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
 
                 {isChecked && Object.entries(options).filter(([k]) => k !== 'main' && k !== 'result').length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
                     {Object.entries(options)
                       .filter(([key]) => key !== 'main' && key !== 'result')
                       .map(([option, status]) => {
@@ -175,15 +188,17 @@ export default function ViewInspectionPage() {
                             badgeColor = 'bg-black';
                             break;
                           case 'not_required':
+                            badgeColor = 'bg-gray-500';
+                            break;
                           case 'not_applicable':
                             badgeColor = 'bg-yellow-500';
                             break;
                         }
 
                         return (
-                          <div key={option} className="flex justify-between items-center p-2 bg-white rounded shadow-sm">
-                            <span>{option}</span>
-                            <span className={`font-semibold text-white py-1 px-3 rounded ${badgeColor}`}>
+                          <div key={option} className="flex flex-wrap justify-between items-center p-2 bg-gray-200 rounded shadow-sm">
+                            <span className='overflow-hidden text-ellipsis font-semibold text-gray-600'>{option}</span>
+                            <span className={`font-semibold text-white text-center w-[120px] py-1 px-3 rounded ${badgeColor}`}>
                               {String(status)}
                             </span>
                           </div>
@@ -198,26 +213,26 @@ export default function ViewInspectionPage() {
       </section>
 
       {/* ✅ POST-INSPECTION */}
-      <section className="bg-white rounded shadow p-6">
-        <h2 className="text-2xl font-semibold mb-4">✅ Post-Inspection</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section className="bg-white rounded shadow">
+        <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Post-Inspection</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
           {[
             { label: 'Meet with Client Representative', value: post_inspection?.client_meeting_done },
-            { label: 'Communicate Urgent Matters', value: post_inspection?.urgent_matters },
             { label: 'Date of Next Inspection Visit', value: post_inspection?.next_inspection_date },
+            { label: 'Communicate Urgent Matters', value: post_inspection?.urgent_matters },
             { label: 'Up-sync Bolster', value: post_inspection?.bolster_notes },
             { label: 'Comment', value: post_inspection?.comment },
           ].map(({ label, value }) => (
-            <div key={label} className="flex justify-between items-center border-b py-2">
-              <span>{label}</span>
-              <span>{value ?? 'N/A'}</span>
+            <div key={label} className="flex border-b gap-2 bg-gray-100 rounded p-2">
+              <span className='font-semibold text-base basis-1/3 min-w-[140px] border-r'>{label}</span>
+              <span className='text-gray-500 basis-2/3'>{value ?? 'N/A'}</span>
             </div>
           ))}
         </div>
       </section>
 
       {/* 🔘 КНОПКИ */}
-      <div className="flex flex-wrap gap-4 justify-center mt-8">
+      <div className="flex flex-wrap justify-between gap-4 mt-8">
 
         <button
           onClick={() => router.push(`/projects/${id}/inspections`)}
@@ -229,20 +244,20 @@ export default function ViewInspectionPage() {
           onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
           className="bg-yellow-500 text-white py-2 px-6 rounded hover:bg-yellow-600"
         >
-          ✏️ Edit
+          Edit
         </button>
 
         <button
           onClick={() => setModalOpen(true)}
-          className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700 transition mt-2"
+          className="bg-red-600 text-white py-2 px-6 rounded hover:bg-red-700 transition"
         >
-          🗑️ Delete
+          Delete
         </button>
         <button
           onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/logs`)}
           className="bg-indigo-600 text-white py-2 px-6 rounded hover:bg-indigo-700 transition"
         >
-          🕒 View Change Log
+          View Change Log
         </button>
 
       </div>
