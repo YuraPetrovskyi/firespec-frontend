@@ -15,8 +15,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ToasterProvider />
-          {children}
+          <div className="max-w-[1258px] mx-auto">
+            <ToasterProvider />
+            {children}
+          </div>
       </body>
     </html>
   );
