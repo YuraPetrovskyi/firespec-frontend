@@ -64,20 +64,23 @@ export default function ViewInspectionPage() {
 
   return (
     <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-8">
-      <h1 className="text-3xl font-bold text-center mb-2">Inspection Details</h1>
-      <div className='flex justify-between items-center gab-2'>
-        <button
-          onClick={() => router.push(`/projects/${id}/inspections`)}
-          className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
-        >
-          ← Back
-        </button>
-        <button
-          onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
-          className="bg-yellow-500 text-white py-2 px-6 rounded hover:bg-yellow-600"
-        >
-          ✏️ Edit
-        </button>
+      
+      <div>
+        <h1 className="text-3xl font-bold text-center mb-2">Inspection Details</h1>
+        <div className='flex justify-between items-center gab-2'>
+          <button
+            onClick={() => router.push(`/projects/${id}/inspections`)}
+            className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
+          >
+            ← Back
+          </button>
+          <button
+            onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
+            className="bg-yellow-500 text-white py-2 px-6 rounded hover:bg-yellow-600"
+          >
+            ✏️ Edit
+          </button>
+        </div>
       </div>
 
       {/* ✅ PRE-INSPECTION */}
@@ -164,7 +167,7 @@ export default function ViewInspectionPage() {
               <div key={category} className="border rounded p-4 bg-gray-50">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-semibold text-base">{category}</h3>
-                  <span className={`px-3 py-1 rounded ${isChecked ? 'text-green-500' : 'text-red-500'}`}>
+                  <span className={`rounded  min-w-[90px] text-right ${isChecked ? 'text-green-500' : 'text-red-500'}`}>
                     {mainStatus.replace('_', ' ').toUpperCase()}
                   </span>
                 </div>
