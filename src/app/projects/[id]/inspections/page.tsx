@@ -88,7 +88,16 @@ export default function ProjectInspectionsPage() {
                   <p className="text-xl font-bold">Version {inspection.version}</p>
                 </div>
                 {inspection.version > 1 && (
-                  <p className="text-sm text-green-500 mb-2">edited version ...</p>
+                  <div className='flex justify-between items-center mb-2'>
+                    <p className="text-sm text-green-500 mb-2">edited version ...</p>
+                    <Link
+                      href={`/projects/${id}/inspections/${inspection.id}/logs`}
+                      className="bg-green-500/60 text-white py-1 px-2 rounded hover:bg-indigo-700 transition"
+                    >
+                      View Change Log
+                    </Link>
+                  </div>
+                  
                 )}
                 <p className="text-sm text-gray-600 mb-2">Date: {inspection.inspection_date}</p>
                 <p className="text-sm mb-2">Inspector: {inspection.inspector_name}</p>
