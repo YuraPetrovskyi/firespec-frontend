@@ -6,7 +6,7 @@ interface SiteInspectionsSectionProps {
 }
 
 const siteInspectionCategories = [
-  { name: 'Encasements', options: ['thickness', 'fixing type/centres/orientation', 'framing', 'joints', 'junctions', 'overlaps', 'any penetrations'] },
+  { name: 'Encasements', options: ['thickness', 'fixing(type/centres/orientation)', 'framing', 'joints', 'junctions', 'overlaps', 'any penetrations'] },
   { name: 'Wall Makeup', options: ['Layers', 'thickness', 'framing system'] },
   { name: 'Letterbox Openings', options: ['framing', 'lining', 'tape & jointing'] },
   { name: 'Linear Joint Seals', options: ['compression', 'gap size', 'depth', 'sealant', 'backing material'] },
@@ -59,14 +59,14 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
           const mainStatus = categoryData.main || 'not_checked';
 
           return (
-            <div key={category.name} className="border p-4 rounded shadow-sm">
-              <details>
+            <div key={category.name} className="border p-4 rounded shadow-sm bg-slate-50">
+              <details className="">
                 <summary className="cursor-pointer select-none">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-semibold">{category.name}</h3>
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-base font-semibold text-gray-800 mb-2">{category.name}</h3>
                     <span
-                      className={`text-sm font-medium px-2 py-1 rounded-full ${
-                        mainStatus === 'checked' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                      className={`text-xs font-bold px-2 py-1 rounded-full ml-1 ${
+                        mainStatus === 'checked' ? 'text-green-800 bg-green-100 w-[110px] text-center' : 'text-red-600 bg-red-100 w-[110px] text-center'
                       }`}
                     >
                       {mainStatus}
@@ -75,14 +75,16 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
                 </summary>
 
                 <div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="flex flex-wrap gap-6">
+                  {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 bg-green-100"> */}
+
                     {category.options.map((option) => (
-                      <div key={option} className="flex flex-col">
-                        <label className="font-semibold mb-1">{option}</label>
+                      <div key={option} className="flex flex-col ">
+                        <label className="font-semibold text-gray-500">{option}</label>
                         <select
                           value={categoryData[option] || 'not_selected'}
                           onChange={(e) => handleOptionStatusChange(category.name, option, e.target.value)}
-                          className="border p-2 rounded w-[180px]"
+                          className="border p-2 rounded w-[160px]"
                         >
                           <option value="not_selected">-- Select --</option>
                           {category.name === 'Destructive Tests' && option === 'Carried Out?' ? (

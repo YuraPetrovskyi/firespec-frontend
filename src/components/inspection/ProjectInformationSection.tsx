@@ -6,7 +6,7 @@ interface ProjectInformationSectionProps {
   onChange: (data: any) => void;
 }
 
-const projectInfoFields = [
+const projectInfoFieldsOne = [
   { name: 'project_name', label: 'Project Name' },
   { name: 'inspection_date', label: 'Inspection Date', type: 'date' },
   { name: 'client', label: 'Client' },
@@ -15,6 +15,8 @@ const projectInfoFields = [
   { name: 'installer', label: 'Installer/contractor' },
   { name: 'third_party_acr', label: '3rd Party Acr. Body' },
   { name: 'storeys', label: 'Storeys', type: 'number' },
+];
+const projectInfoFieldsTwo = [
   { name: 'structural_frame', label: 'Structural Frame' },
   { name: 'façade', label: 'Façade' },
   { name: 'floor_type', label: 'Floor Type' },
@@ -42,30 +44,48 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
   return (
     <div className="bg-white p-6 rounded shadow-md">
       <h2 className="text-2xl font-bold mb-4">✅ Project Information</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {projectInfoFields.map(({ name, label, type }) => (
-          <div key={name} className="flex flex-col">
-            <label className="font-semibold mb-1">{label}</label>
-            <input
-              type={type || 'text'}
-              value={data[name] ?? ''}
-              onChange={(e) => handleChange(name, e.target.value)}
-              className="border p-2 rounded"
-            />
-            {errors[name] && <span className="text-red-600 text-sm mt-1">{errors[name]}</span>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3"> 
+        
+        <div className="flex flex-col gap-2">
+          {projectInfoFieldsOne.map(({ name, label, type }) => (
+            <div key={name} className="flex flex-col">
+              <label className="font-semibold text-base">{label}</label>
+              <input
+                type={type || 'text'}
+                value={data[name] ?? ''}
+                onChange={(e) => handleChange(name, e.target.value)}
+                className="border p-2 rounded bg-slate-50 font-extrabold text-gray-500"
+              />
+              {errors[name] && <span className="text-red-600 text-sm mt-1">{errors[name]}</span>}
+            </div>
+          ))}
+
+          <div className="flex flex-col">
+            <label className="font-semibold text-base">{digital_recording.label}</label>
+            <select
+              value={String(data.digital_recording ?? 0)}
+              onChange={(e) => handleChange(digital_recording.name, e.target.value)}
+              className="border p-2 rounded bg-slate-50 font-extrabold text-gray-500"
+            >
+              <option value="1">✅ Yes</option>
+              <option value="0">❌ No</option>
+            </select>
           </div>
-        ))}
-        <div className="flex flex-col">
-          <label className="font-semibold mb-1">{digital_recording.label}</label>
-          <select
-            value={String(data.digital_recording ?? 0)}
-            onChange={(e) => handleChange(digital_recording.name, e.target.value)}
-            className="border p-2 rounded"
-          >
-            <option value="1">✅ Yes</option>
-            <option value="0">❌ No</option>
-          </select>
         </div>
+        
+        <div className='flex flex-col gap-2'>
+          {projectInfoFieldsTwo.map(({ name, label }) => (
+            <div key={name} className="flex flex-col ">
+              <label className="font-semibold text-base">{label}</label>
+              <input
+                value={data[name] ?? ''}
+                onChange={(e) => handleChange(name, e.target.value)}
+                className="border p-2 rounded bg-slate-50 font-extrabold text-gray-500"
+              />
+              {errors[name] && <span className="text-red-600 text-sm mt-1">{errors[name]}</span>}
+            </div>
+          ))}
+        </div>        
       </div>
     </div>
   );
