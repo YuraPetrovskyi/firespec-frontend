@@ -2,6 +2,8 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -106,19 +108,28 @@ export default function CreateInspectionPage() {
 
   return (
     <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-6">
-      <h1 className="text-xl font-bold text-gray-800 text-center">Create New Inspection</h1>
+      <h1 className="text-xl font-bold text-gray-800 text-center">FIRE STOPPING INSPECTION PROCEDURE</h1>
 
       <PreInspectionSection data={preInspection} onChange={setPreInspection} />
       <ProjectInformationSection data={projectInformation} onChange={setProjectInformation} />
       <SiteInspectionsSection data={siteInspections} onChange={setSiteInspections} />
       <PostInspectionSection data={postInspection} onChange={setPostInspection} />
 
-      <button
-        onClick={handleCreateInspection}
-        className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition mt-8"
-      >
-        ✅ Save Inspection
-      </button>
+      <div className='flex justify-between items-center mb-6'>
+        <Link
+          href={`/projects/${id}/inspections`}
+          className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 transition"
+        >
+          Cancel
+        </Link>
+        <button
+          onClick={handleCreateInspection}
+          className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition"
+        >
+          Save Inspection
+        </button>
+      </div>
+      
     </div>
   );
 }
