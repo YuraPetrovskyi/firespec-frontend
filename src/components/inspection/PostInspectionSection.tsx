@@ -50,13 +50,13 @@ export default function PostInspectionSection({ data, onChange }: PostInspection
             className="border p-2 rounded font-extrabold text-gray-500"
           />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col md:col-span-2">
           <label className="font-semibold mb-1 text-base">Comment</label>
-          <input
-            type="text"
+          <textarea
             value={data.comment ?? ''}
             onChange={(e) => handleChange('comment', e.target.value)}
-            className="border p-2 rounded font-extrabold text-gray-500"
+            className="border p-2 rounded font-extrabold text-gray-500 min-h-[120px] "
+            placeholder="Write your comment..."
           />
         </div>
       </div>
