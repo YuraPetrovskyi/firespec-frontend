@@ -6,7 +6,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
-import ModalConfirm from '@/components/ModalConfirm';
+import ModalConfirm from '@/components/ModalConfirmDelete';
 
 const siteInspectionCategories = [
   'Encasements',
@@ -53,7 +53,7 @@ export default function ViewInspectionPage() {
   const handleDeleteInspection = async () => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/projects/${id}/inspections/${inspectionId}`);
-      toast.success('✅ Inspection deleted!');
+      toast.success('Inspection deleted!');
       router.push(`/projects/${id}/inspections`);
     } catch (error) {
       console.error(error);

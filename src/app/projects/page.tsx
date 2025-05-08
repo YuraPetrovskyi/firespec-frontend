@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
-import ModalConfirm from '@/components/ModalConfirm';
+import ModalConfirm from '@/components/ModalConfirmDelete';
 import CreateProjectModal from '@/components/CreateProjectModal';
 import SkeletonCard from '@/components/SkeletonCard';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
@@ -59,7 +59,7 @@ export default function ProjectsPage() {
     if (!projectToDelete) return;
     try {
       await axios.delete(`http://127.0.0.1:8000/api/projects/${projectToDelete}`);
-      toast.success('✅ Project deleted!');
+      toast.success('Project deleted!');
       fetchProjects();
     } catch (err) {
       console.error(err);

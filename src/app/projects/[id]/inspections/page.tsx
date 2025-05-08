@@ -7,7 +7,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 import SkeletonCard from '@/components/SkeletonCard';
-import ModalConfirm from '@/components/ModalConfirm';
+import ModalConfirm from '@/components/ModalConfirmDelete';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
 interface Inspection {
@@ -31,7 +31,7 @@ export default function ProjectInspectionsPage() {
   
     try {
       await axios.delete(`http://127.0.0.1:8000/api/projects/${id}/inspections/${selectedInspectionId}`);
-      toast.success('✅ Inspection deleted!');
+      toast.success('Inspection deleted!');
       setInspections(prev => prev.filter(i => i.id !== selectedInspectionId));
     } catch (error) {
       console.error(error);
@@ -62,7 +62,7 @@ export default function ProjectInspectionsPage() {
 
   return (
     <ProtectedLayout>
-      <div className="p-10 bg-gray-100 min-h-screen">
+      <div className="p-4 pb-10 bg-gray-100 min-h-screen">
         <Link
           href={`/projects`}
           className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-5"
@@ -75,7 +75,7 @@ export default function ProjectInspectionsPage() {
             href={`/projects/${id}/inspections/create`}
             className="bg-blue-600 text-white font-bold px-4 py-2 rounded hover:bg-blue-700 transition"
           >
-            Add
+            Create Inspection
           </Link>
         </div>
   
