@@ -10,6 +10,8 @@ import ProjectInformationSection from '@/components/inspection/ProjectInformatio
 import SiteInspectionsSection from '@/components/inspection/SiteInspectionsSection';
 import PostInspectionSection from '@/components/inspection/PostInspectionSection';
 
+import ProtectedLayout from "@/components/layouts/ProtectedLayout";
+
 type SectionData = { [key: string]: any };
 
 type InspectionData = {
@@ -227,28 +229,30 @@ export default function EditInspectionPage() {
 
   // console.log('projectInformation:', projectInformation);
   return (
-    <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-6">
-      <h1 className="text-3xl font-bold text-gray-800">✏️ Edit Inspection</h1>
-
-      <PreInspectionSection data={preInspection} onChange={setPreInspection} />
-      <ProjectInformationSection data={projectInformation} onChange={setProjectInformation} />
-      <SiteInspectionsSection data={siteInspections} onChange={setSiteInspections} />
-      <PostInspectionSection data={postInspection} onChange={setPostInspection} />
-      <div className='flex flex-row justify-between items-center'>
-        <button
-              onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}`)}
-              className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
-          >
-            Cansel
-        </button>
-        <button
-          onClick={handleUpdate}
-          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 p-2"
-          >
-          💾 Save Changes
-        </button>
+    <ProtectedLayout>
+      <div className="p-5 bg-gray-100 min-h-screen flex flex-col gap-6">
+        <h1 className="text-3xl font-bold text-gray-800">Edit Inspection</h1>
+  
+        <PreInspectionSection data={preInspection} onChange={setPreInspection} />
+        <ProjectInformationSection data={projectInformation} onChange={setProjectInformation} />
+        <SiteInspectionsSection data={siteInspections} onChange={setSiteInspections} />
+        <PostInspectionSection data={postInspection} onChange={setPostInspection} />
+        <div className='flex flex-row justify-between items-center'>
+          <button
+                onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}`)}
+                className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
+            >
+              Cansel
+          </button>
+          <button
+            onClick={handleUpdate}
+            className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 p-2"
+            >
+            💾 Save Changes
+          </button>
+        </div>
+        
       </div>
-      
-    </div>
+    </ProtectedLayout>
   );
 }

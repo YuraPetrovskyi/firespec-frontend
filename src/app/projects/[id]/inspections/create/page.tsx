@@ -11,6 +11,7 @@ import PreInspectionSection from '@/components/inspection/PreInspectionSection';
 import ProjectInformationSection from '@/components/inspection/ProjectInformationSection';
 import SiteInspectionsSection from '@/components/inspection/SiteInspectionsSection';
 import PostInspectionSection from '@/components/inspection/PostInspectionSection';
+import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
 type ProjectData = {
   project_name: string;
@@ -107,29 +108,31 @@ export default function CreateInspectionPage() {
   };
 
   return (
-    <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-6">
-      <h1 className="text-xl font-bold text-gray-800 text-center">FIRE STOPPING INSPECTION PROCEDURE</h1>
-
-      <PreInspectionSection data={preInspection} onChange={setPreInspection} />
-      <ProjectInformationSection data={projectInformation} onChange={setProjectInformation} />
-      <SiteInspectionsSection data={siteInspections} onChange={setSiteInspections} />
-      <PostInspectionSection data={postInspection} onChange={setPostInspection} />
-
-      <div className='flex justify-between items-center mb-6'>
-        <Link
-          href={`/projects/${id}/inspections`}
-          className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 transition"
-        >
-          Cancel
-        </Link>
-        <button
-          onClick={handleCreateInspection}
-          className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition"
-        >
-          Save Inspection
-        </button>
+    <ProtectedLayout>
+      <div className="p-4 bg-gray-100 min-h-screen flex flex-col gap-6">
+        <h1 className="text-xl font-bold text-gray-800 text-center">FIRE STOPPING INSPECTION PROCEDURE</h1>
+  
+        <PreInspectionSection data={preInspection} onChange={setPreInspection} />
+        <ProjectInformationSection data={projectInformation} onChange={setProjectInformation} />
+        <SiteInspectionsSection data={siteInspections} onChange={setSiteInspections} />
+        <PostInspectionSection data={postInspection} onChange={setPostInspection} />
+  
+        <div className='flex justify-between items-center mb-6'>
+          <Link
+            href={`/projects/${id}/inspections`}
+            className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 transition"
+          >
+            Cancel
+          </Link>
+          <button
+            onClick={handleCreateInspection}
+            className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition"
+          >
+            Save Inspection
+          </button>
+        </div>
+        
       </div>
-      
-    </div>
+    </ProtectedLayout>
   );
 }
