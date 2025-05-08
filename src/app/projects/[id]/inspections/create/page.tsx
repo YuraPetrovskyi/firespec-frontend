@@ -94,7 +94,7 @@ export default function CreateInspectionPage() {
 
     try {
       await axios.post(`http://127.0.0.1:8000/api/projects/${id}/inspections`, payload);
-      toast.success('✅ Inspection created!');
+      toast.success('Inspection created!');
       router.push(`/projects/${id}/inspections`);
     } catch (err: unknown) {
       console.error(err);

@@ -1,34 +1,43 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import ModalLogoutConfirm from "./ModalLogoutConfirm";
 
-export default function UserMenu() {
-  const { user, logout } = useAuth();
-  const [open, setOpen] = useState(false);
+type Props = {
+  onClose: () => void;
+};
 
-  if (!user) return null;
+export default function UserMenu({ onClose }: Props) {
+  const { logout } = useAuth();
+  const [showConfirm, setShowConfirm] = useState(false);
 
   return (
-    <div className="relative">
+    <div className=" p-2 flex flex-col justify-between absolute right-0 mt-2 min-w-[150px] min-h-[200px] bg-white shadow-lg border rounded-md z-10">
+      <p className="text-lg font-bold	text-center mt-1">Menue</p>
       <button
-        onClick={() => setOpen(!open)}
-        className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium"
+        onClick={() => setShowConfirm(true)}
+        className="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
       >
-        {user.name}
+        Logout
       </button>
-      {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md border z-50">
-          <button
-            onClick={() => {
-              logout();
-              setOpen(false);
-            }}
-            className="w-full px-4 py-2 text-left hover:bg-gray-100"
-          >
-            Logout
-          </button>
-        </div>
+      <button
+        onClick={() => onClose()}
+        className="bg-gray-300 text-gray-800 px-4 py-2 rounded-xl hover:bg-gray-400"
+      >
+        Close
+      </button>
+
+      {showConfirm && (
+        <ModalLogoutConfirm
+          title="Confirm Logout"
+          message="Are you sure you want to log out?"
+          onConfirm={() => {
+            logout();
+            onClose();
+          }}
+          onCancel={() => setShowConfirm(false)}
+        />
       )}
     </div>
   );

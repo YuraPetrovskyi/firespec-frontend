@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from "react";
+
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -13,6 +14,12 @@ interface CreateProjectModalProps {
 export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }: CreateProjectModalProps) {
   const [newProjectName, setNewProjectName] = useState('');
   const [newClient, setNewClient] = useState('');
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setVisible(true), 10);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const handleCreateProject = async () => {
     if (!newProjectName.trim()) {
@@ -25,7 +32,7 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
         project_name: newProjectName,
         client: newClient,
       });
-      toast.success('✅ Project created successfully!');
+      toast.success('Project created successfully!');
       onProjectCreated(); // оновити список
       onClose(); // закрити модалку
       setNewProjectName('');
