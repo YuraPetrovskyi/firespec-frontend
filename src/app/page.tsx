@@ -1,7 +1,23 @@
+"use client";
+
+import { useAuth } from "@/context/AuthContext";
+import LoginModal from "@/components/LoginModal";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function HomePage() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push("/projects");
+    }
+  }, [user, router]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <h1 className="text-4xl font-bold">🔥 Welcome to FireSpec!</h1>
-    </div>
-  )
+    <main className="h-screen w-full flex items-center justify-center relative">
+      {!user && <LoginModal />}
+    </main>
+  );
 }
