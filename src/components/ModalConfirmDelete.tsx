@@ -1,15 +1,28 @@
 'use client';
 
-interface ModalConfirmProps {
+import { useEffect, useState } from "react";
+
+interface ModalConfirmDeleteProps {
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-export default function ModalConfirm({ message, onConfirm, onCancel }: ModalConfirmProps) {
+export default function ModalConfirmDelete({ message, onConfirm, onCancel }: ModalConfirmDeleteProps) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setVisible(true), 10);
+    return () => clearTimeout(timeout);
+  }, []);
+  
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded shadow-lg w-[350px]">
+      <div
+        className={`bg-white rounded-lg shadow-xl p-6 w-80 transform transition-all duration-300 ${
+          visible ? "scale-100 opacity-100" : "scale-90 opacity-0"
+        }`}
+      >
         <p className="text-xl text-gray-800 font-semibold text-center mb-6">{message}</p>
         <div className="flex justify-between items-center mt-6 gap-3 font-semibold">
           <button
