@@ -109,8 +109,11 @@ export default function ProjectsPage() {
                 <div key={project.id} className="bg-white shadow-md rounded p-5 border border-gray-200">
                   <h2 className="text-xl font-semibold text-blue-800 text-center">{project.project_name}</h2>
                   <div className='flex flex-row justify-between items-center mb-4 gap-2'>
-                    <span className="text-xs text-gray-600 mb-2">Client: {project.client}</span>
-                    <span className="text-xs text-gray-600 mb-2">{project.status}</span>
+                    <div className="flex flex-row gap-2 text-xs text-gray-600 mb-2">
+                      <p className='text-gray-800 font-semibold'>Client:</p> 
+                      <p>{project.client}</p>
+                    </div>
+                    <div className="text-xs text-gray-600 mb-2">{project.status}</div>
                   </div>
                   
                 

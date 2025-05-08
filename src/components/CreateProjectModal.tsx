@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -14,12 +14,6 @@ interface CreateProjectModalProps {
 export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }: CreateProjectModalProps) {
   const [newProjectName, setNewProjectName] = useState('');
   const [newClient, setNewClient] = useState('');
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => setVisible(true), 10);
-    return () => clearTimeout(timeout);
-  }, []);
 
   const handleCreateProject = async () => {
     if (!newProjectName.trim()) {
@@ -75,7 +69,7 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
             </button>
             <button
               onClick={handleCreateProject}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
             >
               Save Project
             </button>
