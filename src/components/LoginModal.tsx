@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function LoginModal() {
   const { login } = useAuth();
@@ -19,6 +20,7 @@ export default function LoginModal() {
       const payload = isRegistering ? { name, email, password } : { email, password };
       const res = await axios.post(`http://localhost:8000${endpoint}`, payload);
       login(res.data.token, res.data.user);
+      toast.success("Welcome!")
     } catch (err: any) {
       setError(err.response?.data?.error || "Something went wrong");
     }
@@ -28,56 +30,56 @@ export default function LoginModal() {
     <div className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-lg shadow-lg w-full max-w-md p-8"
+        className="bg-red-100 rounded-lg shadow-lg w-96 max-w-md p-8 "
       >
-        <h2 className="text-2xl font-bold mb-4">
-          {isRegistering ? "Register" : "Login"}
-        </h2>
+        <p className="text-2xl text-red-500 text-center font-bold my-6">Welcome to FireSpec</p>
+        <p className="text-xl text-center font-bold mb-4">
+          {isRegistering ? "Register" : "Sign Into Your Account"}
+        </p>
         {error && <p className="text-red-600 mb-2">{error}</p>}
-
         {isRegistering && (
           <input
-            className="w-full border px-3 py-2 mb-3 rounded"
+            className="w-full border px-3 py-2 mb-3 rounded-xl"
             type="text"
-            placeholder="Full Name"
+            placeholder="Enter Full Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
         )}
         <input
-          className="w-full border px-3 py-2 mb-3 rounded"
+          className="w-full border px-3 py-2 mb-3 rounded-xl"
           type="email"
-          placeholder="Email"
+          placeholder="Enter Your Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
-          className="w-full border px-3 py-2 mb-3 rounded"
+          className="w-full border px-3 py-2 mb-3 rounded-xl"
           type="password"
-          placeholder="Password"
+          placeholder="Enter Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700"
+          className="bg-slate-500 text-white w-full py-2 rounded-xl hover:bg-slate-700"
         >
           {isRegistering ? "Register" : "Login"}
         </button>
         <button
           type="button"
-          className="text-sm mt-4 underline text-gray-600"
+          className="text-sm text-center w-full mt-4 text-cyan-600 my-4"
           onClick={() => {
             setError("");
             setIsRegistering(!isRegistering);
           }}
         >
           {isRegistering
-            ? "Already have an account? Login"
-            : "Don't have an account? Register"}
+            ? "Already have an account? Login Here"
+            : "Don't have an account? Register Here"}
         </button>
       </form>
     </div>
