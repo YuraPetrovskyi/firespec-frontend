@@ -1,24 +1,21 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import { AuthProvider } from "@/context/AuthContext";
 import ToasterProvider from "@/components/ToasterProvider";
 
 export const metadata: Metadata = {
   title: "FireSpec",
-  description: "Fire Stopping Inspection Procedure",
+  description: "Fire Safety Inspection App",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-          <div className="max-w-[1258px] mx-auto">
-            <ToasterProvider />
-            {children}
-          </div>
+      <body className="max-w-[1258px] mx-auto">
+        <AuthProvider>
+          <ToasterProvider />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
