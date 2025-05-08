@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -12,6 +13,7 @@ export default function LoginModal() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,14 +57,33 @@ export default function LoginModal() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <input
+        {/* <input
           className="w-full border px-3 py-2 mb-3 rounded-xl"
           type="password"
           placeholder="Enter Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-        />
+        /> */}
+        <div className="relative w-full">
+          <input
+            className="w-full border px-3 py-2 mb-3 rounded-xl"
+            type={showPassword ? "text" : "password"} // Перемикання між "password" і "text"
+            placeholder="Enter Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button
+            type="button"
+            className="absolute right-3 top-2 text-gray-600"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword 
+              ? <Image src="eye.svg" alt="Logo" width={20} height={20} className="cursor-pointer" />
+              : <Image src="eye-off.svg" alt="Logo" width={20} height={20} className="cursor-pointer" />}
+          </button>
+        </div>
         <button
           type="submit"
           className="bg-slate-500 text-white w-full py-2 rounded-xl hover:bg-slate-700"
