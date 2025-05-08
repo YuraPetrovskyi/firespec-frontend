@@ -225,7 +225,12 @@ export default function EditInspectionPage() {
     }
   };
 
-  if (loading) return <div className="p-10 text-center">Loading...</div>;
+  if (loading) {
+    return (
+      <ProtectedLayout>
+        <p className='text-xl text-center p-10'>Loading...</p>
+      </ProtectedLayout>);
+  }
 
   // console.log('projectInformation:', projectInformation);
   return (

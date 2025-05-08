@@ -44,7 +44,10 @@ export default function ViewInspectionPage() {
   }, [id, inspectionId]);
 
   if (!inspection) {
-    return <div className="p-10 text-center">Loading...</div>;
+    return (
+      <ProtectedLayout>
+        <p className='text-xl text-center p-10'>Loading...</p>
+      </ProtectedLayout>);
   }
 
   const { pre_inspection, project_information, site_inspections, post_inspection, inspection_number } = inspection;
@@ -74,13 +77,13 @@ export default function ViewInspectionPage() {
               onClick={() => router.push(`/projects/${id}/inspections`)}
               className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
             >
-              ← Back
+              Back
             </button>
             <button
               onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
               className="bg-yellow-500 text-white py-2 px-6 rounded hover:bg-yellow-600"
             >
-              ✏️ Edit
+              Edit
             </button>
           </div>
         </div>
