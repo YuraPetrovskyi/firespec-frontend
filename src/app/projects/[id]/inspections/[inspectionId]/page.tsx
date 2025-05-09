@@ -135,7 +135,7 @@ export default function ViewInspectionPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
             {[
               { label: 'Project Name', value: project_information?.project_name },
-              { label: 'Inspection Date', value: project_information?.inspection_date },
+              { label: 'Inspection Date', value: new Date(project_information?.inspection_date).toLocaleDateString()},
               { label: 'Inspection Number', value: inspection_number },
               { label: 'Client', value: project_information?.client },
               { label: 'Client Contact & Title', value: project_information?.client_contact },
@@ -228,7 +228,7 @@ export default function ViewInspectionPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
             {[
               { label: 'Meet with Client Representative', value: post_inspection?.client_meeting_done },
-              { label: 'Date of Next Inspection Visit', value: post_inspection?.next_inspection_date },
+              { label: 'Date of Next Inspection Visit', value: post_inspection?.next_inspection_date ? new Date(post_inspection?.next_inspection_date).toLocaleDateString() : null},
               { label: 'Communicate Urgent Matters', value: post_inspection?.urgent_matters },
               { label: 'Up-sync Bolster', value: post_inspection?.bolster_notes },
               { label: 'Comment', value: post_inspection?.comment },

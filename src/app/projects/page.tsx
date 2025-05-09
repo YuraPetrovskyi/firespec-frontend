@@ -124,7 +124,7 @@ export default function ProjectsPage() {
                     <div className="mt-2 text-sm">
                       <p><strong>Latest Inspection:</strong></p>
                       <ul className="list-disc ml-4">
-                        <li>Date: {new Date(project.inspections[0].inspection_date).toLocaleDateString("en-GB")}</li>
+                        <li>Date: {new Date(project.inspections[0].inspection_date).toLocaleDateString()}</li>
                         <li>Inspector: {project.inspections[0].inspector_name}</li>
                       </ul>
                     </div>

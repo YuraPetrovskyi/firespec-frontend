@@ -63,7 +63,7 @@ export default function LogsPage() {
           <p className="p-10 text-lg text-center animate-pulse text-blue-700">Loading logs...</p>
         : logs.length !== 0 
           ?
-            <div className="p-6 max-w-5xl mx-auto space-y-8 font-mono">
+            <div className="p-6 max-w-5xl mx-auto space-y-8 pb-20">
               <h1 className="text-3xl font-bold text-center text-gray-800 mb-4">Change logs</h1>
         
               {logs.map((log) => {

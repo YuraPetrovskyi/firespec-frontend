@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 
 import axiosInstance from '@/lib/axios';
 import { AxiosError } from 'axios';
@@ -56,6 +55,7 @@ export default function CreateInspectionPage() {
       axiosInstance.get(`projects/${id}`)
         .then((res) => {
           const project = res.data.data;
+          console.log('Project data:', project);
           setProjectData({
             project_name: project.project_name || '',
             client: project.client || '',

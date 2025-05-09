@@ -102,7 +102,7 @@ export default function ProjectInspectionsPage() {
                     </div>
                     
                   )}
-                  <p className="text-sm text-gray-600 mb-2">Date: {inspection.inspection_date}</p>
+                  <p className="text-sm text-gray-600 mb-2">Date: {new Date(inspection.inspection_date).toLocaleDateString()}</p>
                   <p className="text-sm mb-2">Inspector: {inspection.inspector_name}</p>
                   <div className="flex justify-between items-center mt-4">
                     <button
