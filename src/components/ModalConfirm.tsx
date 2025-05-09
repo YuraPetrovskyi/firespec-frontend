@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 
 interface ModalConfirmDeleteProps {
+  title: string;
   message: string;
+  nameAction: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-export default function ModalConfirmDelete({ message, onConfirm, onCancel }: ModalConfirmDeleteProps) {
+export default function ModalConfirmDelete({ message, title, nameAction, onConfirm, onCancel }: ModalConfirmDeleteProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -23,7 +25,8 @@ export default function ModalConfirmDelete({ message, onConfirm, onCancel }: Mod
           visible ? "scale-100 opacity-100" : "scale-90 opacity-0"
         }`}
       >
-        <p className="text-xl text-gray-800 font-semibold text-center mb-6">{message}</p>
+        <h2 className="text-xl text-center font-extrabold mb-4">{title}</h2>
+        <p className="text-lg text-gray-800 font-semibold text-center mb-6">{message}</p>
         <div className="flex justify-between items-center mt-6 gap-3 font-semibold">
           <button
             onClick={onCancel}
@@ -35,7 +38,7 @@ export default function ModalConfirmDelete({ message, onConfirm, onCancel }: Mod
             onClick={onConfirm}
             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
           >
-            Delete
+            {nameAction}
           </button>
         </div>
       </div>
