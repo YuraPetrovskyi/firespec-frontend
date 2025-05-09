@@ -7,7 +7,7 @@ import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
-import ModalConfirm from '@/components/ModalConfirmDelete';
+import ModalConfirm from '@/components/ModalConfirm';
 
 const siteInspectionCategories = [
   'Encasements',
@@ -69,24 +69,25 @@ export default function ViewInspectionPage() {
 
   return (
     <ProtectedLayout>
-      <div className="p-10 bg-gray-100 min-h-screen flex flex-col gap-8">
+      <div className="p-5 bg-gray-100 min-h-screen flex flex-col gap-8 pb-20">
         
         <div>
-          <h1 className="text-3xl font-bold text-center mb-2">Inspection Details</h1>
-          <div className='flex justify-between items-center gab-2'>
+          <h1 className="text-3xl font-bold text-center mb-2">Inspection Details</h1> 
+          <div className="flex flex-wrap justify-between gap-4 mt-8"> 
             <button
-              onClick={() => router.push(`/projects/${id}/inspections`)}
-              className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
+              onClick={() => setModalOpen(true)}
+              className="bg-red-600 text-white py-2 px-6 rounded hover:bg-red-700 transition"
             >
-              Back
+              Delete
             </button>
             <button
-              onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
-              className="bg-yellow-500 text-white py-2 px-6 rounded hover:bg-yellow-600"
+              onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/logs`)}
+              className="bg-green-500/60 text-white py-2 px-6 rounded hover:bg-green-700 transition"
             >
-              Edit
+              View Change Log
             </button>
-          </div>
+        </div>
+          
         </div>
   
         {/* ✅ PRE-INSPECTION */}
@@ -239,43 +240,28 @@ export default function ViewInspectionPage() {
             ))}
           </div>
         </section>
-  
-        {/* 🔘 КНОПКИ */}
-        <div className="flex flex-wrap justify-between gap-4 mt-8">
-  
-          <button
-            onClick={() => router.push(`/projects/${id}/inspections`)}
-            className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800"
-          >
-            ← Back
-          </button>
-          <button
-            onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
-            className="bg-yellow-500 text-white py-2 px-6 rounded hover:bg-yellow-600"
-          >
-            Edit
-          </button>
-  
-          <button
-            onClick={() => setModalOpen(true)}
-            className="bg-red-600 text-white py-2 px-6 rounded hover:bg-red-700 transition"
-          >
-            Delete
-          </button>
-          <button
-            onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/logs`)}
-            className="bg-green-500/60 text-white py-2 px-6 rounded hover:bg-green-700 transition"
-          >
-            View Change Log
-          </button>
-  
-        </div>
+
+        <button
+          onClick={() => router.push(`/projects/${id}/inspections`)}
+          className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-5"
+        >
+          Back
+        </button>
+
+        <button
+          onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
+          className="bg-yellow-600 text-white py-2 px-6 rounded hover:bg-yellow-800 fixed bottom-5 right-5"
+        >
+          Edit
+        </button>
   
         {modalOpen && (
           <ModalConfirm
             message="Are you sure you want to delete this inspection?"
             onConfirm={handleDeleteInspection}
             onCancel={() => setModalOpen(false)}
+            nameAction="Delete"
+            title="Delete Inspection"
           />
         )}
   

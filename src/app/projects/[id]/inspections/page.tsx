@@ -8,7 +8,7 @@ import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 
 import SkeletonCard from '@/components/SkeletonCard';
-import ModalConfirm from '@/components/ModalConfirmDelete';
+import ModalConfirm from '@/components/ModalConfirm';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
 interface Inspection {
@@ -133,6 +133,8 @@ export default function ProjectInspectionsPage() {
         {modalOpen && (
           <ModalConfirm
             message="Are you sure you want to delete this inspection?"
+            nameAction='Delete'
+            title='Delete Inspection'
             onConfirm={handleDeleteInspection}
             onCancel={() => {
               setModalOpen(false);

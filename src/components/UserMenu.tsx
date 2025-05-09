@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import ModalLogoutConfirm from "./ModalLogoutConfirm";
+import ModalConfirm from "./ModalConfirm";
 
 type Props = {
   onClose: () => void;
@@ -29,9 +29,10 @@ export default function UserMenu({ onClose }: Props) {
       </button>
 
       {showConfirm && (
-        <ModalLogoutConfirm
+        <ModalConfirm
           title="Confirm Logout"
           message="Are you sure you want to log out?"
+          nameAction="Logout"
           onConfirm={() => {
             logout();
             onClose();

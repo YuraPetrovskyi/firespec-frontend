@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
-import ModalConfirm from '@/components/ModalConfirmDelete';
+import ModalConfirm from '@/components/ModalConfirm';
 import CreateProjectModal from '@/components/CreateProjectModal';
 import SkeletonCard from '@/components/SkeletonCard';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
@@ -87,6 +87,8 @@ export default function ProjectsPage() {
         {modalOpen && (
           <ModalConfirm
             message="Are you sure you want to delete this project?"
+            nameAction='Delete'
+            title='Delete Project'
             onConfirm={handleConfirmDelete}
             onCancel={() => {
               setModalOpen(false);

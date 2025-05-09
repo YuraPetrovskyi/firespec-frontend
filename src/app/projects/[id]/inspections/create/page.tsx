@@ -16,6 +16,7 @@ import ProjectInformationSection from '@/components/inspection/ProjectInformatio
 import SiteInspectionsSection from '@/components/inspection/SiteInspectionsSection';
 import PostInspectionSection from '@/components/inspection/PostInspectionSection';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
+import ModalConfirm from '@/components/ModalConfirm';
 
 type ProjectData = {
   project_name: string;
@@ -40,6 +41,8 @@ export default function CreateInspectionPage() {
   const [postInspection, setPostInspection] = useState<SectionData>({});
   const [projectData, setProjectData] = useState<ProjectData>({ project_name: '', client: '' });
   const { user } = useAuth();
+  const [cancelAgree, setCancelAgree] = useState(false);
+
   // утиліта для очищення службових полів
   const clean = (obj: any) => {
     if (!obj || typeof obj !== 'object') return {};
@@ -127,21 +130,30 @@ export default function CreateInspectionPage() {
         <PostInspectionSection data={postInspection} onChange={setPostInspection} />
   
         <div className='flex justify-between items-center mb-6'>
-          <Link
-            href={`/projects/${id}/inspections`}
-            className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 transition"
+          <button
+            onClick={() => setCancelAgree(true)}
+            className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 transition fixed bottom-5"
           >
             Cancel
-          </Link>
+          </button>
           <button
             onClick={handleCreateInspection}
-            className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition"
+            className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition fixed bottom-5 right-5"
           >
             Save Inspection
           </button>
         </div>
         
       </div>
+      {cancelAgree && (
+        <ModalConfirm
+          message="If you leave this page all changes will not be saved. Do you confirm the cancellation?"
+          onConfirm={ () => router.push(`/projects/${id}/inspections`)}
+          onCancel={() => setCancelAgree(false)}
+          title="Cancel Inspection"
+          nameAction="Confirm"
+        />
+      )}
     </ProtectedLayout>
   );
 }
