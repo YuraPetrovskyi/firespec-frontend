@@ -13,6 +13,9 @@ import PostInspectionSection from '@/components/inspection/PostInspectionSection
 
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
+import { useAuth } from "@/context/AuthContext";
+
+
 type SectionData = { [key: string]: any };
 
 type InspectionData = {
@@ -80,6 +83,8 @@ export default function EditInspectionPage() {
   const [siteInspections, setSiteInspections] = useState<SectionData>({});
   const [postInspection, setPostInspection] = useState<SectionData>({});
   const [loading, setLoading] = useState(true);
+
+  const { user } = useAuth();
 
   const clean = (obj: any) => {
     if (!obj || typeof obj !== 'object') return {};
@@ -193,7 +198,7 @@ export default function EditInspectionPage() {
       project_name: projectInformation.project_name,
       client: projectInformation.client,
       inspection_date: projectInformation.inspection_date,
-      inspector_name: projectInformation.inspector_name || 'Unknown',
+      inspector_name: user?.name || 'Unknown',
       pre_inspection: clean(preInspection),
       post_inspection: clean(postInspection),
       project_information: clean(projectInformation),
