@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
-import axios from 'axios';
+// import axios from 'axios';
+import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
@@ -45,7 +46,7 @@ export default function LogsPage() {
   useEffect(() => {
     if (id && inspectionId) {
       axios
-        .get(`http://127.0.0.1:8000/api/projects/${id}/inspections/${inspectionId}/logs`)
+        .get(`projects/${id}/inspections/${inspectionId}/logs`)
         .then((res) => {
           setLogs(res.data.data);
           console.log('logs', res.data.data); 

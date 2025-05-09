@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import axios from 'axios';
+// import axios from 'axios';
+import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 
 import PreInspectionSection from '@/components/inspection/PreInspectionSection';
@@ -89,7 +90,7 @@ export default function EditInspectionPage() {
   useEffect(() => {
     if (id && inspectionId) {
       axios
-        .get(`http://127.0.0.1:8000/api/projects/${id}/inspections/${inspectionId}`)
+        .get(`projects/${id}/inspections/${inspectionId}`)
         .then((res) => {
           const data: InspectionData = res.data.data;
 
@@ -216,8 +217,8 @@ export default function EditInspectionPage() {
     console.log('Update Inspection payload:', payload);
 
     try {
-      await axios.put(`http://127.0.0.1:8000/api/projects/${id}/inspections/${inspectionId}`, payload);
-      toast.success('✅ Inspection updated!');
+      await axios.put(`projects/${id}/inspections/${inspectionId}`, payload);
+      toast.success('Inspection updated!');
       router.push(`/projects/${id}/inspections`);
     } catch (err: any) {
       console.error(err);

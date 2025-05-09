@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
+import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import ModalConfirm from '@/components/ModalConfirmDelete';
@@ -38,7 +39,7 @@ export default function ProjectsPage() {
   }, []);
 
   const fetchProjects = () => {
-    axios.get('http://127.0.0.1:8000/api/projects')
+    axios.get('projects')
       .then((res) => {
         setProjects(res.data.data)
         setLoading(false);
@@ -58,7 +59,7 @@ export default function ProjectsPage() {
   const handleConfirmDelete = async () => {
     if (!projectToDelete) return;
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/projects/${projectToDelete}`);
+      await axios.delete(`projects/${projectToDelete}`);
       toast.success('Project deleted!');
       fetchProjects();
     } catch (err) {

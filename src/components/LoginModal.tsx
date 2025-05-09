@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
-import axios from "axios";
+// import axios from "axios";
+import axios from "@/lib/axios";
 import toast from "react-hot-toast";
 
 export default function LoginModal() {
@@ -18,9 +19,9 @@ export default function LoginModal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const endpoint = isRegistering ? "/api/register" : "/api/login";
+      const endpoint = isRegistering ? "register" : "login";
       const payload = isRegistering ? { name, email, password } : { email, password };
-      const res = await axios.post(`http://localhost:8000${endpoint}`, payload);
+      const res = await axios.post(`${endpoint}`, payload);
       login(res.data.token, res.data.user);
       toast.success("Welcome!")
     } catch (err: any) {
@@ -38,7 +39,7 @@ export default function LoginModal() {
         <p className="text-xl text-center font-bold mb-4">
           {isRegistering ? "Register" : "Sign Into Your Account"}
         </p>
-        {error && <p className="text-red-600 mb-2">{error}</p>}
+        {error && <p className="text-red-600 text-2xl mb-2">{error}</p>}
         {isRegistering && (
           <input
             className="w-full border px-3 py-2 mb-3 rounded-xl"

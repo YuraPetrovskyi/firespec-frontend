@@ -2,7 +2,8 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
+import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
@@ -37,7 +38,7 @@ export default function ViewInspectionPage() {
   useEffect(() => {
     if (id && inspectionId) {
       axios
-        .get(`http://127.0.0.1:8000/api/projects/${id}/inspections/${inspectionId}`)
+        .get(`projects/${id}/inspections/${inspectionId}`)
         .then((res) => setInspection(res.data.data))
         .catch(() => toast.error('❌ Failed to load inspection'));
     }
@@ -55,7 +56,7 @@ export default function ViewInspectionPage() {
 
   const handleDeleteInspection = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/projects/${id}/inspections/${inspectionId}`);
+      await axios.delete(`projects/${id}/inspections/${inspectionId}`);
       toast.success('Inspection deleted!');
       router.push(`/projects/${id}/inspections`);
     } catch (error) {

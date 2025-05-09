@@ -4,8 +4,12 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-import axios from 'axios';
+import axiosInstance from '@/lib/axios';
+import { AxiosError } from 'axios';
+// import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
+
+import { useAuth } from "@/context/AuthContext";
 
 import PreInspectionSection from '@/components/inspection/PreInspectionSection';
 import ProjectInformationSection from '@/components/inspection/ProjectInformationSection';
@@ -22,6 +26,10 @@ type SectionData = {
   [key: string]: any;
 };
 
+type ValidationErrorResponse = {
+  errors: Record<string, string[]>;
+};
+
 export default function CreateInspectionPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -31,7 +39,7 @@ export default function CreateInspectionPage() {
   const [siteInspections, setSiteInspections] = useState<SectionData>({});
   const [postInspection, setPostInspection] = useState<SectionData>({});
   const [projectData, setProjectData] = useState<ProjectData>({ project_name: '', client: '' });
-
+  const { user } = useAuth();
   // утиліта для очищення службових полів
   const clean = (obj: any) => {
     if (!obj || typeof obj !== 'object') return {};
@@ -42,7 +50,7 @@ export default function CreateInspectionPage() {
   useEffect(() => {
     if (id) {
       // 1. Отримуємо дані про проєкт
-      axios.get(`http://127.0.0.1:8000/api/projects/${id}`)
+      axiosInstance.get(`projects/${id}`)
         .then((res) => {
           const project = res.data.data;
           setProjectData({
@@ -60,7 +68,7 @@ export default function CreateInspectionPage() {
         .catch(() => toast.error('❌ Failed to load project'));
   
       // 2. Пробуємо отримати останню інспекцію
-      axios.get(`http://127.0.0.1:8000/api/projects/${id}/inspections/latest`)
+      axiosInstance.get(`projects/${id}/inspections/latest`)
         .then((res) => {
           const data = res.data.data;
           if (data && data.pre_inspection && data.project_information) {
@@ -79,7 +87,7 @@ export default function CreateInspectionPage() {
 
   const handleCreateInspection = async () => {
     const payload = {
-      inspector_name: 'test_inspector',
+      inspector_name: user?.name || 'Unknown777',
       project_name: projectInformation.project_name,
       client: projectInformation.client,
       inspection_date: projectInformation.inspection_date,
@@ -93,16 +101,17 @@ export default function CreateInspectionPage() {
     console.log('📦 Creating inspection with payload:', payload);
 
     try {
-      await axios.post(`http://127.0.0.1:8000/api/projects/${id}/inspections`, payload);
+      await axiosInstance.post(`projects/${id}/inspections`, payload);
       toast.success('Inspection created!');
       router.push(`/projects/${id}/inspections`);
-    } catch (err: unknown) {
-      console.error(err);
-      if (axios.isAxiosError(err) && err.response?.data?.errors) {
-        const messages = Object.values(err.response.data.errors).flat() as string[];
-        toast.error(messages[0] || '❌ Validation error.');
+    } catch (err) {
+      const error = err as AxiosError<ValidationErrorResponse>;
+
+      if (error.response?.data?.errors) {
+        const messages = Object.values(error.response.data.errors).flat();
+        toast.error(messages[0] || '❌ Validation error');
       } else {
-        toast.error('❌ Failed to create inspection.');
+        toast.error('❌ Failed to create inspection');
       }
     }
   };

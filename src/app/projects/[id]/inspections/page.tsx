@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
+import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 
 import SkeletonCard from '@/components/SkeletonCard';
@@ -30,7 +31,7 @@ export default function ProjectInspectionsPage() {
     if (!selectedInspectionId) return;
   
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/projects/${id}/inspections/${selectedInspectionId}`);
+      await axios.delete(`projects/${id}/inspections/${selectedInspectionId}`);
       toast.success('Inspection deleted!');
       setInspections(prev => prev.filter(i => i.id !== selectedInspectionId));
     } catch (error) {
@@ -45,7 +46,7 @@ export default function ProjectInspectionsPage() {
   useEffect(() => {
     if (id) {
       setLoading(true);
-      axios.get(`http://127.0.0.1:8000/api/projects/${id}/inspections`)
+      axios.get(`projects/${id}/inspections`)
         .then((res) => {
           setInspections(res.data.data);
           setLoading(false);

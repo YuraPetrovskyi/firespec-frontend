@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-import axios from 'axios';
+// import axios from 'axios';
+import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 
 interface CreateProjectModalProps {
@@ -22,7 +23,7 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
     }
 
     try {
-      await axios.post('http://127.0.0.1:8000/api/projects', {
+      await axios.post('projects', {
         project_name: newProjectName,
         client: newClient,
       });
