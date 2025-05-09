@@ -10,6 +10,7 @@ const axiosInstance = axios.create({
 // ⏳ автоматично додає токен перед кожним запитом
 axiosInstance.interceptors.request.use(
   (config) => {
+    console.log('config', config); // Дебаг
     // const token = localStorage.getItem('token');
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (token && config.headers) {
