@@ -85,8 +85,8 @@ export default function LoginModal() {
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword 
-              ? <Image src="eye.svg" alt="Logo" width={20} height={20} className="cursor-pointer" />
-              : <Image src="eye-off.svg" alt="Logo" width={20} height={20} className="cursor-pointer" />}
+              ? <Image src="eye.svg" alt="Logo" width={20} height={20} className="cursor-pointer h-auto" priority/>
+              : <Image src="eye-off.svg" alt="Logo" width={20} height={20} className="cursor-pointer h-auto" priority/>}
           </button>
         </div>
         <button
