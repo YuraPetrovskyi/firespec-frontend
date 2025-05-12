@@ -12,6 +12,7 @@ import SiteInspectionsSection from '@/components/inspection/SiteInspectionsSecti
 import PostInspectionSection from '@/components/inspection/PostInspectionSection';
 
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
+import ModalConfirm from '@/components/ModalConfirm';
 
 import { useAuth } from "@/context/AuthContext";
 
@@ -83,6 +84,7 @@ export default function EditInspectionPage() {
   const [siteInspections, setSiteInspections] = useState<SectionData>({});
   const [postInspection, setPostInspection] = useState<SectionData>({});
   const [loading, setLoading] = useState(true);
+  const [cancelAgree, setCancelAgree] = useState(false);
 
   const { user } = useAuth();
 
@@ -250,19 +252,28 @@ export default function EditInspectionPage() {
         <PostInspectionSection data={postInspection} onChange={setPostInspection} />
 
         <button
-            onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}`)}
-            className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 fixed bottom-5 left-3"
+            onClick={() => setCancelAgree(true)}
+            className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 fixed bottom-3 left-3"
           >
             Cansel
         </button>
         <button
           onClick={handleUpdate}
-          className="bg-blue-600 text-white py-2 px-2 rounded hover:bg-blue-80  fixed bottom-5 right-3"
+          className="bg-blue-600 text-white py-2 px-2 rounded hover:bg-blue-80  fixed bottom-3 right-3"
           >
             Save Changes
         </button>
         
       </div>
+      {cancelAgree && (
+        <ModalConfirm
+          message="If you leave this page all changes will not be saved. Do you confirm the cancellation?"
+          onConfirm={ () => router.push(`/projects/${id}/inspections/${inspectionId}`)}
+          onCancel={() => setCancelAgree(false)}
+          title="Cancel Inspection"
+          nameAction="Confirm"
+        />
+      )}
     </ProtectedLayout>
   );
 }
