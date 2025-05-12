@@ -14,7 +14,7 @@ export default function UserMenu({ onClose }: Props) {
 
   return (
     <div className=" p-2 flex flex-col justify-between absolute right-0 mt-2 min-w-[150px] min-h-[200px] bg-white shadow-lg border rounded-md z-10">
-      <p className="text-lg font-bold	text-center mt-1">Menue</p>
+      <p className="text-lg font-bold	text-center mt-1">Profile</p>
       <button
         onClick={() => setShowConfirm(true)}
         className="bg-red-500 text-sm text-white px-2 py-2 rounded-xl hover:bg-red-600"
