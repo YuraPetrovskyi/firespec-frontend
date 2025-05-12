@@ -17,13 +17,13 @@ export default function UserMenu({ onClose }: Props) {
       <p className="text-lg font-bold	text-center mt-1">Menue</p>
       <button
         onClick={() => setShowConfirm(true)}
-        className="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
+        className="bg-red-500 text-sm text-white px-2 py-2 rounded-xl hover:bg-red-600"
       >
         Logout
       </button>
       <button
         onClick={() => onClose()}
-        className="bg-gray-300 text-gray-800 px-4 py-2 rounded-xl hover:bg-gray-400"
+        className="bg-gray-300 text-sm text-gray-800 px-2 py-2 rounded-xl hover:bg-gray-400"
       >
         Close
       </button>
