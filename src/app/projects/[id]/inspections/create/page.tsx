@@ -132,13 +132,13 @@ export default function CreateInspectionPage() {
         <div className='flex justify-between items-center mb-6'>
           <button
             onClick={() => setCancelAgree(true)}
-            className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 transition fixed bottom-5 left-3"
+            className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 transition fixed bottom-3 left-3"
           >
             Cancel
           </button>
           <button
             onClick={handleCreateInspection}
-            className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition fixed bottom-5 right-3"
+            className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition fixed bottom-3 right-3"
           >
             Save Inspection
           </button>

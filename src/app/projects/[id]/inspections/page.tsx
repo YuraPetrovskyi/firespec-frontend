@@ -66,7 +66,7 @@ export default function ProjectInspectionsPage() {
       <div className="p-4 pb-10 bg-gray-100 min-h-screen">
         <Link
           href={`/projects`}
-          className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-5 left-3"
+          className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-3 left-3"
         >
           Back
         </Link>

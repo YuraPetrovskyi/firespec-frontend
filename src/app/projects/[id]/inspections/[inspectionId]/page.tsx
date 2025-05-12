@@ -243,14 +243,14 @@ export default function ViewInspectionPage() {
 
         <button
           onClick={() => router.push(`/projects/${id}/inspections`)}
-          className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-5 left-3"
+          className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-3 left-3"
         >
           Back
         </button>
 
         <button
           onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
-          className="bg-yellow-600 text-white py-2 px-6 rounded hover:bg-yellow-800 fixed bottom-5 right-3"
+          className="bg-yellow-600 text-white py-2 px-6 rounded hover:bg-yellow-800 fixed bottom-3 right-3"
         >
           Edit
         </button>
