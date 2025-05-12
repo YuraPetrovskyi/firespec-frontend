@@ -49,7 +49,7 @@ export default function LogsPage() {
         .get(`projects/${id}/inspections/${inspectionId}/logs`)
         .then((res) => {
           setLogs(res.data.data);
-          console.log('logs', res.data.data); 
+          // console.log('logs', res.data.data); 
         })
         .catch(() => toast.error('❌ Failed to load logs'))
         .finally(() => setLoading(false));
@@ -68,13 +68,13 @@ export default function LogsPage() {
         
               {logs.map((log) => {
                 const parsedChanges: Change[] = JSON.parse(log.new_value || '[]');
-                console.log('parsedChanges', parsedChanges); // Дебаг
+                // console.log('parsedChanges', parsedChanges); // Дебаг
                 // Групування змін по категоріях
                 const grouped = CATEGORIES.reduce((acc: Record<string, Change[]>, category) => {
                   acc[category] = parsedChanges.filter((c) => c.category === category);
                   return acc;
                 }, {});
-                console.log('grouped', grouped); // Дебаг
+                // console.log('grouped', grouped); // Дебаг
         
                 return (
                   <div key={log.id} className="bg-white shadow rounded-md p-5 border">

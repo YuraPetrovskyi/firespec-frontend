@@ -52,7 +52,7 @@ export default function ViewInspectionPage() {
   }
 
   const { pre_inspection, project_information, site_inspections, post_inspection, inspection_number } = inspection;
-  console.log('Inspection data:', inspection);
+  // console.log('Inspection data:', inspection);
 
   const handleDeleteInspection = async () => {
     try {

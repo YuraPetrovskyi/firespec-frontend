@@ -21,11 +21,11 @@ export default function LoginModal() {
     try {
       const endpoint = isRegistering ? "register" : "login";
       const payload = isRegistering ? { name, email, password } : { email, password };
-      console.log("payload", payload);
-      console.log("endpoint", endpoint);
+      // console.log("payload", payload);
+      // console.log("endpoint", endpoint);
 
       const res = await axios.post(`${endpoint}`, payload);
-      console.log("res.data", res.data);
+      // console.log("res.data", res.data);
       login(res.data.token, res.data.user);
       toast.success("Welcome!")
     } catch (err: any) {

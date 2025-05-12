@@ -119,7 +119,7 @@ export default function EditInspectionPage() {
           setSiteInspections(data.site_inspections || {});
           setOldSiteInspections(JSON.parse(JSON.stringify(data.site_inspections || {}))); //глибоке копіювання (deep clone) об'єкта щоб уникнути проблем з порівнянням сторго і нового обєкту
           
-          console.log('Edit Inspection data:', data);
+          // console.log('Edit Inspection data:', data);
         })
         .catch(() => toast.error('❌ Failed to load inspection'))
         .finally(() => setLoading(false));
@@ -223,7 +223,7 @@ export default function EditInspectionPage() {
       ),
     };
 
-    console.log('Update Inspection payload:', payload);
+    // console.log('Update Inspection payload:', payload);
 
     try {
       await axios.put(`projects/${id}/inspections/${inspectionId}`, payload);

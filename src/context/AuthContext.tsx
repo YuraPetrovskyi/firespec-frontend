@@ -51,8 +51,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     router.push("/");
   };
-  console.log("user", user); // Debugging line
-  console.log("token", token); // Debugging line
+  // console.log("user", user); // Debugging line
+  // console.log("token", token); // Debugging line
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, loading }}>

@@ -57,7 +57,7 @@ export default function CreateInspectionPage() {
       axiosInstance.get(`projects/${id}`)
         .then((res) => {
           const project = res.data.data;
-          console.log('Project data:', project);
+          // console.log('Project data:', project);
           setProjectData({
             project_name: project.project_name || '',
             client: project.client || '',
@@ -104,7 +104,7 @@ export default function CreateInspectionPage() {
     };
     
 
-    console.log('📦 Creating inspection with payload:', payload);
+    // console.log('📦 Creating inspection with payload:', payload);
 
     try {
       await axiosInstance.post(`projects/${id}/inspections`, payload);
