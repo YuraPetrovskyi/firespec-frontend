@@ -13,7 +13,7 @@ export default function Navbar() {
   if (!user) return null;
 
   return (
-    <nav className="w-full bg-indigo-100 shadow-sm px-6 py-3 flex justify-between items-center sticky top-0 z-10">
+    <nav className="w-full bg-indigo-100 shadow-sm px-4 py-2 flex justify-between items-center sticky top-0 z-10">
       <Link href="/projects">
         <Image src="/logo.png" alt="Logo" width={100} height={40} style={{ width: '100px', height: '40px' }} priority/>
       </Link>
