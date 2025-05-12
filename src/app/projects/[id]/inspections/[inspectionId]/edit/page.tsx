@@ -251,13 +251,13 @@ export default function EditInspectionPage() {
 
         <button
             onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}`)}
-            className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 fixed bottom-5"
+            className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 fixed bottom-5 left-3"
           >
             Cansel
         </button>
         <button
           onClick={handleUpdate}
-          className="bg-blue-600 text-white py-2 px-2 rounded hover:bg-blue-80  fixed bottom-5 right-5"
+          className="bg-blue-600 text-white py-2 px-2 rounded hover:bg-blue-80  fixed bottom-5 right-3"
           >
             Save Changes
         </button>
