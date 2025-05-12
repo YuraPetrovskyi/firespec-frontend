@@ -7,16 +7,13 @@ import axiosInstance from '@/lib/axios';
 import { AxiosError } from 'axios';
 // import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
-
 import { useAuth } from "@/context/AuthContext";
-
 import PreInspectionSection from '@/components/inspection/PreInspectionSection';
 import ProjectInformationSection from '@/components/inspection/ProjectInformationSection';
 import SiteInspectionsSection from '@/components/inspection/SiteInspectionsSection';
 import PostInspectionSection from '@/components/inspection/PostInspectionSection';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import ModalConfirm from '@/components/ModalConfirm';
-import LoadingButton from '@/components/LoadingButton';
 
 type ProjectData = {
   project_name: string;
@@ -42,6 +39,7 @@ export default function CreateInspectionPage() {
   const [projectData, setProjectData] = useState<ProjectData>({ project_name: '', client: '' });
   const { user } = useAuth();
   const [cancelAgree, setCancelAgree] = useState(false);
+  const [saveAgree, setSaveAgree] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // утиліта для очищення службових полів
@@ -142,24 +140,35 @@ export default function CreateInspectionPage() {
           >
             Cancel
           </button>
-          <LoadingButton
-            isLoading={isSubmitting}
-            onClick={handleCreateInspection}
-            className="fixed bottom-3 right-3"
-            loadingText='Saving...'
+          <button
+            onClick={() => setSaveAgree(true)}
+            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-800 transition fixed bottom-3 right-3"
+            disabled={isSubmitting}
           >
             Save Inspection
-          </LoadingButton>
+          </button>
         </div>
-        
       </div>
+
       {cancelAgree && (
         <ModalConfirm
+          title="Cancel Inspection"
+          nameAction="Confirm"
           message="If you leave this page all changes will not be saved. Do you confirm the cancellation?"
           onConfirm={ () => router.push(`/projects/${id}/inspections`)}
           onCancel={() => setCancelAgree(false)}
-          title="Cancel Inspection"
-          nameAction="Confirm"
+        />
+      )}
+      {saveAgree && (
+        <ModalConfirm
+          title="Save Inspection"
+          message="Are you sure you want to save the inspection?"
+          nameAction="Save"
+          confirmColor="blue"
+          onConfirm={handleCreateInspection}
+          onCancel={() => setSaveAgree(false)}
+          loadingText="Saving..."
+          isAsync // обов’язково!
         />
       )}
     </ProtectedLayout>

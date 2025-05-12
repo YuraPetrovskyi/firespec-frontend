@@ -13,7 +13,6 @@ import PostInspectionSection from '@/components/inspection/PostInspectionSection
 
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import ModalConfirm from '@/components/ModalConfirm';
-import LoadingButton from '@/components/LoadingButton';
 import { useAuth } from "@/context/AuthContext";
 
 
@@ -86,6 +85,7 @@ export default function EditInspectionPage() {
   const [loading, setLoading] = useState(true);
   const [cancelAgree, setCancelAgree] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saveAgree, setSaveAgree] = useState(false);
 
   const { user } = useAuth();
 
@@ -262,16 +262,16 @@ export default function EditInspectionPage() {
           >
             Cansel
         </button>
-        <LoadingButton
-          isLoading={isSubmitting}
-          onClick={handleUpdate}
-          className="fixed bottom-3 right-3"
-          loadingText='Saving...'
-          >
-            Save Changes
-        </LoadingButton>
+        <button
+          onClick={() => setSaveAgree(true)}
+          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-800 transition fixed bottom-3 right-3"
+          disabled={isSubmitting}
+        >
+          Save Changes
+        </button>
         
       </div>
+      
       {cancelAgree && (
         <ModalConfirm
           message="If you leave this page all changes will not be saved. Do you confirm the cancellation?"
@@ -279,6 +279,18 @@ export default function EditInspectionPage() {
           onCancel={() => setCancelAgree(false)}
           title="Cancel Inspection"
           nameAction="Confirm"
+        />
+      )}
+      {saveAgree && (
+        <ModalConfirm
+          title="Save Changes"
+          message="Are you sure you want to save changes?"
+          nameAction="Save"
+          confirmColor="blue"
+          onConfirm={handleUpdate}
+          onCancel={() => setSaveAgree(false)}
+          loadingText="Saving..."
+          isAsync // обов’язково!
         />
       )}
     </ProtectedLayout>
