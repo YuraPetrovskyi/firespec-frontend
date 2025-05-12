@@ -41,7 +41,7 @@ export default function LoginModal() {
       >
         <p className="text-2xl text-red-500 text-center font-bold my-6">Welcome to FireSpec</p>
         <p className="text-xl text-center font-bold mb-4">
-          {isRegistering ? "Register" : "Sign Into Your Account"}
+          {isRegistering ? "Register Your Account" : "Sign Into Your Account"}
         </p>
         {error && <p className="text-red-600 text-2xl mb-2">{error}</p>}
         {isRegistering && (
