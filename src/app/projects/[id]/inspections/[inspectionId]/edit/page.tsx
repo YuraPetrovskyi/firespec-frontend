@@ -13,7 +13,7 @@ import PostInspectionSection from '@/components/inspection/PostInspectionSection
 
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import ModalConfirm from '@/components/ModalConfirm';
-
+import LoadingButton from '@/components/LoadingButton';
 import { useAuth } from "@/context/AuthContext";
 
 
@@ -85,6 +85,7 @@ export default function EditInspectionPage() {
   const [postInspection, setPostInspection] = useState<SectionData>({});
   const [loading, setLoading] = useState(true);
   const [cancelAgree, setCancelAgree] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { user } = useAuth();
 
@@ -196,6 +197,7 @@ export default function EditInspectionPage() {
   
 
   const handleUpdate = async () => {
+    setIsSubmitting(true);
     const payload = {
       project_name: projectInformation.project_name,
       client: projectInformation.client,
@@ -230,6 +232,8 @@ export default function EditInspectionPage() {
     } catch (err: any) {
       console.error(err);
       toast.error('❌ Failed to update inspection.');
+    } finally {
+      setIsSubmitting(false); // 🔚 Розблокувати кнопку
     }
   };
 
@@ -254,15 +258,18 @@ export default function EditInspectionPage() {
         <button
             onClick={() => setCancelAgree(true)}
             className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 fixed bottom-3 left-3"
+            disabled={isSubmitting}
           >
             Cansel
         </button>
-        <button
+        <LoadingButton
+          isLoading={isSubmitting}
           onClick={handleUpdate}
-          className="bg-blue-600 text-white py-2 px-2 rounded hover:bg-blue-80  fixed bottom-3 right-3"
+          className="fixed bottom-3 right-3"
+          loadingText='Saving...'
           >
             Save Changes
-        </button>
+        </LoadingButton>
         
       </div>
       {cancelAgree && (

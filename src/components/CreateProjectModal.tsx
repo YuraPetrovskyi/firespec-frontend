@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import LoadingButton from '@/components/LoadingButton';
 
 // import axios from 'axios';
 import axios from '@/lib/axios';
@@ -15,12 +16,14 @@ interface CreateProjectModalProps {
 export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }: CreateProjectModalProps) {
   const [newProjectName, setNewProjectName] = useState('');
   const [newClient, setNewClient] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCreateProject = async () => {
     if (!newProjectName.trim()) {
       toast.error('❌ Project name is required.');
       return;
     }
+    setIsSubmitting(true);
 
     try {
       await axios.post('projects', {
@@ -35,6 +38,8 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
     } catch (err) {
       console.error(err);
       toast.error('❌ Failed to create project. Please try again.');
+    } finally {
+      setIsSubmitting(false); // 🔚 Розблокувати кнопку
     }
   };
 
@@ -65,15 +70,17 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
             <button
               onClick={onClose}
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded transition"
+              disabled={isSubmitting}
             >
               Cancel
             </button>
-            <button
+            <LoadingButton
+              isLoading={isSubmitting}
               onClick={handleCreateProject}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              loadingText='Saving...'
             >
               Save Project
-            </button>
+            </LoadingButton>
           </div>
         </div>
       </div>

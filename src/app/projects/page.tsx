@@ -139,7 +139,7 @@ export default function ProjectsPage() {
                     </button>
                     <Link
                       href={`/projects/${project.id}/inspections`}
-                      className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 transition"
+                      className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 transition"
                     >
                       All Inspections
                     </Link>

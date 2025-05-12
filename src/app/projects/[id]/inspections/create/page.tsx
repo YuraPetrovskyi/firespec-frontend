@@ -16,6 +16,7 @@ import SiteInspectionsSection from '@/components/inspection/SiteInspectionsSecti
 import PostInspectionSection from '@/components/inspection/PostInspectionSection';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import ModalConfirm from '@/components/ModalConfirm';
+import LoadingButton from '@/components/LoadingButton';
 
 type ProjectData = {
   project_name: string;
@@ -41,6 +42,7 @@ export default function CreateInspectionPage() {
   const [projectData, setProjectData] = useState<ProjectData>({ project_name: '', client: '' });
   const { user } = useAuth();
   const [cancelAgree, setCancelAgree] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // утиліта для очищення службових полів
   const clean = (obj: any) => {
@@ -89,6 +91,7 @@ export default function CreateInspectionPage() {
   }, [id]);
 
   const handleCreateInspection = async () => {
+    setIsSubmitting(true);
     const payload = {
       inspector_name: user?.name || 'Unknown777',
       project_name: projectInformation.project_name,
@@ -116,6 +119,8 @@ export default function CreateInspectionPage() {
       } else {
         toast.error('❌ Failed to create inspection');
       }
+    } finally {
+      setIsSubmitting(false); // 🔚 Розблокувати кнопку
     }
   };
 
@@ -133,15 +138,18 @@ export default function CreateInspectionPage() {
           <button
             onClick={() => setCancelAgree(true)}
             className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 transition fixed bottom-3 left-3"
+            disabled={isSubmitting}
           >
             Cancel
           </button>
-          <button
+          <LoadingButton
+            isLoading={isSubmitting}
             onClick={handleCreateInspection}
-            className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition fixed bottom-3 right-3"
+            className="fixed bottom-3 right-3"
+            loadingText='Saving...'
           >
             Save Inspection
-          </button>
+          </LoadingButton>
         </div>
         
       </div>
