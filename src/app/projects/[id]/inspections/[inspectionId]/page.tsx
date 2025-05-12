@@ -208,7 +208,7 @@ export default function ViewInspectionPage() {
                           return (
                             <div key={option} className="flex flex-wrap justify-between items-center p-2 bg-gray-200 rounded shadow-sm">
                               <span className='overflow-hidden text-ellipsis font-semibold text-gray-600'>{option}</span>
-                              <span className={`font-semibold text-white text-center w-[120px] py-1 px-3 rounded ${badgeColor}`}>
+                              <span className={`font-semibold text-white text-center w-[120px] p-1 rounded ${badgeColor}`}>
                                 {String(status)}
                               </span>
                             </div>
