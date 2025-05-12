@@ -1,5 +1,8 @@
 "use client";
 
+import ModalConfirm from '@/components/ModalConfirm';
+import { useState } from 'react';
+
 interface SiteInspectionsSectionProps {
   data: any;
   onChange: (data: any) => void;
@@ -25,11 +28,13 @@ const siteInspectionCategories = [
 ];
 
 export default function SiteInspectionsSection({ data, onChange }: SiteInspectionsSectionProps) {
+  const [clearAgree, setClearAgree] = useState<string | null>(null);
+
   const updateMainStatus = (category: string, updatedOptions: Record<string, any>) => {
     const values = Object.entries(updatedOptions).filter(([key]) => key !== 'main');
     const hasSelected = values.some(([_, v]) => v && v !== 'not_selected');
     const main = hasSelected ? 'checked' : 'not_checked';
-
+    
     return { ...updatedOptions, main };
   };
 
@@ -50,7 +55,7 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
 
   return (
     <div className="bg-white p-6 rounded shadow-md">
-      <h2 className="text-2xl font-bold mb-6">✅ Site Inspections</h2>
+      <h2 className="text-2xl font-bold mb-6">Site Inspections</h2>
 
       <div className="flex flex-col gap-6">
         {siteInspectionCategories.map((category) => {
@@ -106,13 +111,30 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
                     ))}
                   </div>
   
-                  <button
-                    type="button"
-                    onClick={() => clearAllOptions(category.name, category.options)}
-                    className="mt-4 text-sm text-red-600 hover:underline"
-                  >
-                    🧹 Clear all options
-                  </button>
+                  <div className='flex w-full justify-center items-center'>
+                    <button
+                      type="button"
+                      onClick={() => setClearAgree(category.name)}
+                      className="mt-4 text-sm font-extrabold text-red-600 hover:underline"
+                    >
+                      Clear all options
+                    </button>
+                  </div>
+
+                  {clearAgree === category.name && (
+                    <ModalConfirm
+                      message="Do you confirm clearing all options?"
+                      title={`Clear ${category.name}`}
+                      nameAction="Confirm"
+                      confirmColor="red"
+                      isAsync={false}
+                      onConfirm={() => {
+                        clearAllOptions(category.name, category.options);
+                        setClearAgree(null); // Закрити модалку після підтвердження
+                      }}
+                      onCancel={() => setClearAgree(null)}
+                    />
+                  )}
                 </div>
               </details>
             </div>

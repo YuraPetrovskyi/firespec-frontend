@@ -28,7 +28,7 @@ export default function PreInspectionSection({ data, onChange }: PreInspectionSe
 
   return (
     <div className="bg-white p-6 rounded shadow-md">
-      <h2 className="text-2xl font-bold mb-4">✅ Pre-Inspection</h2>
+      <h2 className="text-2xl font-bold mb-4">Pre-Inspection</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-3">
           {preInspectionFieldsOne.map(({ name, label }) => (

@@ -43,7 +43,7 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
 
   return (
     <div className="bg-white p-6 rounded shadow-md">
-      <h2 className="text-2xl font-bold mb-4">✅ Project Information</h2>
+      <h2 className="text-2xl font-bold mb-4">Project Information</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3"> 
         
         <div className="flex flex-col gap-2">

@@ -12,7 +12,7 @@ export default function PostInspectionSection({ data, onChange }: PostInspection
 
   return (
     <div className="bg-white p-6 rounded shadow-md">
-      <h2 className="text-2xl font-bold mb-4">✅ Post-Inspection</h2>
+      <h2 className="text-2xl font-bold mb-4">Post-Inspection</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col">
           <label className="font-semibold mb-1 text-base">Meet with client representative</label>
