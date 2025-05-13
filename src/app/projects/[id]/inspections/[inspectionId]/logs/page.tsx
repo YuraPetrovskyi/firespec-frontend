@@ -162,7 +162,7 @@ export default function LogsPage() {
                               <ul className="space-y-1 ml-4">
                                 {items.map((c, i) => (
                                   <li key={i} className="text-sm flex flex-wrap gap-2">
-                                    <span className="text-gray-600">{c.field}:</span>
+                                    <span className="text-gray-600 break-all">{c.field}:</span>
                                     <div className='flex flex-wrap ml-2'>
                                       <span className="text-red-600 ml-2">{c.from ?? '---'}</span>
                                       <span className="mx-1">→</span>
