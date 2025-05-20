@@ -4,18 +4,18 @@ import Link from "next/link";
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { parseJwt } from "@/lib/parseJwt";
+// import { parseJwt } from "@/lib/parseJwt";
 import UserMenu from "./UserMenu";
 
 export default function Navbar() {
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { token } = useAuth();
-  const payload = token ? parseJwt(token) : null;
+  // const { token } = useAuth();
+  // const payload = token ? parseJwt(token) : null;
 
-  const expiryTime = payload?.exp
-    ? new Date(payload.exp * 1000).toLocaleString()
-    : "N/A";
+  // const expiryTime = payload?.exp
+  //   ? new Date(payload.exp * 1000).toLocaleString()
+  //   : "N/A";
 
   if (!user) return null;
 
@@ -24,7 +24,7 @@ export default function Navbar() {
       <Link href="/projects">
         <Image src="/logo.png" alt="Logo" width={100} height={40} style={{ width: '100px', height: '40px' }} priority/>
       </Link>
-      <p className="text-sm text-gray-600 text-center">Token expires at: {expiryTime}</p>
+      {/* <p className="text-sm text-gray-600 text-center">Token expires at: {expiryTime}</p> */}
 
       <div className="relative">
         <button
