@@ -161,8 +161,20 @@ export default function LogsPage() {
                               <h3 className="font-semibold text-gray-800 mb-1">{subcategory}</h3>
                               <ul className="space-y-1 ml-4">
                                 {items.map((c, i) => (
+                                  c.field !== 'main' &&
                                   <li key={i} className="text-sm flex flex-wrap gap-2">
                                     <span className="text-gray-600 break-all">{c.field}:</span>
+                                    <div className='flex flex-wrap ml-2'>
+                                      <span className="text-red-600 ml-2">{c.from ?? '---'}</span>
+                                      <span className="mx-1">→</span>
+                                      <span className="text-green-600">{c.to ?? '---'}</span>
+                                    </div>
+                                  </li>
+                                ))}
+                                {items.map((c, i) => (
+                                  c.field === 'main' &&
+                                  <li key={i} className="text-sm font-semibold flex flex-wrap gap-2">
+                                    <span className="text-gray-800 break-all">Main category:</span>
                                     <div className='flex flex-wrap ml-2'>
                                       <span className="text-red-600 ml-2">{c.from ?? '---'}</span>
                                       <span className="mx-1">→</span>
