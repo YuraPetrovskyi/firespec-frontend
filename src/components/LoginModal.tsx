@@ -27,7 +27,7 @@ export default function LoginModal() {
       const res = await axios.post(`${endpoint}`, payload);
       // console.log("res.data", res.data);
       login(res.data.token, res.data.user);
-      toast.success("Welcome!")
+      toast.success(`Welcome ${res.data.user.name}!`);
     } catch (err: any) {
       setError(err.response?.data?.error || "Something went wrong");
     }
