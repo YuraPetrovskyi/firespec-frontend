@@ -67,6 +67,32 @@ export default function ViewInspectionPage() {
     }
   };
 
+  const handleExport = async () => {
+    try {
+      const response = await axios.get(
+        `projects/${id}/inspections/${inspectionId}/export`,
+        { responseType: 'blob' }
+      );
+
+      // Створення URL з blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+
+      // Вручну сформуй назву файла з inspection_number
+      const filename = `inspection_${inspection.inspection_number}.xlsx`;
+
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("❌ Export failed", error);
+      toast.error("Failed to export Excel file");
+    }
+  };
+
+
   return (
     <ProtectedLayout>
       <div className="p-5 bg-gray-100 min-h-screen flex flex-col gap-8 pb-20">
@@ -80,6 +106,7 @@ export default function ViewInspectionPage() {
             >
               Delete
             </button>
+            
             <button
               onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/logs`)}
               className="bg-green-500/60 text-white py-2 px-6 rounded hover:bg-green-700 transition"
@@ -241,9 +268,18 @@ export default function ViewInspectionPage() {
           </div>
         </section>
 
+        <div className='flex justify-center'>
+          <button
+            onClick={handleExport}
+            className="max-w:[140px] bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700 transition"
+          >
+            Export to Excel
+          </button>
+        </div>
+
         <button
           onClick={() => router.push(`/projects/${id}/inspections`)}
-          className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-3 left-3"
+          className=" bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-3 left-3"
         >
           Back
         </button>
@@ -253,7 +289,7 @@ export default function ViewInspectionPage() {
           className="bg-yellow-600 text-white py-2 px-6 rounded hover:bg-yellow-800 fixed bottom-3 right-3"
         >
           Edit
-        </button>
+        </button>       
   
         {modalOpen && (
           <ModalConfirm
