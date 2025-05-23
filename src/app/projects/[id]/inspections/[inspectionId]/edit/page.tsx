@@ -260,7 +260,7 @@ export default function EditInspectionPage() {
             className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 fixed bottom-3 left-3"
             disabled={isSubmitting}
           >
-            Cansel
+            Cancel
         </button>
         <button
           onClick={() => setSaveAgree(true)}
