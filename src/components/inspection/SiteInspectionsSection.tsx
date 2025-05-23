@@ -2,30 +2,12 @@
 
 import ModalConfirm from '@/components/ModalConfirm';
 import { useState } from 'react';
+import { inspectionSchema } from '@/config/inspectionSchema';
 
 interface SiteInspectionsSectionProps {
   data: any;
   onChange: (data: any) => void;
 }
-
-const siteInspectionCategories = [
-  { name: 'Encasements', options: ['thickness', 'fixing(type/centres/orientation)', 'framing', 'joints', 'junctions', 'overlaps', 'any penetrations'] },
-  { name: 'Wall Makeup', options: ['Layers', 'thickness', 'framing system'] },
-  { name: 'Letterbox Openings', options: ['framing', 'lining', 'tape & jointing'] },
-  { name: 'Linear Joint Seals', options: ['compression', 'gap size', 'depth', 'sealant', 'backing material'] },
-  { name: 'Trapezoidal Voids', options: ['Infilled', 'sealant'] },
-  { name: 'Fire Stopping, Friction Fitted', options: ['opening (size/spacing etc)', 'service spacing', 'layers', 'edge/joint coating', 'lagging', 'closure devices', 'service supports', 'fitted e/s', 'fixings'] },
-  { name: 'Fire Stopping, Horizontal', options: ['substrate', 'shutter', 'layers', 'depth', 'closure devices', 'fixings'] },
-  { name: 'Fire Stopping, Face Fixed', options: ['fixings', 'overlaps', 'service spacing', 'closure devices', 'lagging', 'edge coating', 'service supports'] },
-  { name: 'Fire Stopping, Direct Seal', options: ['size', 'annulus', 'depth'] },
-  { name: 'Fire Stopping, Closure Devices', options: ['pipe/insulation type/diameter', 'annulus', 'depth', 'layers', 'fixings', 'diameter', 'fitted to plain pipe'] },
-  { name: 'Dampers', options: ['opening (size/spacing etc)', 'opening infill', 'dimensions to casing', 'fixings', 'supports', 'plasterboard pattress'] },
-  { name: 'Putty Pads', options: ['sealed'] },
-  { name: 'Cavity Barriers, Ceiling Void', options: ['substrate', 'brackets', 'fixings', 'joints', 'overlaps', 'stitching', 'stapling', 'penetrations'] },
-  { name: 'Cavity Barriers, RAF', options: ['compression', 'brackets', 'fixings', 'joints', 'sealants', 'tapes'] },
-  { name: 'Cavity Barriers External', options: ['substrate', 'compression', 'brackets', 'fixings', 'joints', 'sealants', 'tapes'] },
-  { name: 'Destructive Tests', options: ['Carried Out?'] },
-];
 
 export default function SiteInspectionsSection({ data, onChange }: SiteInspectionsSectionProps) {
   const [clearAgree, setClearAgree] = useState<string | null>(null);
@@ -34,7 +16,7 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
     const values = Object.entries(updatedOptions).filter(([key]) => key !== 'main');
     const hasSelected = values.some(([_, v]) => v && v !== 'not_selected');
     const main = hasSelected ? 'checked' : 'not_checked';
-    
+
     return { ...updatedOptions, main };
   };
 
@@ -53,13 +35,14 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
     onChange(updated);
   };
 
+  const sortedCategories = inspectionSchema.siteInspections.sort((a, b) => a.order - b.order);
+
   return (
     <div className="bg-white p-6 rounded shadow-md">
       <h2 className="text-2xl font-bold mb-6">Site Inspections</h2>
 
       <div className="flex flex-col gap-6">
-        {siteInspectionCategories.map((category) => {
-          // const isDestructive = category.name === 'Destructive Tests Carried out?';
+        {sortedCategories.map((category) => {
           const categoryData = data[category.name] || {};
           const mainStatus = categoryData.main || 'not_checked';
 
@@ -68,10 +51,12 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
               <details className="">
                 <summary className="cursor-pointer select-none">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-base font-semibold text-gray-800 mb-2">{category.name}</h3>
+                    <h3 className="text-base font-semibold text-gray-800 mb-2">{category.label}</h3>
                     <span
                       className={`text-xs font-bold px-2 py-1 rounded-full ml-1 ${
-                        mainStatus === 'checked' ? 'text-green-800 bg-green-100 w-[110px] text-center' : 'text-red-600 bg-red-100 w-[110px] text-center'
+                        mainStatus === 'checked'
+                          ? 'text-green-800 bg-green-100 w-[110px] text-center'
+                          : 'text-red-600 bg-red-100 w-[110px] text-center'
                       }`}
                     >
                       {mainStatus}
@@ -81,18 +66,16 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
 
                 <div>
                   <div className="flex flex-wrap gap-6">
-                  {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 bg-green-100"> */}
-
                     {category.options.map((option) => (
-                      <div key={option} className="flex flex-col ">
-                        <label className="font-semibold text-gray-500">{option}</label>
+                      <div key={option.name} className="flex flex-col">
+                        <label className="font-semibold text-gray-500">{option.label}</label>
                         <select
-                          value={categoryData[option] || 'not_selected'}
-                          onChange={(e) => handleOptionStatusChange(category.name, option, e.target.value)}
+                          value={categoryData[option.name] || 'not_selected'}
+                          onChange={(e) => handleOptionStatusChange(category.name, option.name, e.target.value)}
                           className="border p-2 rounded w-[160px]"
                         >
                           <option value="not_selected">-- Select --</option>
-                          {category.name === 'Destructive Tests' && option === 'Carried Out?' ? (
+                          {category.name === 'destructive_tests' && option.name === 'carried_out' ? (
                             <>
                               <option value="no">❌ No</option>
                               <option value="yes">✅ Yes</option>
@@ -110,8 +93,8 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
                       </div>
                     ))}
                   </div>
-  
-                  <div className='flex w-full justify-center items-center'>
+
+                  <div className="flex w-full justify-center items-center">
                     <button
                       type="button"
                       onClick={() => setClearAgree(category.name)}
@@ -124,13 +107,16 @@ export default function SiteInspectionsSection({ data, onChange }: SiteInspectio
                   {clearAgree === category.name && (
                     <ModalConfirm
                       message="Do you confirm clearing all options?"
-                      title={`Clear ${category.name}`}
+                      title={`Clear ${category.label}`}
                       nameAction="Confirm"
                       confirmColor="red"
                       isAsync={false}
                       onConfirm={() => {
-                        clearAllOptions(category.name, category.options);
-                        setClearAgree(null); // Закрити модалку після підтвердження
+                        clearAllOptions(
+                          category.name,
+                          category.options.map((o) => o.name)
+                        );
+                        setClearAgree(null);
                       }}
                       onCancel={() => setClearAgree(null)}
                     />

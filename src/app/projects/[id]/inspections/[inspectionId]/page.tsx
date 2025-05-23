@@ -8,25 +8,26 @@ import toast from 'react-hot-toast';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
 import ModalConfirm from '@/components/ModalConfirm';
+import { inspectionSchema } from '@/config/inspectionSchema';
 
-const siteInspectionCategories = [
-  'Encasements',
-  'Wall Makeup',
-  'Letterbox Openings',
-  'Linear Joint Seals',
-  'Trapezoidal Voids',
-  'Fire Stopping, Friction Fitted',
-  'Fire Stopping, Horizontal',
-  'Fire Stopping, Face Fixed',
-  'Fire Stopping, Direct Seal',
-  'Fire Stopping, Closure Devices',
-  'Dampers',
-  'Putty Pads',
-  'Cavity Barriers, Ceiling Void',
-  'Cavity Barriers, RAF',
-  'Cavity Barriers External',
-  'Destructive Tests',
-];
+// const siteInspectionCategories = [
+//   'Encasements',
+//   'Wall Makeup',
+//   'Letterbox Openings',
+//   'Linear Joint Seals',
+//   'Trapezoidal Voids',
+//   'Fire Stopping, Friction Fitted',
+//   'Fire Stopping, Horizontal',
+//   'Fire Stopping, Face Fixed',
+//   'Fire Stopping, Direct Seal',
+//   'Fire Stopping, Closure Devices',
+//   'Dampers',
+//   'Putty Pads',
+//   'Cavity Barriers, Ceiling Void',
+//   'Cavity Barriers, RAF',
+//   'Cavity Barriers External',
+//   'Destructive Tests',
+// ];
 
 export default function ViewInspectionPage() {
   const { id, inspectionId } = useParams();
@@ -192,55 +193,51 @@ export default function ViewInspectionPage() {
         <section className="bg-white rounded shadow">
           <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Site Inspections</h2>
           <div className="flex flex-col gap-4 p-4">
-            {siteInspectionCategories.map((category) => {
-              const options = site_inspections?.[category] || {};
+            {inspectionSchema.siteInspections.sort((a, b) => a.order - b.order).map((category) => {
+              const options = site_inspections?.[category.name] || {};
               const mainStatus = options.main || options.result || 'not_checked';
               const isChecked = mainStatus === 'checked' || mainStatus === 'yes';
-  
+
               return (
-                <div key={category} className="border rounded p-4 bg-gray-50">
+                <div key={category.name} className="border rounded p-4 bg-gray-50">
                   <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-semibold text-base">{category}</h3>
-                    <span className={`rounded  min-w-[90px] text-right ${isChecked ? 'text-green-500' : 'text-red-500'}`}>
+                    <h3 className="font-semibold text-base">{category.label}</h3>
+                    <span className={`rounded min-w-[90px] text-right ${isChecked ? 'text-green-500' : 'text-red-500'}`}>
                       {mainStatus.replace('_', ' ').toUpperCase()}
                     </span>
                   </div>
-  
-                  {isChecked && Object.entries(options).filter(([k]) => k !== 'main' && k !== 'result').length > 0 && (
+
+                  {isChecked && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-                      {Object.entries(options)
-                        .filter(([key]) => key !== 'main' && key !== 'result')
-                        .map(([option, status]) => {
-                          let badgeColor = 'bg-gray-400';
-                          switch (status) {
-                            case 'checked':
-                            case 'yes':
-                              badgeColor = 'bg-green-500';
-                              break;
-                            case 'not_checked':
-                            case 'no':
-                              badgeColor = 'bg-red-500';
-                              break;
-                            case 'absent':
-                              badgeColor = 'bg-black';
-                              break;
-                            case 'not_required':
-                              badgeColor = 'bg-gray-500';
-                              break;
-                            case 'not_applicable':
-                              badgeColor = 'bg-yellow-500';
-                              break;
-                          }
-  
-                          return (
-                            <div key={option} className="flex flex-wrap justify-between items-center p-2 bg-gray-200 rounded shadow-sm">
-                              <span className='overflow-hidden text-ellipsis font-semibold text-gray-600'>{option}</span>
-                              <span className={`font-semibold text-white text-center w-[120px] p-1 rounded ${badgeColor}`}>
-                                {String(status)}
-                              </span>
-                            </div>
-                          );
-                        })}
+                      {category.options.map((option) => {
+                        const status = options[option.name];
+                        if (!status) return null;
+
+                        let badgeColor = 'bg-gray-400';
+                        switch (status) {
+                          case 'checked':
+                          case 'yes':
+                            badgeColor = 'bg-green-500'; break;
+                          case 'not_checked':
+                          case 'no':
+                            badgeColor = 'bg-red-500'; break;
+                          case 'absent':
+                            badgeColor = 'bg-black'; break;
+                          case 'not_required':
+                            badgeColor = 'bg-gray-500'; break;
+                          case 'not_applicable':
+                            badgeColor = 'bg-yellow-500'; break;
+                        }
+
+                        return (
+                          <div key={option.name} className="flex flex-wrap justify-between items-center p-2 bg-gray-200 rounded shadow-sm">
+                            <span className='overflow-hidden  text-ellipsis font-semibold text-gray-600'>{option.label}</span>
+                            <span className={`font-semibold text-white text-center w-[120px] p-1 rounded ${badgeColor}`}>
+                              {String(status)}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>

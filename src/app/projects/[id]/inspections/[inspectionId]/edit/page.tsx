@@ -15,6 +15,7 @@ import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import ModalConfirm from '@/components/ModalConfirm';
 import { useAuth } from "@/context/AuthContext";
 
+import { inspectionSchema } from '@/config/inspectionSchema';
 
 type SectionData = { [key: string]: any };
 
@@ -102,24 +103,35 @@ export default function EditInspectionPage() {
         .then((res) => {
           const data: InspectionData = res.data.data;
 
-          setPreInspection(clean(data.pre_inspection));
-          setOldPreInspection(clean(data.pre_inspection));
-          setPostInspection(clean(data.post_inspection));
-          setOldPostInspection(clean(data.post_inspection));
+          // 🟩 Виправлена логіка ініціалізації siteInspections
+          const fullSiteInspections = { ...data.site_inspections };
+          inspectionSchema.siteInspections.forEach((cat) => {
+            if (!fullSiteInspections[cat.name]) {
+              fullSiteInspections[cat.name] = { main: 'not_checked' };
+              cat.options.forEach((opt) => {
+                fullSiteInspections[cat.name][opt.name] = 'not_selected';
+              });
+            }
+          });
+
+          setSiteInspections(fullSiteInspections);
+
+          // 🔄 Інше як було:
+          setPreInspection(data.pre_inspection);
+          setPostInspection(data.post_inspection);
 
           const cleanedProjectInfo = {
-            ...clean(data.project_information),
+            ...data.project_information,
             project_name: data.project_information?.project_name || '',
             client: data.project_information?.client || '',
             inspection_date: data.project_information?.inspection_date || '',
-            inspector_name: data.project_information?.inspector_name || '',
           };
           setProjectInformation(cleanedProjectInfo);
+
+          setOldPreInspection(data.pre_inspection);
+          setOldPostInspection(data.post_inspection);
           setOldProjectInformation(cleanedProjectInfo);
-          setSiteInspections(data.site_inspections || {});
-          setOldSiteInspections(JSON.parse(JSON.stringify(data.site_inspections || {}))); //глибоке копіювання (deep clone) об'єкта щоб уникнути проблем з порівнянням сторго і нового обєкту
-          
-          // console.log('Edit Inspection data:', data);
+          setOldSiteInspections(JSON.parse(JSON.stringify(fullSiteInspections)));
         })
         .catch(() => toast.error('❌ Failed to load inspection'))
         .finally(() => setLoading(false));
@@ -177,14 +189,34 @@ export default function EditInspectionPage() {
     });
   
     // 🔹 Site Inspections
+    // Object.entries(newData.siteInspections).forEach(([category, values]) => {
+    //   Object.entries(values).forEach(([field, val]) => {
+    //     const oldVal = oldData.siteInspections?.[category]?.[field];
+    //     if (String(oldVal ?? '') !== String(val ?? '')) {
+    //       changes.push({
+    //         category: `Site Inspections`,
+    //         subcategory: category,
+    //         field,
+    //         from: oldVal,
+    //         to: val,
+    //       });
+    //     }
+    //   });
+    // });
     Object.entries(newData.siteInspections).forEach(([category, values]) => {
       Object.entries(values).forEach(([field, val]) => {
         const oldVal = oldData.siteInspections?.[category]?.[field];
+
         if (String(oldVal ?? '') !== String(val ?? '')) {
+          const categorySchema = inspectionSchema.siteInspections.find((c) => c.name === category);
+          const categoryLabel = categorySchema?.label || category;
+          const optionLabel = categorySchema?.options.find((o) => o.name === field)?.label || field;
+
           changes.push({
-            category: `Site Inspections`,
-            subcategory: category,
+            category: 'Site Inspections',
+            subcategory: categoryLabel,
             field,
+            label: optionLabel,
             from: oldVal,
             to: val,
           });

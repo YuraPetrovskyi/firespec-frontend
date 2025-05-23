@@ -8,6 +8,7 @@ import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
+import { inspectionSchema } from '@/config/inspectionSchema';
 
 type Log = {
   id: number;
@@ -158,12 +159,12 @@ export default function LogsPage() {
                             }, {})
                           ).map(([subcategory, items]) => (
                             <div key={subcategory}>
-                              <h3 className="font-semibold text-gray-800 mb-1">{subcategory}</h3>
+                              <h3 className="text-gray-800 font-semibold mb-1">{subcategory}</h3>
                               <ul className="space-y-1 ml-4">
                                 {items.map((c, i) => (
                                   c.field !== 'main' &&
                                   <li key={i} className="text-sm flex flex-wrap gap-2">
-                                    <span className="text-gray-600 break-all">{c.field}:</span>
+                                    <span className="text-gray-600 break-all">{c.label || c.field}:</span>
                                     <div className='flex flex-wrap ml-2'>
                                       <span className="text-red-600 ml-2">{c.from ?? '---'}</span>
                                       <span className="mx-1">→</span>
@@ -174,7 +175,7 @@ export default function LogsPage() {
                                 {items.map((c, i) => (
                                   c.field === 'main' &&
                                   <li key={i} className="text-sm font-semibold flex flex-wrap gap-2">
-                                    <span className="text-gray-800 break-all">Main category:</span>
+                                    <span className="text-gray-600 break-all">Main category:</span>
                                     <div className='flex flex-wrap ml-2'>
                                       <span className="text-red-600 ml-2">{c.from ?? '---'}</span>
                                       <span className="mx-1">→</span>
