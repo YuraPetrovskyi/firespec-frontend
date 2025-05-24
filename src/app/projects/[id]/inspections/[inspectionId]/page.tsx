@@ -121,46 +121,33 @@ export default function ViewInspectionPage() {
         {/* ✅ PRE-INSPECTION */}
         <section className="bg-white rounded shadow">
           <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Pre-Inspection</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 p-4">
-            <div>
-              {[
-                { label: 'RAMS information submitted', field: 'rams_info_submitted' },
-                { label: 'Induction arranged', field: 'induction_arranged' },
-                { label: 'Induction attended', field: 'induction_attended' },
-                { label: 'PPE (incl glasses and sleeves for Wates)', field: 'ppe_checked' },
-                { label: 'Meet with client representative', field: 'client_meeting' },
-              ].map(({ label, field }) => (
-                <div key={field} className="flex justify-between items-center border-b py-2 mx-2 gap-2">
-                  <div className='font-extrabold text-gray-800'>{label}</div>
-                  <div className={`min-w-[60px] px-3 py-1 rounded text-white text-center ${pre_inspection?.[field] ? 'bg-green-600' : 'bg-red-500'}`}>
-                    {pre_inspection?.[field] ? 'Yes' : 'No'}
-                  </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 p-2 ">
+            {[...Array(2)].map((_, colIdx) => {
+              const sortedFields = [...inspectionSchema.preInspection].sort((a, b) => a.order - b.order);
+              const midpoint = Math.ceil(sortedFields.length / 2);
+              const column = colIdx === 0 ? sortedFields.slice(0, midpoint) : sortedFields.slice(midpoint);
+
+              return (
+                <div key={colIdx} className="flex flex-col gap-3">
+                  {column.map(({ name, label }) => (
+                    <div key={name} className="flex justify-between items-center border-b py-2 mx-2 gap-2">
+                      <div className='font-extrabold text-gray-800'>{label}</div>
+                      <div className={`min-w-[60px] px-3 py-1 rounded text-white text-center ${pre_inspection?.[name] ? 'bg-green-600' : 'bg-red-500'}`}>
+                        {pre_inspection?.[name] ? 'Yes' : 'No'}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <div>
-              {[
-                { label: 'Latest fire strategy drawings available', field: 'fire_drawings_available' },
-                { label: 'Bolster uploads completed', field: 'bolster_uploads' },
-                { label: 'Bolster down synced and checked', field: 'bolster_synced' },
-                { label: 'Latest Manufacturer ETAs', field: 'latest_eta_available' },
-                { label: 'Walk through and cursory inspection', field: 'walkthrough_done' },
-              ].map(({ label, field }) => (
-                <div key={field} className="flex justify-between items-center border-b py-2 mx-2 gap-2">
-                  <div className='font-extrabold text-gray-800'>{label}</div>
-                  <div className={`min-w-[60px] px-3 py-1 rounded text-white text-center ${pre_inspection?.[field] ? 'bg-green-600' : 'bg-red-500'}`}>
-                    {pre_inspection?.[field] ? 'Yes' : 'No'}
-                  </div>
-                </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </section>
   
         {/* ✅ PROJECT INFORMATION */}
         <section className="bg-white rounded shadow">
           <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Project Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
             {[
               { label: 'Project Name', value: project_information?.project_name },
               { label: 'Inspection Date', value: new Date(project_information?.inspection_date).toLocaleDateString()},

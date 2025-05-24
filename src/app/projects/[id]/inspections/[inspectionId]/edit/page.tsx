@@ -28,18 +28,18 @@ type InspectionData = {
 };
 
 // Додаємо мапи лейблів:
-const PRE_INSPECTION_LABELS: Record<string, string> = {
-  rams_info_submitted: 'RAMS information submitted',
-  induction_arranged: 'Induction arranged',
-  induction_attended: 'Induction attended',
-  ppe_checked: 'PPE (incl glasses and sleeves for Wates)',
-  client_meeting: 'Meet with client representative',
-  fire_drawings_available: 'Latest fire strategy drawings available',
-  bolster_uploads: 'Bolster uploads completed',
-  bolster_synced: 'Bolster down synced and checked',
-  latest_eta_available: 'Latest Manufacturer ETAs',
-  walkthrough_done: 'Walk through and cursory inspection',
-};
+// const PRE_INSPECTION_LABELS: Record<string, string> = {
+//   rams_info_submitted: 'RAMS information submitted',
+//   induction_arranged: 'Induction arranged',
+//   induction_attended: 'Induction attended',
+//   ppe_checked: 'PPE (incl glasses and sleeves for Wates)',
+//   client_meeting: 'Meet with client representative',
+//   fire_drawings_available: 'Latest fire strategy drawings available',
+//   bolster_uploads: 'Bolster uploads completed',
+//   bolster_synced: 'Bolster down synced and checked',
+//   latest_eta_available: 'Latest Manufacturer ETAs',
+//   walkthrough_done: 'Walk through and cursory inspection',
+// };
 
 const PROJECT_INFO_LABELS: Record<string, string> = {
   project_name: 'Project Name',
@@ -179,10 +179,17 @@ export default function EditInspectionPage() {
     });
   
     // Pre-inspection
-    Object.entries(newData.preInspection).forEach(([key, val]) => {
-      compare('Pre-Inspection', key, oldData.preInspection?.[key], val, PRE_INSPECTION_LABELS[key]);
+    // Object.entries(newData.preInspection).forEach(([key, val]) => {
+    //   compare('Pre-Inspection', key, oldData.preInspection?.[key], val, PRE_INSPECTION_LABELS[key]);
+    // });
+    inspectionSchema.preInspection.forEach(({ name, label }) => {
+      const oldVal = oldData.preInspection?.[name];
+      const newVal = newData.preInspection?.[name];
+      compare('Pre-Inspection', name, oldVal, newVal, label);
     });
-  
+
+
+
     // Post-inspection
     Object.entries(newData.postInspection).forEach(([key, val]) => {
       compare('Post-Inspection', key, oldData.postInspection?.[key], val, POST_INSPECTION_LABELS[key]);
