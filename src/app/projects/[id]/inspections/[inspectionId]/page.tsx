@@ -144,7 +144,7 @@ export default function ViewInspectionPage() {
           </div>
         </section>
   
-        {/* ✅ PROJECT INFORMATION */}
+        {/* ✅ PROJECT INFORMATION
         <section className="bg-white rounded shadow">
           <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Project Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
@@ -173,6 +173,50 @@ export default function ViewInspectionPage() {
                 <span className='overflow-hidden text-ellipsis text-gray-500 text-left basis-2/3'>{value ?? 'N/A'}</span>
               </div>
             ))}
+          </div>
+        </section> */}
+        {/* ✅ PROJECT INFORMATION */}
+        <section className="bg-white rounded shadow">
+          <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Project Information</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-4">
+            {[...inspectionSchema.projectInformation]
+              .sort((a, b) => a.order - b.order)
+              .reduce<[typeof inspectionSchema.projectInformation, typeof inspectionSchema.projectInformation]>(
+                (acc, field, index, arr) => {
+                  const midpoint = Math.ceil(arr.length / 2);
+                  (index < midpoint ? acc[0] : acc[1]).push(field);
+                  return acc;
+                },
+                [[], []]
+              )
+              .map((columnFields, colIdx) => (
+                <div key={colIdx} className="flex flex-col gap-2">
+                  {columnFields.map(({ name, label, type }) => {
+                    const value =
+                      name === 'inspection_number'
+                        ? inspection.inspection_number
+                        : project_information?.[name];
+                    const displayValue =
+                      type === 'date' && value
+                        ? new Date(value).toLocaleDateString()
+                        : typeof value === 'boolean' || value === 1 || value === 0
+                          ? value ? 'Yes' : 'No'
+                          : value ?? 'N/A';
+
+                    return (
+                      <div key={name} className="flex flex-row border-b py-2 mx-2 gap-4">
+                        <span className="font-extrabold text-gray-800 overflow-hidden text-ellipsis border-r p-1 basis-1/3 min-w-[130px]">
+                          {label}
+                        </span>
+                        <span className="overflow-hidden text-ellipsis text-gray-500 text-left basis-2/3">
+                          {displayValue}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
           </div>
         </section>
   

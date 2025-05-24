@@ -41,25 +41,25 @@ type InspectionData = {
 //   walkthrough_done: 'Walk through and cursory inspection',
 // };
 
-const PROJECT_INFO_LABELS: Record<string, string> = {
-  project_name: 'Project Name',
-  inspection_date: 'Inspection Date',
-  client: 'Client',
-  client_contact: 'Client Contact & Title',
-  client_rep: 'Client Site Rep & Title',
-  installer: 'Installer/contractor',
-  third_party_acr: '3rd Party Acr. Body',
-  storeys: 'Storeys',
-  structural_frame: 'Structural Frame',
-  façade: 'Façade',
-  floor_type: 'Floor Type',
-  internal_walls: 'Internal Walls Types',
-  fire_stopping_materials: 'Fire Stopping Materials',
-  barrier_materials: 'Barrier Materials',
-  dampers: 'Dampers',
-  encasements: 'Encasements',
-  digital_recording: 'Digital Recording',
-};
+// const PROJECT_INFO_LABELS: Record<string, string> = {
+//   project_name: 'Project Name',
+//   inspection_date: 'Inspection Date',
+//   client: 'Client',
+//   client_contact: 'Client Contact & Title',
+//   client_rep: 'Client Site Rep & Title',
+//   installer: 'Installer/contractor',
+//   third_party_acr: '3rd Party Acr. Body',
+//   storeys: 'Storeys',
+//   structural_frame: 'Structural Frame',
+//   façade: 'Façade',
+//   floor_type: 'Floor Type',
+//   internal_walls: 'Internal Walls Types',
+//   fire_stopping_materials: 'Fire Stopping Materials',
+//   barrier_materials: 'Barrier Materials',
+//   dampers: 'Dampers',
+//   encasements: 'Encasements',
+//   digital_recording: 'Digital Recording',
+// };
 
 // const POST_INSPECTION_LABELS: Record<string, string> = {
 //   next_inspection_date: 'Date of next inspection visit',
@@ -174,9 +174,15 @@ export default function EditInspectionPage() {
     };
   
     // Project Info
-    Object.entries(newData.projectInformation).forEach(([key, val]) => {
-      compare('Project Information', key, oldData.projectInformation?.[key], val, PROJECT_INFO_LABELS[key]);
+    // Object.entries(newData.projectInformation).forEach(([key, val]) => {
+    //   compare('Project Information', key, oldData.projectInformation?.[key], val, PROJECT_INFO_LABELS[key]);
+    // });
+    inspectionSchema.projectInformation.forEach(({ name, label }) => {
+      const oldVal = oldData.projectInformation?.[name];
+      const newVal = newData.projectInformation?.[name];
+      compare('Project Information', name, oldVal, newVal, label);
     });
+
   
     // Pre-inspection
     // Object.entries(newData.preInspection).forEach(([key, val]) => {
