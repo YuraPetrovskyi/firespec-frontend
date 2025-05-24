@@ -61,13 +61,13 @@ const PROJECT_INFO_LABELS: Record<string, string> = {
   digital_recording: 'Digital Recording',
 };
 
-const POST_INSPECTION_LABELS: Record<string, string> = {
-  next_inspection_date: 'Date of next inspection visit',
-  client_meeting_done: 'Meet with client representative',
-  urgent_matters: 'Communicate urgent matters',
-  bolster_notes: 'Up-sync Bolster',
-  comment: 'Comment',
-};
+// const POST_INSPECTION_LABELS: Record<string, string> = {
+//   next_inspection_date: 'Date of next inspection visit',
+//   client_meeting_done: 'Meet with client representative',
+//   urgent_matters: 'Communicate urgent matters',
+//   bolster_notes: 'Up-sync Bolster',
+//   comment: 'Comment',
+// };
 
 
 export default function EditInspectionPage() {
@@ -191,8 +191,11 @@ export default function EditInspectionPage() {
 
 
     // Post-inspection
-    Object.entries(newData.postInspection).forEach(([key, val]) => {
-      compare('Post-Inspection', key, oldData.postInspection?.[key], val, POST_INSPECTION_LABELS[key]);
+    // Object.entries(newData.postInspection).forEach(([key, val]) => {
+    //   compare('Post-Inspection', key, oldData.postInspection?.[key], val, POST_INSPECTION_LABELS[key]);
+    // });
+    inspectionSchema.postInspection.forEach(({ name, label }) => {
+      compare('Post-Inspection', name, oldData.postInspection?.[name], newData.postInspection?.[name], label);
     });
   
     // 🔹 Site Inspections

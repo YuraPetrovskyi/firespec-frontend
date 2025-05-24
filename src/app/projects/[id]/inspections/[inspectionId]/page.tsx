@@ -186,7 +186,7 @@ export default function ViewInspectionPage() {
               const isChecked = mainStatus === 'checked' || mainStatus === 'yes';
 
               return (
-                <div key={category.name} className="border rounded p-4 bg-gray-50">
+                <div key={category.name} className="border rounded p-4 bg-gray-100">
                   <div className="flex justify-between items-center mb-2">
                     <h3 className="font-semibold text-base">{category.label}</h3>
                     <span className={`rounded min-w-[90px] text-right ${isChecked ? 'text-green-500' : 'text-red-500'}`}>
@@ -232,8 +232,33 @@ export default function ViewInspectionPage() {
             })}
           </div>
         </section>
-  
+
         {/* ✅ POST-INSPECTION */}
+        <section className="bg-white rounded shadow">
+          <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Post-Inspection</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-4">
+            {inspectionSchema.postInspection
+              .sort((a, b) => a.order - b.order)
+              .map(({ name, label, type }) => {
+                const value = post_inspection?.[name];
+                const displayValue =
+                  type === 'date' && value ? new Date(value).toLocaleDateString() :
+                  typeof value === 'boolean' || value === 1 || value === 0
+                    ? value ? 'Yes' : 'No'
+                    : value ?? 'N/A';
+
+                return (
+                  <div key={name} className="flex border-b gap-2 bg-gray-100 rounded p-2">
+                    <span className="font-semibold text-base basis-1/3 min-w-[140px] border-r">{label}</span>
+                    <span className="text-gray-500 basis-2/3 ">{displayValue}</span>
+                  </div>
+                );
+              })}
+          </div>
+        </section>
+
+  
+        {/* ✅ POST-INSPECTION
         <section className="bg-white rounded shadow">
           <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Post-Inspection</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
@@ -250,7 +275,7 @@ export default function ViewInspectionPage() {
               </div>
             ))}
           </div>
-        </section>
+        </section> */}
 
         <div className='flex justify-center'>
           <button

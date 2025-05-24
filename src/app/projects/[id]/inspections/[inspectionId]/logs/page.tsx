@@ -8,7 +8,6 @@ import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
-import { inspectionSchema } from '@/config/inspectionSchema';
 
 type Log = {
   id: number;
