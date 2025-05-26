@@ -9,25 +9,7 @@ import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
 import ModalConfirm from '@/components/ModalConfirm';
 import { inspectionSchema } from '@/config/inspectionSchema';
-
-// const siteInspectionCategories = [
-//   'Encasements',
-//   'Wall Makeup',
-//   'Letterbox Openings',
-//   'Linear Joint Seals',
-//   'Trapezoidal Voids',
-//   'Fire Stopping, Friction Fitted',
-//   'Fire Stopping, Horizontal',
-//   'Fire Stopping, Face Fixed',
-//   'Fire Stopping, Direct Seal',
-//   'Fire Stopping, Closure Devices',
-//   'Dampers',
-//   'Putty Pads',
-//   'Cavity Barriers, Ceiling Void',
-//   'Cavity Barriers, RAF',
-//   'Cavity Barriers External',
-//   'Destructive Tests',
-// ];
+import LoadSpinner from '@/components/LoadSpinner';
 
 export default function ViewInspectionPage() {
   const { id, inspectionId } = useParams();
@@ -48,7 +30,7 @@ export default function ViewInspectionPage() {
   if (!inspection) {
     return (
       <ProtectedLayout>
-        <p className='text-xl text-center p-10'>Loading...</p>
+        <LoadSpinner />
       </ProtectedLayout>);
   }
 
@@ -95,7 +77,7 @@ export default function ViewInspectionPage() {
 
 
   return (
-    <ProtectedLayout>
+    <ProtectedLayout>      
       <div className="p-5 bg-gray-100 min-h-screen flex flex-col gap-8 pb-20">
         
         <div>

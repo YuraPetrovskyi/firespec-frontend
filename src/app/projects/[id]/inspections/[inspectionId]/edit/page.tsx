@@ -10,6 +10,7 @@ import PreInspectionSection from '@/components/inspection/PreInspectionSection';
 import ProjectInformationSection from '@/components/inspection/ProjectInformationSection';
 import SiteInspectionsSection from '@/components/inspection/SiteInspectionsSection';
 import PostInspectionSection from '@/components/inspection/PostInspectionSection';
+import LoadSpinner from '@/components/LoadSpinner';
 
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import ModalConfirm from '@/components/ModalConfirm';
@@ -288,7 +289,7 @@ export default function EditInspectionPage() {
   if (loading) {
     return (
       <ProtectedLayout>
-        <p className='text-xl text-center p-10'>Loading...</p>
+        <LoadSpinner />
       </ProtectedLayout>);
   }
 
