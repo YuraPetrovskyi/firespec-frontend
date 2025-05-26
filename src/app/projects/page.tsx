@@ -78,7 +78,8 @@ export default function ProjectsPage() {
           <h1 className="text-3xl font-bold text-gray-800 uppercase">Projects</h1>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-blue-600 text-white font-bold px-4 py-2 rounded hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white font-bold px-4 py-2 rounded
+              hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
           >
             Add Project
           </button>
@@ -133,13 +134,15 @@ export default function ProjectsPage() {
                   <div className="mt-4 flex flex-row justify-between gap-2">
                     <button
                       onClick={() => confirmDelete(project.id)}
-                      className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition"
+                      className="bg-red-600 text-white py-2 px-4 rounded 
+                        hover:bg-red-700 hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
                     >
                       Delete
                     </button>
                     <Link
                       href={`/projects/${project.id}/inspections`}
-                      className="bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-800 transition"
+                      className="bg-gray-700 text-white py-2 px-4 rounded 
+                        hover:bg-gray-800 hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
                     >
                       All Inspections
                     </Link>

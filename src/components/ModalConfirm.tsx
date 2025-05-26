@@ -63,14 +63,18 @@ export default function ModalConfirm({
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded"
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded 
+                      hover:scale-105 active:scale-95 hover:shadow-lg transition duration-200"
           >
             Cancel
           </button>
           <button
             onClick={handleClick}
             disabled={isLoading}
-            className={`text-white px-4 py-2 rounded min-w-[80px] flex items-center justify-center gap-2 ${confirmClass} ${isLoading ? 'cursor-not-allowed opacity-70' : ''}`}
+            className={`text-white px-4 py-2 rounded min-w-[80px] flex
+              items-center justify-center gap-2 
+              hover:scale-105 active:scale-95 hover:shadow-lg transition duration-200
+              ${confirmClass} ${isLoading ? 'cursor-not-allowed opacity-70' : ''}`}
           >
             {isLoading && (
               <svg

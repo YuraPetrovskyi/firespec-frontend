@@ -103,14 +103,16 @@ export default function ViewInspectionPage() {
           <div className="flex flex-wrap justify-between gap-4 mt-8"> 
             <button
               onClick={() => setModalOpen(true)}
-              className="bg-red-600 text-white py-2 px-6 rounded hover:bg-red-700 transition"
+              className="bg-red-600 text-white py-2 px-6 rounded
+                hover:bg-red-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
             >
               Delete
             </button>
             
             <button
               onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/logs`)}
-              className="bg-green-500/60 text-white py-2 px-6 rounded hover:bg-green-700 transition"
+              className="bg-green-500/60 text-white py-2 px-6 rounded
+                hover:bg-green-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
             >
               View Change Log
             </button>
@@ -324,7 +326,7 @@ export default function ViewInspectionPage() {
         <div className='flex justify-center'>
           <button
             onClick={handleExport}
-            className="max-w:[140px] bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700 transition"
+            className="max-w:[140px] bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700 hover:scale-105 active:scale-95 transition-transform duration-200"
           >
             Export to Excel
           </button>
@@ -332,14 +334,16 @@ export default function ViewInspectionPage() {
 
         <button
           onClick={() => router.push(`/projects/${id}/inspections`)}
-          className=" bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-3 left-3"
+          className=" bg-gray-700 text-white py-2 px-6 rounded
+            hover:bg-gray-800 hover:scale-105 active:scale-95 transition-transform duration-200 fixed bottom-3 left-3"
         >
           Back
         </button>
 
         <button
           onClick={() => router.push(`/projects/${id}/inspections/${inspectionId}/edit`)}
-          className="bg-yellow-600 text-white py-2 px-6 rounded hover:bg-yellow-800 fixed bottom-3 right-3"
+          className="bg-yellow-600 text-white py-2 px-6 rounded
+            hover:bg-yellow-800 hover:scale-105 active:scale-95 transition-transform duration-200 fixed bottom-3 right-3"
         >
           Edit
         </button>       

@@ -219,7 +219,9 @@ export default function LogsPage() {
       }
       <button
         onClick={() => router.back()}
-        className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-3 left-3"
+        className="bg-gray-700 text-white py-2 px-6 rounded
+        hover:bg-gray-800 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100
+        fixed bottom-3 left-3"
       >
         Back
       </button>

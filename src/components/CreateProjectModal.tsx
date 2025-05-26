@@ -69,7 +69,8 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
           <div className='flex justify-between items-center mt-4 font-semibold'>
             <button
               onClick={onClose}
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded transition"
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded
+                hover:scale-105 active:scale-95 hover:shadow-lg transition duration-200"
               disabled={isSubmitting}
             >
               Cancel

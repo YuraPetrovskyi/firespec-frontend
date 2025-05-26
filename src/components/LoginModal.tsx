@@ -91,13 +91,15 @@ export default function LoginModal() {
         </div>
         <button
           type="submit"
-          className="bg-slate-500 text-white w-full py-2 rounded-xl hover:bg-slate-700"
+          className="bg-slate-500 text-white w-full py-2 rounded-xl
+            hover:bg-slate-700 hover:scale-105 active:scale-95 transition duration-200"
         >
           {isRegistering ? "Register" : "Login"}
         </button>
         <button
           type="button"
-          className="text-sm text-center w-full mt-4 text-cyan-600 my-4"
+          className="text-sm text-center w-full mt-8 text-cyan-600 my-4
+            hover:scale-105 active:scale-95 transition duration-200"
           onClick={() => {
             setError("");
             setIsRegistering(!isRegistering);

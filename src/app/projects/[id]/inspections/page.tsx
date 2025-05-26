@@ -74,7 +74,8 @@ export default function ProjectInspectionsPage() {
           <h1 className="text-3xl font-bold text-gray-800 uppercase">Inspections</h1>
           <Link
             href={`/projects/${id}/inspections/create`}
-            className="bg-blue-600 text-white font-bold px-4 py-2 rounded hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white font-bold px-4 py-2 rounded
+            hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
           >
             Create Inspection
           </Link>
@@ -95,7 +96,8 @@ export default function ProjectInspectionsPage() {
                       <p className="text-sm text-green-500 mb-2">edited version ...</p>
                       <Link
                         href={`/projects/${id}/inspections/${inspection.id}/logs`}
-                        className="bg-green-500/60 text-white py-1 px-2 rounded hover:bg-green-700 transition"
+                        className="bg-green-500/60 text-white py-1 px-2 rounded
+                        hover:bg-green-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
                       >
                         View Change Log
                       </Link>
@@ -110,13 +112,15 @@ export default function ProjectInspectionsPage() {
                         setSelectedInspectionId(inspection.id);
                         setModalOpen(true);
                       }}
-                      className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-700 transition"
+                      className="bg-red-600 text-white py-1 px-3 rounded
+                        hover:bg-red-700 hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
                     >
                       Delete
                     </button>
                     <Link
                       href={`/projects/${id}/inspections/${inspection.id}`}
-                      className="bg-gray-700 text-white py-1 px-3 rounded hover:bg-gray-800 transition"
+                      className="bg-gray-700 text-white py-1 px-3 rounded 
+                        hover:bg-gray-800 hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
                     >
                       View
                     </Link>

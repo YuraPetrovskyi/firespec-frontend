@@ -17,9 +17,10 @@ export default function LoadingButton({
     <button
       disabled={isLoading || disabled}
       className={
-        `px-4 py-2 rounded text-white flex items-center justify-center gap-2 transition ${
-          isLoading ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-        } ${className || ''}`
+        `px-4 py-2 rounded text-white flex items-center justify-center gap-2 
+        hover:scale-105 active:scale-95 hover:shadow-lg transition-transform duration-200 
+        ${isLoading ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} 
+        ${className || ''}`
       }
       {...props}
     >
