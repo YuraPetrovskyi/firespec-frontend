@@ -9,6 +9,8 @@ import ModalConfirm from '@/components/ModalConfirm';
 import CreateProjectModal from '@/components/CreateProjectModal';
 import SkeletonCard from '@/components/SkeletonCard';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
+import { handleApiError } from '@/lib/handleApiError';
+import ErrorModal from '@/components/ErrorModal';
 
 interface Inspection {
   inspection_number: string;
@@ -32,7 +34,8 @@ export default function ProjectsPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
   useEffect(() => {
     setLoading(true);
     fetchProjects();
@@ -46,7 +49,8 @@ export default function ProjectsPage() {
       })
       .catch((err) => {
         setLoading(false);
-        toast.error('❌ Failed to load projects.');
+        // toast.error('❌ Failed to load projects.');
+        setErrorMessage(handleApiError(err));
         console.error(err)
       });
   };
@@ -73,6 +77,12 @@ export default function ProjectsPage() {
 
   return (
     <ProtectedLayout>
+      {errorMessage && (
+        <ErrorModal 
+          message={errorMessage}
+          onClose={() => setErrorMessage(null) } 
+        />
+      )}
       <div className="bg-gray-100 min-h-screen">
         <div className="flex justify-between items-center pt-6 px-6">
           <h1 className="text-3xl font-bold text-gray-800 uppercase">Projects</h1>
