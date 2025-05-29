@@ -62,7 +62,7 @@ export default function ProjectInspectionsPage() {
     }
   }, [id]);
 
-  console.log('inspections', inspections);
+  // console.log('inspections', inspections);
 
   return (
     <ProtectedLayout>

@@ -127,7 +127,11 @@ export default function ProjectsPage() {
                       <p className='text-gray-800 font-semibold'>Client:</p> 
                       <p>{project.client}</p>
                     </div>
-                    <div className="text-xs text-gray-600 mb-2">{project.status}</div>
+                    <div className="text-xs text-gray-600 mb-2">
+                      {project.status == 'in_progress'
+                        ? <p className='text-green-800'>in progress</p> 
+                        : <p className='text-red-800'>completed</p>}
+                    </div>
                   </div>
                   
                 
