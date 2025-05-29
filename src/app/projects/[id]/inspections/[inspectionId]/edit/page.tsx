@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-// import axios from 'axios';
 import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 
@@ -18,6 +17,12 @@ import { useAuth } from "@/context/AuthContext";
 
 import { inspectionSchema } from '@/config/inspectionSchema';
 
+import {
+  saveEditInspectionToLocal,
+  loadEditInspectionFromLocal,
+  clearEditInspectionLocal
+} from '@/lib/inspectionLocalStorage';
+
 type SectionData = { [key: string]: any };
 
 type InspectionData = {
@@ -27,49 +32,6 @@ type InspectionData = {
   project_information: SectionData;
   site_inspections: SectionData;
 };
-
-// Додаємо мапи лейблів:
-// const PRE_INSPECTION_LABELS: Record<string, string> = {
-//   rams_info_submitted: 'RAMS information submitted',
-//   induction_arranged: 'Induction arranged',
-//   induction_attended: 'Induction attended',
-//   ppe_checked: 'PPE (incl glasses and sleeves for Wates)',
-//   client_meeting: 'Meet with client representative',
-//   fire_drawings_available: 'Latest fire strategy drawings available',
-//   bolster_uploads: 'Bolster uploads completed',
-//   bolster_synced: 'Bolster down synced and checked',
-//   latest_eta_available: 'Latest Manufacturer ETAs',
-//   walkthrough_done: 'Walk through and cursory inspection',
-// };
-
-// const PROJECT_INFO_LABELS: Record<string, string> = {
-//   project_name: 'Project Name',
-//   inspection_date: 'Inspection Date',
-//   client: 'Client',
-//   client_contact: 'Client Contact & Title',
-//   client_rep: 'Client Site Rep & Title',
-//   installer: 'Installer/contractor',
-//   third_party_acr: '3rd Party Acr. Body',
-//   storeys: 'Storeys',
-//   structural_frame: 'Structural Frame',
-//   façade: 'Façade',
-//   floor_type: 'Floor Type',
-//   internal_walls: 'Internal Walls Types',
-//   fire_stopping_materials: 'Fire Stopping Materials',
-//   barrier_materials: 'Barrier Materials',
-//   dampers: 'Dampers',
-//   encasements: 'Encasements',
-//   digital_recording: 'Digital Recording',
-// };
-
-// const POST_INSPECTION_LABELS: Record<string, string> = {
-//   next_inspection_date: 'Date of next inspection visit',
-//   client_meeting_done: 'Meet with client representative',
-//   urgent_matters: 'Communicate urgent matters',
-//   bolster_notes: 'Up-sync Bolster',
-//   comment: 'Comment',
-// };
-
 
 export default function EditInspectionPage() {
   const { id, inspectionId } = useParams();
@@ -90,6 +52,7 @@ export default function EditInspectionPage() {
   const [saveAgree, setSaveAgree] = useState(false);
 
   const { user } = useAuth();
+  const didLoadFromStorage = useRef(false);
 
   const clean = (obj: any) => {
     if (!obj || typeof obj !== 'object') return {};
@@ -98,46 +61,77 @@ export default function EditInspectionPage() {
   };
 
   useEffect(() => {
-    if (id && inspectionId) {
-      axios
-        .get(`projects/${id}/inspections/${inspectionId}`)
-        .then((res) => {
-          const data: InspectionData = res.data.data;
+    if (!id || !inspectionId) return;
 
-          // 🟩 Виправлена логіка ініціалізації siteInspections
-          const fullSiteInspections = { ...data.site_inspections };
-          inspectionSchema.siteInspections.forEach((cat) => {
-            if (!fullSiteInspections[cat.name]) {
-              fullSiteInspections[cat.name] = { main: 'not_checked' };
-              cat.options.forEach((opt) => {
-                fullSiteInspections[cat.name][opt.name] = 'not_selected';
-              });
-            }
-          });
+    const saved = loadEditInspectionFromLocal(id as string, inspectionId as string);
+    const isValidDraft =
+      saved &&
+      Object.keys(saved.projectInformation || {}).length > 1; // project_name + client + щось іще
 
-          setSiteInspections(fullSiteInspections);
+    if (isValidDraft) {
+      didLoadFromStorage.current = true;
+      toast.success('Restored your last unsaved edits for this inspection.');
 
-          // 🔄 Інше як було:
-          setPreInspection(data.pre_inspection);
-          setPostInspection(data.post_inspection);
+      setPreInspection(saved.preInspection || {});
+      setPostInspection(saved.postInspection || {});
+      setProjectInformation(saved.projectInformation || {});
+      setSiteInspections(saved.siteInspections || {});
 
-          const cleanedProjectInfo = {
-            ...data.project_information,
-            project_name: data.project_information?.project_name || '',
-            client: data.project_information?.client || '',
-            inspection_date: data.project_information?.inspection_date || '',
-          };
-          setProjectInformation(cleanedProjectInfo);
-
-          setOldPreInspection(data.pre_inspection);
-          setOldPostInspection(data.post_inspection);
-          setOldProjectInformation(cleanedProjectInfo);
-          setOldSiteInspections(JSON.parse(JSON.stringify(fullSiteInspections)));
-        })
-        .catch(() => toast.error('❌ Failed to load inspection'))
-        .finally(() => setLoading(false));
+      setLoading(false); // ✅ вимикаємо спінер
+      return; // ⛔️ блокуємо запит до API
     }
+
+    // Якщо чернетки немає, завантажуємо з сервера
+    axios
+      .get(`projects/${id}/inspections/${inspectionId}`)
+      .then((res) => {
+        if (didLoadFromStorage.current) return; // ⛔️ НЕ ОНОВЛЮЄМО STATE, якщо була чернетка
+        
+        const data: InspectionData = res.data.data;
+
+        const fullSiteInspections = { ...data.site_inspections };
+        inspectionSchema.siteInspections.forEach((cat) => {
+          if (!fullSiteInspections[cat.name]) {
+            fullSiteInspections[cat.name] = { main: 'not_checked' };
+            cat.options.forEach((opt) => {
+              fullSiteInspections[cat.name][opt.name] = 'not_selected';
+            });
+          }
+        });
+
+        setSiteInspections(fullSiteInspections);
+
+        setPreInspection(data.pre_inspection);
+        setPostInspection(data.post_inspection);
+
+        const cleanedProjectInfo = {
+          ...data.project_information,
+          project_name: data.project_information?.project_name || '',
+          client: data.project_information?.client || '',
+          inspection_date: data.project_information?.inspection_date || '',
+        };
+        setProjectInformation(cleanedProjectInfo);
+
+        setOldPreInspection(data.pre_inspection);
+        setOldPostInspection(data.post_inspection);
+        setOldProjectInformation(cleanedProjectInfo);
+        setOldSiteInspections(JSON.parse(JSON.stringify(fullSiteInspections)));
+      })
+      .catch(() => toast.error('❌ Failed to load inspection'))
+      .finally(() => setLoading(false));
   }, [id, inspectionId]);
+
+  useEffect(() => {
+    if (!id || !inspectionId) return;
+    const data = {
+      preInspection,
+      postInspection,
+      projectInformation,
+      siteInspections,
+    };
+    saveEditInspectionToLocal(id as string, inspectionId as string, data);
+  }, [preInspection, postInspection, projectInformation, siteInspections, id, inspectionId]);
+
 
   const generateChangeLog = (
     oldData: {
@@ -175,9 +169,6 @@ export default function EditInspectionPage() {
     };
   
     // Project Info
-    // Object.entries(newData.projectInformation).forEach(([key, val]) => {
-    //   compare('Project Information', key, oldData.projectInformation?.[key], val, PROJECT_INFO_LABELS[key]);
-    // });
     inspectionSchema.projectInformation.forEach(({ name, label }) => {
       const oldVal = oldData.projectInformation?.[name];
       const newVal = newData.projectInformation?.[name];
@@ -186,9 +177,6 @@ export default function EditInspectionPage() {
 
   
     // Pre-inspection
-    // Object.entries(newData.preInspection).forEach(([key, val]) => {
-    //   compare('Pre-Inspection', key, oldData.preInspection?.[key], val, PRE_INSPECTION_LABELS[key]);
-    // });
     inspectionSchema.preInspection.forEach(({ name, label }) => {
       const oldVal = oldData.preInspection?.[name];
       const newVal = newData.preInspection?.[name];
@@ -198,28 +186,11 @@ export default function EditInspectionPage() {
 
 
     // Post-inspection
-    // Object.entries(newData.postInspection).forEach(([key, val]) => {
-    //   compare('Post-Inspection', key, oldData.postInspection?.[key], val, POST_INSPECTION_LABELS[key]);
-    // });
     inspectionSchema.postInspection.forEach(({ name, label }) => {
       compare('Post-Inspection', name, oldData.postInspection?.[name], newData.postInspection?.[name], label);
     });
   
     // 🔹 Site Inspections
-    // Object.entries(newData.siteInspections).forEach(([category, values]) => {
-    //   Object.entries(values).forEach(([field, val]) => {
-    //     const oldVal = oldData.siteInspections?.[category]?.[field];
-    //     if (String(oldVal ?? '') !== String(val ?? '')) {
-    //       changes.push({
-    //         category: `Site Inspections`,
-    //         subcategory: category,
-    //         field,
-    //         from: oldVal,
-    //         to: val,
-    //       });
-    //     }
-    //   });
-    // });
     Object.entries(newData.siteInspections).forEach(([category, values]) => {
       Object.entries(values).forEach(([field, val]) => {
         const oldVal = oldData.siteInspections?.[category]?.[field];
@@ -276,7 +247,10 @@ export default function EditInspectionPage() {
 
     try {
       await axios.put(`projects/${id}/inspections/${inspectionId}`, payload);
+
       toast.success('Inspection updated!');
+      clearEditInspectionLocal(id as string, inspectionId as string); // очищаємо чернетку
+      
       router.push(`/projects/${id}/inspections`);
     } catch (err: any) {
       console.error(err);
@@ -328,7 +302,10 @@ export default function EditInspectionPage() {
       {cancelAgree && (
         <ModalConfirm
           message="If you leave this page all changes will not be saved. Do you confirm the cancellation?"
-          onConfirm={ () => router.push(`/projects/${id}/inspections/${inspectionId}`)}
+          onConfirm={() => {
+            clearEditInspectionLocal(id as string, inspectionId as string);
+            router.push(`/projects/${id}/inspections/${inspectionId}`);
+          }}
           onCancel={() => setCancelAgree(false)}
           title="Cancel Inspection"
           nameAction="Confirm"
