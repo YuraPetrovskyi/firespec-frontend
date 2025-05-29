@@ -4,9 +4,20 @@
 
 body {
   background-color: #f8fafc;
-  font-family: Arial, sans-serif;
-  /* font-family: 'Courier New', Courier, monospace;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
-  /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
-  font-family: monospace;
+  /* font-family: Arial, sans-serif; */
+  /* font-family: monospace; */
+  font-family: Calibri, Carlito, Candara, "Segoe UI", Roboto, "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+/* Розберемо цей набір:
+
+Calibri: Бажаний шрифт. Якщо він є на пристрої, буде використаний він.
+Carlito: Найкращий метрично сумісний замінник. Ідеально, якщо Calibri відсутній, особливо на Linux або Android (де він може бути встановлений).
+Candara: Схожий за стилем та походженням шрифт від Microsoft.
+"Segoe UI": Дуже поширений на Windows, надає подібне відчуття. (Взято в лапки, бо назва містить пробіл).
+Roboto: Чудовий сучасний шрифт, добре виглядає на екранах, стандарт для Android.
+"Open Sans": Дуже популярний і читабельний вебшрифт.
+"Helvetica Neue", Helvetica: Класичні шрифти без зарубок, дуже поширені на macOS та iOS (також доступні на інших платформах).
+Arial: Надзвичайно поширений шрифт, хоча стилістично менш схожий на Calibri, він є надійним "робочим конем".
+sans-serif: Це родова назва. Якщо жоден із попередніх шрифтів не знайдено, браузер використає стандартний шрифт без зарубок, встановлений за замовчуванням в операційній системі користувача. 
+            Це гарантує, що текст завжди буде відображено шрифтом без зарубок. */
