@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import axiosInstance from '@/lib/axios';
 import { AxiosError } from 'axios';
@@ -15,10 +15,11 @@ import PostInspectionSection from '@/components/inspection/PostInspectionSection
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import ModalConfirm from '@/components/ModalConfirm';
 
-type ProjectData = {
-  project_name: string;
-  client: string;
-};
+import {
+  saveInspectionToLocal,
+  loadInspectionFromLocal,
+  clearInspectionLocal
+} from '@/lib/inspectionLocalStorage';
 
 type SectionData = {
   [key: string]: any;
@@ -36,7 +37,6 @@ export default function CreateInspectionPage() {
   const [projectInformation, setProjectInformation] = useState<SectionData>({});
   const [siteInspections, setSiteInspections] = useState<SectionData>({});
   const [postInspection, setPostInspection] = useState<SectionData>({});
-  const [projectData, setProjectData] = useState<ProjectData>({ project_name: '', client: '' });
   const { user } = useAuth();
   const [cancelAgree, setCancelAgree] = useState(false);
   const [saveAgree, setSaveAgree] = useState(false);
@@ -49,44 +49,77 @@ export default function CreateInspectionPage() {
     return rest;
   };
 
+  const didLoadFromStorage = useRef(false);
+
   useEffect(() => {
-    if (id) {
-      // 1. Отримуємо дані про проєкт
-      axiosInstance.get(`projects/${id}`)
-        .then((res) => {
-          const project = res.data.data;
-          // console.log('Project data:', project);
-          setProjectData({
-            project_name: project.project_name || '',
-            client: project.client || '',
-          });
-  
-          // Встановлюємо їх одразу в projectInformation
+    if (!id) return;
+    // 1️⃣ Спроба завантажити чернетку
+    const saved = loadInspectionFromLocal(id as string);
+
+    const isValidDraft =
+      saved &&
+      Object.keys(saved.projectInformation || {}).length > 1; // project_name + client + щось іще
+      
+    if (isValidDraft) {
+      didLoadFromStorage.current = true;
+      // console.log("📦 Restored valid draft from localStorage");
+      toast.success('Restored your last unsaved inspection draft for this project.');
+
+      setPreInspection(saved.preInspection || {});
+      setProjectInformation(saved.projectInformation || {});
+      setSiteInspections(saved.siteInspections || {});
+      setPostInspection(saved.postInspection || {});
+      return; // ⛔️ повністю зупиняємо useEffect, бо чернетка головна
+    }
+
+    // console.log("📦 No unsaved draft found, loading from server");
+
+    // 2️⃣ Завантажуємо project name / client — Вони завжди актуальні
+    axiosInstance.get(`projects/${id}`)
+      .then((res) => {
+        const project = res.data.data;
+
+        setProjectInformation((prev) => ({
+          ...prev,
+          project_name: project.project_name || '',
+          client: project.client || '',
+        }));
+      })
+      .catch(() => toast.error('❌ Failed to load project'));
+
+    // 3️⃣ Завантажуємо latest інспекцію, якщо не відновлювали чернетку
+    axiosInstance.get(`projects/${id}/inspections/latest`)
+      .then((res) => {
+        if (didLoadFromStorage.current) return; // 🔒 захист, щоб не перезаписати чернетку
+        // console.log("🧭 Loaded latest inspection from API");
+
+        const data = res.data.data;
+        // console.log("🧾 Loaded latest inspection from API: ", data);
+
+        if (data?.pre_inspection && data?.project_information) {
+          setPreInspection(clean(data.pre_inspection));
           setProjectInformation((prev) => ({
             ...prev,
-            project_name: project.project_name || '',
-            client: project.client || '',
+            ...clean(data.project_information),
+            inspection_date: '', // очищаємо дату, щоб користувач міг ввести нову
           }));
-        })
-        .catch(() => toast.error('❌ Failed to load project'));
-  
-      // 2. Пробуємо отримати останню інспекцію
-      axiosInstance.get(`projects/${id}/inspections/latest`)
-        .then((res) => {
-          const data = res.data.data;
-          if (data && data.pre_inspection && data.project_information) {
-            setPreInspection(clean(data.pre_inspection));
-            setProjectInformation((prev) => ({
-              ...prev,
-              ...clean(data.project_information)
-            }));
-          }
-        })
-        .catch(() => {
-          // нічого не робимо — це може бути перша інспекція
-        });
-    }
+        }
+      })
+      .catch(() => {
+        // нічого не робимо — це може бути перша інспекція
+      });
   }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    const data = {
+      preInspection,
+      projectInformation,
+      siteInspections,
+      postInspection
+    };
+    saveInspectionToLocal(id as string, data);
+  }, [preInspection, projectInformation, siteInspections, postInspection, id]);
 
   const handleCreateInspection = async () => {
     setIsSubmitting(true);
@@ -107,6 +140,9 @@ export default function CreateInspectionPage() {
     try {
       await axiosInstance.post(`projects/${id}/inspections`, payload);
       toast.success('Inspection created!');
+
+      clearInspectionLocal(id as string);
+
       router.push(`/projects/${id}/inspections`);
     } catch (err) {
       const error = err as AxiosError<ValidationErrorResponse>;
@@ -159,7 +195,10 @@ export default function CreateInspectionPage() {
           title="Cancel Inspection"
           nameAction="Confirm"
           message="If you leave this page all changes will not be saved. Do you confirm the cancellation?"
-          onConfirm={ () => router.push(`/projects/${id}/inspections`)}
+          onConfirm={() => {
+            clearInspectionLocal(id as string);
+            router.push(`/projects/${id}/inspections`);
+          }}
           onCancel={() => setCancelAgree(false)}
         />
       )}
