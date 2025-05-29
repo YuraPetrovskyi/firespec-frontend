@@ -17,6 +17,9 @@ interface Inspection {
   version: number;
   inspection_date: string;
   inspector_name: string;
+  details: {
+    project_name: string;
+  };
 }
 
 export default function ProjectInspectionsPage() {
@@ -59,7 +62,7 @@ export default function ProjectInspectionsPage() {
     }
   }, [id]);
 
-  // console.log('inspections', inspections);
+  console.log('inspections', inspections);
 
   return (
     <ProtectedLayout>
@@ -86,11 +89,12 @@ export default function ProjectInspectionsPage() {
             ? Array.from({ length: 1 }).map((_, i) => <SkeletonCard key={i} />)
             : inspections.length > 0
               ? inspections.map((inspection) => (
-                <div key={inspection.id} className="bg-white shadow-md rounded p-5 border border-gray-200">
+                <div key={inspection.id} className="bg-white shadow-md rounded p-3 border border-gray-200">
                   <div className='flex flex-row flex-wrap justify-between items-center gap-2 mb-2'>
                     <h2 className="text-xl font-semibold text-blue-800">Inspection {inspection.inspection_number}</h2>
                     <p className="text-xl font-bold">Version {inspection.version}</p>
                   </div>
+                  
                   {inspection.version > 1 && (
                     <div className='flex justify-between items-center mb-2'>
                       <p className="text-sm text-green-500 mb-2">edited version ...</p>
@@ -104,8 +108,11 @@ export default function ProjectInspectionsPage() {
                     </div>
                     
                   )}
-                  <p className="text-sm text-gray-600 mb-2">Date: {new Date(inspection.inspection_date).toLocaleDateString()}</p>
-                  <p className="text-sm mb-2">Inspector: {inspection.inspector_name}</p>
+                  <div className="ml-2">
+                    <p className="text-sm text-gray-600 mb-2">Project name: {inspection.details?.project_name}</p>
+                    <p className="text-sm text-gray-600 mb-2">Inspection Date: {new Date(inspection.inspection_date).toLocaleDateString()}</p>
+                    <p className="text-sm text-gray-600 mb-2">Inspector: {inspection.inspector_name}</p>
+                  </div>
                   <div className="flex justify-between items-center mt-4">
                     <button
                       onClick={() => {
