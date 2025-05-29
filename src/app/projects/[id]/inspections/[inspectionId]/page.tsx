@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-// import axios from 'axios';
 import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
@@ -10,6 +9,7 @@ import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import ModalConfirm from '@/components/ModalConfirm';
 import { inspectionSchema } from '@/config/inspectionSchema';
 import LoadSpinner from '@/components/LoadSpinner';
+import { loadEditInspectionFromLocal } from '@/lib/inspectionLocalStorage';
 
 export default function ViewInspectionPage() {
   const { id, inspectionId } = useParams();
@@ -17,13 +17,19 @@ export default function ViewInspectionPage() {
 
   const [inspection, setInspection] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [hasUnsavedEdit, setHasUnsavedEdit] = useState(false);
 
   useEffect(() => {
     if (id && inspectionId) {
-      axios
-        .get(`projects/${id}/inspections/${inspectionId}`)
-        .then((res) => setInspection(res.data.data))
-        .catch(() => toast.error('❌ Failed to load inspection'));
+
+    const saved = loadEditInspectionFromLocal(id as string, inspectionId as string);
+    const isValidDraft = saved && Object.keys(saved.projectInformation || {}).length > 1;
+    setHasUnsavedEdit(isValidDraft);
+
+    axios
+      .get(`projects/${id}/inspections/${inspectionId}`)
+      .then((res) => setInspection(res.data.data))
+      .catch(() => toast.error('❌ Failed to load inspection'));
     }
   }, [id, inspectionId]);
 
@@ -81,7 +87,12 @@ export default function ViewInspectionPage() {
       <div className="p-5 bg-gray-100 min-h-screen flex flex-col gap-8 pb-20">
         
         <div>
-          <h1 className="text-3xl font-bold text-center mb-2">Inspection Details</h1> 
+          <h1 className="text-3xl font-bold text-center mb-2">Inspection Details</h1>
+          {hasUnsavedEdit && (
+            <div className="text-yellow-800 bg-yellow-100 border border-yellow-400 px-4 py-2 rounded text-center mb-4">
+              ⚠️ You have unsaved edits for this inspection.
+            </div>
+          )} 
           <div className="flex flex-wrap justify-between gap-4 mt-8"> 
             <button
               onClick={() => setModalOpen(true)}
@@ -128,37 +139,6 @@ export default function ViewInspectionPage() {
           </div>
         </section>
   
-        {/* ✅ PROJECT INFORMATION
-        <section className="bg-white rounded shadow">
-          <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Project Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
-            {[
-              { label: 'Project Name', value: project_information?.project_name },
-              { label: 'Inspection Date', value: new Date(project_information?.inspection_date).toLocaleDateString()},
-              { label: 'Inspection Number', value: inspection_number },
-              { label: 'Client', value: project_information?.client },
-              { label: 'Client Contact & Title', value: project_information?.client_contact },
-              { label: 'Client Site Rep & Title', value: project_information?.client_rep },
-              { label: 'Installer/contractor', value: project_information?.installer },
-              { label: '3rd Party Acr. Body', value: project_information?.third_party_acr },
-              { label: 'Digital Recording', value: project_information?.digital_recording ? 'Yes' : 'No' },
-              { label: 'Storeys', value: project_information?.storeys },
-              { label: 'Structural Frame', value: project_information?.structural_frame },
-              { label: 'Façade', value: project_information?.façade },
-              { label: 'Floor Type', value: project_information?.floor_type },
-              { label: 'Internal Walls Types', value: project_information?.internal_walls },
-              { label: 'Fire Stopping Materials', value: project_information?.fire_stopping_materials },
-              { label: 'Barrier Materials', value: project_information?.barrier_materials },
-              { label: 'Dampers', value: project_information?.dampers },
-              { label: 'Encasements', value: project_information?.encasements },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex flex-row border-b py-2 mx-2 gap-4">
-                <span className='font-extrabold text-gray-800 overflow-hidden text-ellipsis border-r p-1 basis-1/3 min-w-[130px] '>{label}</span>
-                <span className='overflow-hidden text-ellipsis text-gray-500 text-left basis-2/3'>{value ?? 'N/A'}</span>
-              </div>
-            ))}
-          </div>
-        </section> */}
         {/* ✅ PROJECT INFORMATION */}
         <section className="bg-white rounded shadow">
           <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Project Information</h2>
@@ -286,25 +266,7 @@ export default function ViewInspectionPage() {
         </section>
 
   
-        {/* ✅ POST-INSPECTION
-        <section className="bg-white rounded shadow">
-          <h2 className="text-2xl font-semibold bg-gray-600 text-white p-4 rounded-t">Post-Inspection</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-            {[
-              { label: 'Meet with Client Representative', value: post_inspection?.client_meeting_done },
-              { label: 'Date of Next Inspection Visit', value: post_inspection?.next_inspection_date ? new Date(post_inspection?.next_inspection_date).toLocaleDateString() : null},
-              { label: 'Communicate Urgent Matters', value: post_inspection?.urgent_matters },
-              { label: 'Up-sync Bolster', value: post_inspection?.bolster_notes },
-              { label: 'Comment', value: post_inspection?.comment },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex border-b gap-2 bg-gray-100 rounded p-2">
-                <span className='font-semibold text-base basis-1/3 min-w-[140px] border-r'>{label}</span>
-                <span className='text-gray-500 basis-2/3'>{value ?? 'N/A'}</span>
-              </div>
-            ))}
-          </div>
-        </section> */}
-
+        {/* ✅ POST-INSPECTION */}
         <div className='flex justify-center'>
           <button
             onClick={handleExport}
@@ -327,7 +289,7 @@ export default function ViewInspectionPage() {
           className="bg-yellow-600 text-white py-2 px-6 rounded
             hover:bg-yellow-800 hover:scale-105 active:scale-95 transition-transform duration-200 fixed bottom-3 right-3"
         >
-          Edit
+          {hasUnsavedEdit ? 'Continue Editing' : 'Edit'}
         </button>       
   
         {modalOpen && (
