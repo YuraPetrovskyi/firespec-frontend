@@ -49,7 +49,7 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded shadow-md w-96 relative">
+      <div className="bg-white p-8 rounded shadow-md w-96 relative animate-zoom-in">
         
         <h2 className="text-2xl font-semibold mb-6 text-center"> Create New Project</h2>
 

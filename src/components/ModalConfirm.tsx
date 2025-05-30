@@ -23,13 +23,8 @@ export default function ModalConfirm({
   isAsync = true,
   loadingText = 'Processing...',
 }: ModalConfirmProps) {
-  const [visible, setVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => setVisible(true), 10);
-    return () => clearTimeout(timeout);
-  }, []);
+  const [isClosing, setIsClosing] = useState(false);
 
   const handleClick = async () => {
     if (isAsync) {
@@ -44,6 +39,14 @@ export default function ModalConfirm({
     }
   };
 
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onCancel(); // Закрити після анімації
+      setIsClosing(false);
+    }, 500); // має відповідати duration у tailwind
+  };
+
   const confirmClass = {
     red: "bg-red-600 hover:bg-red-700",
     blue: "bg-blue-600 hover:bg-blue-700",
@@ -53,15 +56,14 @@ export default function ModalConfirm({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div
-        className={`bg-white rounded-lg shadow-xl p-6 w-80 transform transition-all duration-300 ${
-          visible ? "scale-100 opacity-100" : "scale-90 opacity-0"
-        }`}
+        className={`bg-white rounded-lg shadow-xl p-6 w-80 
+          ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
       >
         <h2 className="text-2xl text-center font-extrabold mb-4">{title}</h2>
         <p className="text-lg text-gray-800 font-semibold text-center mb-6">{message}</p>
         <div className="flex justify-between items-center mt-6 gap-3 font-semibold">
           <button
-            onClick={onCancel}
+            onClick={handleClose}
             disabled={isLoading}
             className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded 
                       hover:scale-105 active:scale-95 hover:shadow-lg transition duration-200"

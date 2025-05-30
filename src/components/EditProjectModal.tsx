@@ -68,7 +68,7 @@ export default function EditProjectModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded shadow-md w-96">
+      <div className="bg-white p-6 rounded shadow-md w-96 animate-zoom-in">
         <h2 className="text-2xl font-semibold mb-6 text-center">Edit Project</h2>
 
         <div className="flex flex-col gap-4">
