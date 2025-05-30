@@ -34,7 +34,7 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
       setIsClosing(false);
       setIsVisible(false);
       onClose(); // Закриваємо після анімації
-    }, 500); // має збігатися з duration у tailwind.config.js
+    }, 300); // має збігатися з duration у tailwind.config.js
   };
 
   const handleCreateProject = async () => {

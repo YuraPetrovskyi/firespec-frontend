@@ -44,7 +44,7 @@ export default function ModalConfirm({
     setTimeout(() => {
       onCancel(); // Закрити після анімації
       setIsClosing(false);
-    }, 500); // має відповідати duration у tailwind
+    }, 300); // має відповідати duration у tailwind
   };
 
   const confirmClass = {

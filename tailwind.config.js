@@ -26,8 +26,8 @@ module.exports = {
       },
       animation: {
         'fade-in': 'fade-in 0.3s ease-out forwards',
-        'zoom-in': 'zoom-in 0.5s ease-out forwards',
-        'zoom-out': 'zoom-out 0.5s ease-in forwards',
+        'zoom-in': 'zoom-in 0.3s ease-out forwards',
+        'zoom-out': 'zoom-out 0.3s ease-in forwards',
         'slide-down': 'slide-down 0.3s ease-out forwards',
       },
     },

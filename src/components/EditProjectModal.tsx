@@ -52,7 +52,7 @@ export default function EditProjectModal({
       setIsClosing(false);
       setIsVisible(false);
       onClose();
-    }, 500); // має відповідати твоїй transition у Tailwind
+    }, 300); // має відповідати твоїй transition у Tailwind
   };
 
   const handleSave = async () => {
