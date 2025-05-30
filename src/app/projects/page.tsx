@@ -24,6 +24,7 @@ interface Project {
   project_name: string;
   client: string;
   status: string;
+  project_reference: string;
   inspections: Inspection[];
 }
 
@@ -122,23 +123,30 @@ export default function ProjectsPage() {
               ? projects.map((project) => (
                 <div key={project.id} className="bg-white shadow-md rounded p-5 border border-gray-200">
                   <h2 className="text-xl font-semibold text-blue-800 text-center">{project.project_name}</h2>
-                  <div className='flex flex-row justify-between items-center mb-4 gap-2'>
+                  
+                  <div className='flex flex-row justify-between items-center gap-2'>
                     <div className="flex flex-row gap-2 text-xs text-gray-600 mb-2">
                       <p className='text-gray-800 font-semibold'>Client:</p> 
-                      <p>{project.client}</p>
+                      <p>{project.client || 'n/a'}</p>
                     </div>
+                    
                     <div className="text-xs text-gray-600 mb-2">
                       {project.status == 'in_progress'
                         ? <p className='text-green-800'>in progress</p> 
                         : <p className='text-red-800'>completed</p>}
                     </div>
                   </div>
+
+                  <div className="flex flex-row gap-2 text-xs text-gray-600">
+                    <p className='text-gray-800 font-semibold'>Project regerence:</p> 
+                    <p>{project.project_reference || 'n/a'}</p>
+                  </div>
                   
                 
                   {project.inspections.length > 0 && (
-                    <div className="mt-2 text-sm">
+                    <div className="mt-4 text-sm">
                       <p><strong>Latest Inspection:</strong></p>
-                      <ul className="list-disc ml-4">
+                      <ul className="ml-4 text-xs text-gray-800">
                         <li>Date: {new Date(project.inspections[0].inspection_date).toLocaleDateString()}</li>
                         <li>Inspector: {project.inspections[0].inspector_name}</li>
                       </ul>

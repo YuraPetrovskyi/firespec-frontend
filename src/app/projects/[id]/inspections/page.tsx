@@ -76,10 +76,10 @@ export default function ProjectInspectionsPage() {
       
       <div className="p-4 pb-10 bg-gray-100 min-h-screen">
         {hasDraft && (
-              <div className="text-yellow-800 bg-yellow-100 border border-yellow-400 px-4 py-2 rounded mb-2">
-                ⚠️ You have unsaved progress from your last visit.
-              </div>
-            )}
+          <div className="text-yellow-800 bg-yellow-100 border border-yellow-400 px-4 py-2 rounded mb-2">
+            ⚠️ You have unsaved progress from your last visit.
+          </div>
+        )}
         <Link
           href={`/projects`}
           className="bg-gray-700 text-white py-2 px-6 rounded hover:bg-gray-800 fixed bottom-3 left-3"
@@ -91,7 +91,7 @@ export default function ProjectInspectionsPage() {
           <Link
             href={`/projects/${id}/inspections/create`}
             className="bg-blue-600 text-white font-bold px-4 py-2 rounded
-            hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
+            hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"            
           >
             {hasDraft ? 'Continue Inspection' : 'Create Inspection'}
           </Link>

@@ -83,6 +83,7 @@ export default function CreateInspectionPage() {
           ...prev,
           project_name: project.project_name || '',
           client: project.client || '',
+          project_reference: project.project_reference || '',
         }));
       })
       .catch(() => toast.error('❌ Failed to load project'));
@@ -127,6 +128,7 @@ export default function CreateInspectionPage() {
       inspector_name: user?.name || 'Unknown777',
       project_name: projectInformation.project_name,
       client: projectInformation.client,
+      project_reference: projectInformation.project_reference,
       inspection_date: projectInformation.inspection_date,
       pre_inspection: clean(preInspection),
       post_inspection: clean(postInspection),

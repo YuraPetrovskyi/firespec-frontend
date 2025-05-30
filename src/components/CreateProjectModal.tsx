@@ -16,6 +16,7 @@ interface CreateProjectModalProps {
 export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }: CreateProjectModalProps) {
   const [newProjectName, setNewProjectName] = useState('');
   const [newClient, setNewClient] = useState('');
+  const [newReference, setNewReference] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCreateProject = async () => {
@@ -29,6 +30,7 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
       await axios.post('projects', {
         project_name: newProjectName,
         client: newClient,
+        project_reference: newReference,
       });
       toast.success('Project created successfully!');
       onProjectCreated(); // оновити список
@@ -64,6 +66,13 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
             placeholder="Client"
             value={newClient}
             onChange={(e) => setNewClient(e.target.value)}
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            placeholder="Project Reference"
+            value={newReference}
+            onChange={(e) => setNewReference(e.target.value)}
             className="border p-2 rounded"
           />
           <div className='flex justify-between items-center mt-4 font-semibold'>

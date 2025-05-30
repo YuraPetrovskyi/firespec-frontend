@@ -108,6 +108,7 @@ export default function EditInspectionPage() {
           ...data.project_information,
           project_name: data.project_information?.project_name || '',
           client: data.project_information?.client || '',
+          project_reference: data.project_information?.project_reference || '',
           inspection_date: data.project_information?.inspection_date || '',
         };
         setProjectInformation(cleanedProjectInfo);
@@ -221,6 +222,7 @@ export default function EditInspectionPage() {
     const payload = {
       project_name: projectInformation.project_name,
       client: projectInformation.client,
+      project_reference: projectInformation.project_reference,
       inspection_date: projectInformation.inspection_date,
       inspector_name: user?.name || 'Unknown',
       pre_inspection: clean(preInspection),
