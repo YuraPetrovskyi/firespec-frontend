@@ -138,7 +138,7 @@ export default function ProjectsPage() {
                   </div>
 
                   <div className="flex flex-row gap-2 text-xs text-gray-600">
-                    <p className='text-gray-800 font-semibold'>Project regerence:</p> 
+                    <p className='text-gray-800 font-semibold'>Project reference:</p> 
                     <p>{project.project_reference || 'n/a'}</p>
                   </div>
                   
