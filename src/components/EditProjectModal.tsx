@@ -30,6 +30,13 @@ export default function EditProjectModal({
   const [status, setStatus] = useState<'in_progress' | 'completed'>('in_progress');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [isVisible, setIsVisible] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) setIsVisible(true);
+  }, [isOpen]);
+
   useEffect(() => {
     if (project) {
       setName(project.project_name);
@@ -38,6 +45,15 @@ export default function EditProjectModal({
       setStatus(project.status as 'in_progress' | 'completed');
     }
   }, [project]);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      setIsVisible(false);
+      onClose();
+    }, 500); // має відповідати твоїй transition у Tailwind
+  };
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -55,7 +71,7 @@ export default function EditProjectModal({
       });
       toast.success('Project updated!');
       onProjectUpdated(project.id);
-      onClose();
+      handleClose(); // використовуємо нову анімацію
     } catch (err) {
       console.error(err);
       toast.error('❌ Failed to update project');
@@ -64,11 +80,14 @@ export default function EditProjectModal({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen && !isVisible) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded shadow-md w-96 animate-zoom-in">
+      <div
+        className={`bg-white p-6 rounded shadow-md w-96 transition-all duration-300
+          ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
+      >
         <h2 className="text-2xl font-semibold mb-6 text-center">Edit Project</h2>
 
         <div className="flex flex-col gap-4">
@@ -116,7 +135,7 @@ export default function EditProjectModal({
 
           <div className="flex justify-between items-center mt-4 font-semibold">
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded"
               disabled={isSubmitting}
             >

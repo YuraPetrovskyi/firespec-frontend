@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoadingButton from '@/components/LoadingButton';
 
 // import axios from 'axios';
@@ -19,6 +19,24 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
   const [newReference, setNewReference] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [isVisible, setIsVisible] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);  
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true);
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      setIsVisible(false);
+      onClose(); // Закриваємо після анімації
+    }, 500); // має збігатися з duration у tailwind.config.js
+  };
+
   const handleCreateProject = async () => {
     if (!newProjectName.trim()) {
       toast.error('❌ Project name is required.');
@@ -34,9 +52,10 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
       });
       toast.success('Project created successfully!');
       onProjectCreated(); // оновити список
-      onClose(); // закрити модалку
+      handleClose();; // закрити модалку
       setNewProjectName('');
       setNewClient('');
+      setNewReference('');
     } catch (err) {
       console.error(err);
       toast.error('❌ Failed to create project. Please try again.');
@@ -45,11 +64,14 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen && !isVisible) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded shadow-md w-96 relative animate-zoom-in">
+      <div
+        className={`bg-white p-6 rounded shadow-md w-96 transition-all duration-300
+          ${isClosing ? 'animate-zoom-out' : 'animate-zoom-in'}`}
+      >
         
         <h2 className="text-2xl font-semibold mb-6 text-center"> Create New Project</h2>
 
@@ -77,7 +99,7 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
           />
           <div className='flex justify-between items-center mt-4 font-semibold'>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded
                 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-200"
               disabled={isSubmitting}
