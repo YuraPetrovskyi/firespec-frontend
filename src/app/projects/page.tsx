@@ -42,6 +42,10 @@ export default function ProjectsPage() {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'in_progress' | 'completed' | 'all'>('in_progress');
+
+
   useEffect(() => {
     setLoading(true);
     fetchProjects();
@@ -98,6 +102,13 @@ export default function ProjectsPage() {
     setTimeout(() => setHighlightedId(null), 2500); // вимикаємо через 2.5 секунди
   };
 
+  const filteredProjects = projects.filter((project) => {
+    const matchesSearch = project.project_name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+
   return (
     <ProtectedLayout>
       {errorMessage && (
@@ -107,16 +118,28 @@ export default function ProjectsPage() {
         />
       )}
 
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="bg-blue-600 text-white font-bold px-6 py-2 rounded
+          hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100
+          fixed bottom-3 right-3 z-50"
+      >
+        Add New Project
+      </button>
+
       <div className="bg-gray-100 min-h-screen">
-        <div className="flex justify-between items-center pt-6 px-6">
+        <div className="flex justify-center items-center gap-8 pt-6 px-6">
           <h1 className="text-3xl font-bold text-gray-800 uppercase">Projects</h1>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-600 text-white font-bold px-4 py-2 rounded
-              hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
+          {/* 🗂️ Фільтр статусу */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as 'in_progress' | 'completed' | 'all')}
+            className="border border-gray-300 p-2 rounded  w-auto "
           >
-            Add Project
-          </button>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="all">All Projects</option>
+          </select>
         </div>
 
         {modalOpen && (
@@ -147,11 +170,25 @@ export default function ProjectsPage() {
           />
         )}
 
-        <div className="flex flex-col gap-4 m-4">
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-4 px-6 mt-6">
+        {/* 🔍 Пошук */}
+        <input
+          type="text"
+          placeholder="Search by project name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border border-gray-300 p-2 rounded w-full md:w-1/2"
+        />
+
+        
+      </div>
+
+
+        <div className="flex flex-col gap-4 m-4 pb-12">
           {loading
             ? Array.from({ length: 1 }).map((_, i) => <SkeletonCard key={i} />)
-            : projects.length > 0
-              ? projects.map((project) => (
+            : filteredProjects.length > 0
+              ? filteredProjects.map((project) => (
                 <div 
                   key={project.id}
                   className={`relative bg-white shadow-md rounded p-5 border border-gray-200 transition-all duration-500 ${
