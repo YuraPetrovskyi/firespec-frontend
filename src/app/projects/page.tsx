@@ -108,6 +108,7 @@ export default function ProjectsPage() {
     return matchesSearch && matchesStatus;
   });
 
+  // console.log('Filtered Projects:', filteredProjects);
 
   return (
     <ProtectedLayout>
@@ -233,14 +234,14 @@ export default function ProjectsPage() {
                     <div className='flex flex-row justify-between items-center mb-2 gap-2'>
                       <div className="text-sm text-gray-600 flex gap-2 flex-wrap">
                         <p className='font-semibold'>Client:</p> 
-                        <p>{project.client}</p>
+                        <p>{project.client ?? 'N/A'}</p>
                       </div>
                       
                       
                     </div>
                     <div className="text-sm text-gray-600 flex gap-2 flex-wrap">
                         <p className='font-semibold'>Reference:</p>
-                        <p>{project.project_reference}</p>
+                        <p>{project.project_reference ?? 'N/A'}</p>
                       </div>
 
                     {project.inspections.length > 0 && (

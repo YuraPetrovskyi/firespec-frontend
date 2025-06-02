@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import LoadingButton from '@/components/LoadingButton';
+import ClientSelect from '@/components/ClientSelect';
 
 // import axios from 'axios';
 import axios from '@/lib/axios';
@@ -81,21 +82,18 @@ export default function CreateProjectModal({ isOpen, onClose, onProjectCreated }
             placeholder="Project Name"
             value={newProjectName}
             onChange={(e) => setNewProjectName(e.target.value)}
-            className="border p-2 rounded"
+            className="border p-2 rounded text-gray-600"
           />
-          <input
-            type="text"
-            placeholder="Client"
-            value={newClient}
-            onChange={(e) => setNewClient(e.target.value)}
-            className="border p-2 rounded"
+          <ClientSelect
+            selectedClient={newClient}
+            onChange={setNewClient}
           />
           <input
             type="text"
             placeholder="Project Reference"
             value={newReference}
             onChange={(e) => setNewReference(e.target.value)}
-            className="border p-2 rounded"
+            className="border p-2 rounded text-gray-600"
           />
           <div className='flex justify-between items-center mt-4 font-semibold'>
             <button
