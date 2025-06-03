@@ -24,7 +24,7 @@ const ProtectedLayout = ({ children }: Props) => {
   }
 
   return (
-    <div>
+    <div className="relative flex flex-col bg-gray-100 min-h-screen">
       <Navbar />
       <main>{children}</main>
     </div>
