@@ -184,7 +184,7 @@ export default function ProjectInspectionsPage() {
                         {menuOpenId === inspection.id && (
                           <div
                             ref={menuRef}
-                            className="absolute right-5 bottom-1 min-w-[110px] bg-white border rounded shadow z-10"
+                            className="absolute right-5 bottom-1 min-w-[110px] bg-white border rounded shadow z-10 p-4"
                           >
                             <Link
                               href={`/projects/${id}/inspections/${inspection.id}/edit`}
