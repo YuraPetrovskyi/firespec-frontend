@@ -6,7 +6,7 @@ import axios from '@/lib/axios';
 import toast from 'react-hot-toast';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 
-import ModalConfirm from '@/components/ModalConfirm';
+// import ModalConfirm from '@/components/ModalConfirm';
 import { inspectionSchema } from '@/config/inspectionSchema';
 import LoadSpinner from '@/components/LoadSpinner';
 import { loadEditInspectionFromLocal } from '@/lib/inspectionLocalStorage';
@@ -17,7 +17,7 @@ export default function ViewInspectionPage() {
   const router = useRouter();
 
   const [inspection, setInspection] = useState<any>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  // const [modalOpen, setModalOpen] = useState(false);
   const [hasUnsavedEdit, setHasUnsavedEdit] = useState(false);
 
   useEffect(() => {
@@ -44,18 +44,18 @@ export default function ViewInspectionPage() {
   const { pre_inspection, project_information, site_inspections, post_inspection, inspection_number } = inspection;
   // console.log('Inspection data:', inspection);
 
-  const handleDeleteInspection = async () => {
-    try {
-      await axios.delete(`projects/${id}/inspections/${inspectionId}`);
-      toast.success('Inspection deleted!');
-      router.push(`/projects/${id}/inspections`);
-    } catch (error) {
-      console.error(error);
-      toast.error('❌ Failed to delete inspection');
-    } finally {
-      setModalOpen(false);
-    }
-  };
+  // const handleDeleteInspection = async () => {
+  //   try {
+  //     await axios.delete(`projects/${id}/inspections/${inspectionId}`);
+  //     toast.success('Inspection deleted!');
+  //     router.push(`/projects/${id}/inspections`);
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error('❌ Failed to delete inspection');
+  //   } finally {
+  //     setModalOpen(false);
+  //   }
+  // };
 
   return (
     <ProtectedLayout>      
@@ -68,7 +68,7 @@ export default function ViewInspectionPage() {
               ⚠️ You have unsaved edits for this inspection.
             </div>
           )} 
-          <div className="flex flex-wrap justify-between gap-4 mt-8"> 
+          {/* <div className="flex flex-wrap justify-between gap-4 mt-8"> 
             <button
               onClick={() => setModalOpen(true)}
               className="bg-red-600 text-white py-2 px-6 rounded
@@ -84,7 +84,7 @@ export default function ViewInspectionPage() {
             >
               View Change Log
             </button>
-        </div>
+          </div> */}
           
         </div>
   
@@ -271,7 +271,7 @@ export default function ViewInspectionPage() {
           {hasUnsavedEdit ? 'Continue Editing' : 'Edit'}
         </button>       
   
-        {modalOpen && (
+        {/* {modalOpen && (
           <ModalConfirm
             message="Are you sure you want to delete this inspection?"
             onConfirm={handleDeleteInspection}
@@ -279,7 +279,7 @@ export default function ViewInspectionPage() {
             nameAction="Delete"
             title="Delete Inspection"
           />
-        )}
+        )} */}
   
       </div>
     </ProtectedLayout>
