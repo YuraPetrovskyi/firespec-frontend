@@ -10,6 +10,7 @@ import ModalConfirm from '@/components/ModalConfirm';
 import { inspectionSchema } from '@/config/inspectionSchema';
 import LoadSpinner from '@/components/LoadSpinner';
 import { loadEditInspectionFromLocal } from '@/lib/inspectionLocalStorage';
+import { exportInspectionToExcel } from '@/lib/exportInspectionToExcel';
 
 export default function ViewInspectionPage() {
   const { id, inspectionId } = useParams();
@@ -55,32 +56,6 @@ export default function ViewInspectionPage() {
       setModalOpen(false);
     }
   };
-
-  const handleExport = async () => {
-    try {
-      const response = await axios.get(
-        `projects/${id}/inspections/${inspectionId}/export`,
-        { responseType: 'blob' }
-      );
-
-      // Створення URL з blob
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-
-      // Вручну сформуй назву файла з inspection_number
-      const filename = `inspection_${inspection.inspection_number}.xlsx`;
-
-      link.setAttribute('download', filename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("❌ Export failed", error);
-      toast.error("Failed to export Excel file");
-    }
-  };
-
 
   return (
     <ProtectedLayout>      
@@ -269,8 +244,12 @@ export default function ViewInspectionPage() {
         {/* ✅ POST-INSPECTION */}
         <div className='flex justify-center'>
           <button
-            onClick={handleExport}
-            className="max-w:[140px] bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700 hover:scale-105 active:scale-95 transition-transform duration-200"
+            onClick={() => {
+              const projectId = Array.isArray(id) ? id[0] : id;
+              if (!projectId) return;
+              exportInspectionToExcel(projectId, inspection.id, inspection.inspection_number);
+            }}
+            className="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700 hover:scale-105 active:scale-95 transition-transform duration-200"
           >
             Export to Excel
           </button>
