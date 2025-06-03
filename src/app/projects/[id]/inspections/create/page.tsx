@@ -162,7 +162,7 @@ export default function CreateInspectionPage() {
 
   return (
     <ProtectedLayout>
-      <div className="p-4 bg-gray-100 min-h-screen flex flex-col gap-6">
+      <div className="p-4 bg-gray-100 min-h-screen flex flex-col gap-6 max-w-[1250px] mx-auto">
         <h1 className="text-xl font-bold text-gray-800 text-center">FIRE STOPPING INSPECTION PROCEDURE</h1>
   
         <PreInspectionSection data={preInspection} onChange={setPreInspection} />

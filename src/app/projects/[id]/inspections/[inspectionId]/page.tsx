@@ -84,10 +84,10 @@ export default function ViewInspectionPage() {
 
   return (
     <ProtectedLayout>      
-      <div className="p-5 bg-gray-100 min-h-screen flex flex-col gap-8 pb-20">
+      <div className="p-5 min-h-screen flex flex-col gap-8 pb-20 max-w-[1250px] mx-auto">
         
         <div>
-          <h1 className="text-3xl font-bold text-center mb-2">Inspection Details</h1>
+          <h1 className="text-3xl font-bold text-center mb-2">INSPECTIONS DETAILS</h1>
           {hasUnsavedEdit && (
             <div className="text-yellow-800 bg-yellow-100 border border-yellow-400 px-4 py-2 rounded text-center mb-4">
               ⚠️ You have unsaved edits for this inspection.

@@ -272,7 +272,7 @@ export default function EditInspectionPage() {
   // console.log('projectInformation:', projectInformation);
   return (
     <ProtectedLayout>
-      <div className="p-5 bg-gray-100 min-h-screen flex flex-col gap-6 pb-20">
+      <div className="p-5 min-h-screen flex flex-col gap-6 pb-20 max-w-[1250px] mx-auto">
         <h1 className="text-3xl text-center font-bold text-gray-800">Edit Inspection</h1>
   
         <PreInspectionSection data={preInspection} onChange={setPreInspection} />
