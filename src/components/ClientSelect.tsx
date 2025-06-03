@@ -70,13 +70,13 @@ export default function ClientSelect({ selectedClient, onChange }: ClientSelectP
           onChange={(e) => handleChange(e.target.value)}
           className="border p-2 rounded text-gray-600"
         >
-          <option value="">Select a client</option>
+          <option value="" disabled hidden>Select a client</option>
           {clients.map((name) => (
             <option key={name} value={name}>
               {name}
             </option>
           ))}
-          <option value="__add_new__" className='text-grey-400 text-center p-6 mb-4 bg-sky-100 font-semibold'> Add new client</option>
+          <option value="__add_new__">➕  Add new client</option>
         </select>
       ) : (
         <div className="flex gap-2 items-center">
