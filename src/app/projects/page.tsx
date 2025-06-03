@@ -118,61 +118,34 @@ export default function ProjectsPage() {
           onClose={() => setErrorMessage(null)} 
         />
       )}
+      
+      <div className="flex flex-col pt-6 px-6 gap-2">
+        <div className="flex items-center gap-8 justify-between">
+          <div className='flex flex-wrap gap-2'>
+            <h1 className="text-3xl font-bold text-gray-800 uppercase">Projects</h1>
+            {/* 🗂️ Фільтр статусу */}
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as 'in_progress' | 'completed' | 'all')}
+              className="border border-gray-300 p-2 rounded  w-auto "
+            >
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="all">All Projects</option>
+            </select>
+          </div>
 
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="bg-blue-600 text-white font-bold px-6 py-2 rounded
-          hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100
-          fixed bottom-3 right-3 z-50"
-      >
-        Add New Project
-      </button>
-
-      <div className="bg-gray-100 min-h-screen">
-        <div className="flex justify-center items-center gap-8 pt-6 px-6">
-          <h1 className="text-3xl font-bold text-gray-800 uppercase">Projects</h1>
-          {/* 🗂️ Фільтр статусу */}
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as 'in_progress' | 'completed' | 'all')}
-            className="border border-gray-300 p-2 rounded  w-auto "
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-600 text-white font-bold px-6 py-2 rounded
+              hover:bg-blue-700 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
           >
-            <option value="in_progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="all">All Projects</option>
-          </select>
+            Add New Project
+          </button>
         </div>
 
-        {modalOpen && (
-          <ModalConfirm
-            message="Are you sure you want to delete this project?"
-            nameAction='Delete'
-            title='Delete Project'
-            onConfirm={handleConfirmDelete}
-            onCancel={() => {
-              setModalOpen(false);
-              setProjectToDelete(null);
-            }}
-          />
-        )}
-
-        <CreateProjectModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onProjectCreated={fetchProjects}
-        />
-
-        {editModalOpen && selectedProject && (
-          <EditProjectModal
-            isOpen={editModalOpen}
-            onClose={() => setEditModalOpen(false)}
-            project={selectedProject}
-            onProjectUpdated={(id) => handleProjectUpdated(id)}
-          />
-        )}
-
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-4 px-6 mt-6">
-        {/* 🔍 Пошук */}
+        
+          
         <input
           type="text"
           placeholder="Search by project name..."
@@ -180,109 +153,150 @@ export default function ProjectsPage() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border border-gray-300 p-2 rounded w-full md:w-1/2"
         />
-
+          
+        
         
       </div>
 
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-4 px-6 mt-6">
+        {/* 🔍 Пошук */}
+        {/* <input
+          type="text"
+          placeholder="Search by project name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border border-gray-300 p-2 rounded w-full md:w-1/2"
+        /> */}
+      </div>
 
-        <div className="flex flex-col gap-4 m-4 pb-12">
-          {loading
-            ? Array.from({ length: 1 }).map((_, i) => <SkeletonCard key={i} />)
-            : filteredProjects.length > 0
-              ? filteredProjects.map((project) => (
-                <div 
-                  key={project.id}
-                  className={`relative bg-white shadow-md rounded p-5 border border-gray-200 transition-all duration-500 ${
-                    highlightedId === project.id ? 'border-green-500 ring-2 ring-green-300' : ''}`}
-                >
-                    {/* Меню ⋮ */}
-                    <div className="absolute top-2 right-2">
-                      <button
-                        onClick={() => setMenuOpenId(menuOpenId === project.id ? null : project.id)}
-                        className="text-gray-500 hover:text-gray-800 text-xl"
-                      >
-                        ⋮
-                      </button>
-                      {menuOpenId === project.id && (
-                        <div 
-                          ref={menuRef}
-                          className="absolute right-0 mt-2 min-w-[110px] bg-white border rounded shadow z-10">
-                          <button
-                            onClick={() => {
-                              setSelectedProject(project);
-                              setEditModalOpen(true);
-                              setMenuOpenId(null);
-                            }}
-                            className="block w-full text-center px-4 py-2 hover:bg-gray-100 text-sm my-4"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => {
-                              confirmDelete(project.id);
-                              setMenuOpenId(null);
-                            }}
-                            className="block w-full text-center px-4 py-2 hover:bg-gray-100 text-sm text-red-600 my-4"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
 
-                    <h2 className="text-xl font-semibold text-blue-800 text-center mb-4">{project.project_name}</h2>
-                    <div className='flex flex-row justify-between items-center mb-2 gap-2'>
-                      <div className="text-sm text-gray-600 flex gap-2 flex-wrap">
-                        <p className='font-semibold'>Client:</p> 
-                        <p>{project.client ?? 'N/A'}</p>
-                      </div>
-                      
-                      
-                    </div>
-                    <div className="text-sm text-gray-600 flex gap-2 flex-wrap">
-                        <p className='font-semibold'>Reference:</p>
-                        <p>{project.project_reference ?? 'N/A'}</p>
-                      </div>
+      {modalOpen && (
+        <ModalConfirm
+          message="Are you sure you want to delete this project?"
+          nameAction='Delete'
+          title='Delete Project'
+          onConfirm={handleConfirmDelete}
+          onCancel={() => {
+            setModalOpen(false);
+            setProjectToDelete(null);
+          }}
+        />
+      )}
 
-                    {project.inspections.length > 0 && (
-                      <div className="mt-2 text-sm mt-4">
-                        <p className='text-sm text-gray-600 font-semibold'>Latest Inspection:</p>
-                        <div className="ml-4">
-                          <div className="text-sm text-gray-600 flex gap-2 flex-wrap">
-                            <p className='font-semibold'>Date:</p>
-                            <p>{new Date(project.inspections[0]?.inspection_date).toLocaleDateString()}</p>
-                          </div>
-                          <div className="text-sm text-gray-600 flex gap-2 flex-wrap">
-                            <p className='font-semibold'>Inspector:</p>
-                            <p>{project.inspections[0].inspector_name}</p>
-                          </div>
-                        </div>
+      <CreateProjectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onProjectCreated={fetchProjects}
+      />
+
+      {editModalOpen && selectedProject && (
+        <EditProjectModal
+          isOpen={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          project={selectedProject}
+          onProjectUpdated={(id) => handleProjectUpdated(id)}
+        />
+      )}
+
+      {/* List of projects */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 m-4 pb-12">
+        {loading
+          ? Array.from({ length: 1 }).map((_, i) => <SkeletonCard key={i} />)
+          : filteredProjects.length > 0
+            ? filteredProjects.map((project) => (
+              <div 
+                key={project.id}
+                className={`relative bg-white shadow-md rounded p-5 border border-gray-200 transition-all duration-500 
+                  ${highlightedId === project.id ? 'border-green-500 ring-2 ring-green-300' : ''}
+                  flex flex-col `}
+              >
+                  {/* Меню ⋮ */}
+                  <div className="absolute top-2 right-2">
+                    <button
+                      onClick={() => setMenuOpenId(menuOpenId === project.id ? null : project.id)}
+                      className="text-gray-500 hover:text-gray-800 text-xl"
+                    >
+                      ⋮
+                    </button>
+                    {menuOpenId === project.id && (
+                      <div 
+                        ref={menuRef}
+                        className="absolute right-0 mt-2 min-w-[110px] bg-white border rounded shadow z-10">
+                        <button
+                          onClick={() => {
+                            setSelectedProject(project);
+                            setEditModalOpen(true);
+                            setMenuOpenId(null);
+                          }}
+                          className="block w-full text-center px-4 py-2 hover:bg-gray-100 text-sm my-4"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => {
+                            confirmDelete(project.id);
+                            setMenuOpenId(null);
+                          }}
+                          className="block w-full text-center px-4 py-2 hover:bg-gray-100 text-sm text-red-600 my-4"
+                        >
+                          Delete
+                        </button>
                       </div>
                     )}
+                  </div>
 
-                    <div className="mt-4 flex justify-between items-center">
-                      <div className="text-gray-600 flex gap-2 flex-wrap">
-                        <p className='font-semibold'>Status:</p>
-                        <p className={project.status === 'in_progress' ? 'text-green-800' : 'text-red-800'}>
-                          {project.status.replace('_', ' ')}
-                        </p>
-                      </div>
-                      <Link
-                        href={`/projects/${project.id}/inspections`}
-                        className="bg-gray-700 text-white text-center py-1 px-4 rounded 
-                          hover:bg-gray-800 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
-                      >
-                        All Inspections
-                      </Link>
+                  <h2 className="text-xl font-semibold text-blue-800 text-center mb-4">{project.project_name}</h2>
+                  <div className='flex flex-row justify-between items-center mb-2 gap-2'>
+                    <div className="text-sm text-gray-600 flex gap-2 flex-wrap">
+                      <p className='font-semibold'>Client:</p> 
+                      <p>{project.client ?? 'N/A'}</p>
                     </div>
-                </div>
-              ))
-              : <div className="text-center text-gray-600 mt-20">
-                  <p className="text-xl font-semibold">No projects yet</p>
-                  <p className="mt-2">Start by adding your first project</p>
-                </div>
-          }
-        </div>
+                    
+                    
+                  </div>
+                  <div className="text-sm text-gray-600 flex gap-2 flex-wrap">
+                      <p className='font-semibold'>Reference:</p>
+                      <p>{project.project_reference ?? 'N/A'}</p>
+                    </div>
+
+                  {project.inspections.length > 0 && (
+                    <div className="mt-2 text-sm mt-4">
+                      <p className='text-sm text-gray-600 font-semibold'>Latest Inspection:</p>
+                      <div className="ml-4">
+                        <div className="text-sm text-gray-600 flex gap-2 flex-wrap">
+                          <p className='font-semibold'>Date:</p>
+                          <p>{new Date(project.inspections[0]?.inspection_date).toLocaleDateString()}</p>
+                        </div>
+                        <div className="text-sm text-gray-600 flex gap-2 flex-wrap">
+                          <p className='font-semibold'>Inspector:</p>
+                          <p>{project.inspections[0].inspector_name}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-4 flex justify-between items-center mt-auto">
+                    <div className="text-gray-600 flex gap-2 flex-wrap">
+                      <p className='font-semibold'>Status:</p>
+                      <p className={project.status === 'in_progress' ? 'text-green-800' : 'text-red-800'}>
+                        {project.status.replace('_', ' ')}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/projects/${project.id}/inspections`}
+                      className="bg-gray-700 text-white text-center py-1 px-4 rounded 
+                        hover:bg-gray-800 hover:scale-105 active:scale-95 hover:shadow-lg transition duration-100"
+                    >
+                      All Inspections
+                    </Link>
+                  </div>
+              </div>
+            ))
+            : <div className="text-center text-gray-600 mt-20">
+                <p className="text-xl font-semibold">No projects yet</p>
+                <p className="mt-2">Start by adding your first project</p>
+              </div>
+        }
       </div>
     </ProtectedLayout>
   );
