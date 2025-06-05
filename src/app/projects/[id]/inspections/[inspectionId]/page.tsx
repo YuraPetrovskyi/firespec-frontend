@@ -12,6 +12,8 @@ import LoadSpinner from '@/components/LoadSpinner';
 import { loadEditInspectionFromLocal } from '@/lib/inspectionLocalStorage';
 import { exportInspectionToExcel } from '@/lib/exportInspectionToExcel';
 
+import { saveInspectionDetail, getInspectionDetail } from '@/lib/indexedDb';
+
 export default function ViewInspectionPage() {
   const { id, inspectionId } = useParams();
   const router = useRouter();
@@ -21,17 +23,31 @@ export default function ViewInspectionPage() {
   const [hasUnsavedEdit, setHasUnsavedEdit] = useState(false);
 
   useEffect(() => {
-    if (id && inspectionId) {
+    if (!id || !inspectionId) return;
 
     const saved = loadEditInspectionFromLocal(id as string, inspectionId as string);
     const isValidDraft = saved && Object.keys(saved.projectInformation || {}).length > 1;
     setHasUnsavedEdit(isValidDraft);
 
+    setInspection(null); // починаємо з порожнього
     axios
       .get(`projects/${id}/inspections/${inspectionId}`)
-      .then((res) => setInspection(res.data.data))
-      .catch(() => toast.error('❌ Failed to load inspection'));
-    }
+      .then((res) => {
+        const data = res.data.data;
+        setInspection(data);
+        saveInspectionDetail(data); // 💾 кешуємо
+      })
+      .catch(async (err) => {
+        console.error('❌ API error, loading from IndexedDB...');
+        const cached = await getInspectionDetail(Number(inspectionId));
+        if (cached) {
+          setInspection(cached);
+          console.log('✅ Loaded inspection from IndexedDB cached:', cached);
+          toast.success("📦 Loaded inspection from offline cache");
+        } else {
+          toast.error("❌ Failed to load inspection online or offline");
+        }
+      });
   }, [id, inspectionId]);
 
   if (!inspection) {

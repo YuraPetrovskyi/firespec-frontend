@@ -13,6 +13,7 @@ import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import { loadInspectionFromLocal } from '@/lib/inspectionLocalStorage';
 import { loadEditInspectionFromLocal } from '@/lib/inspectionLocalStorage';
 import { exportInspectionToExcel } from '@/lib/exportInspectionToExcel';
+import { saveInspectionsByProject, getInspectionsByProject } from '@/lib/indexedDb';
 
 interface Inspection {
   id: number;
@@ -54,13 +55,24 @@ export default function ProjectInspectionsPage() {
   useEffect(() => {
     if (!id) return;
 
-    // Загрузка списку інспекцій
     setLoading(true);
+
+    // Загрузка списку інспекцій
     axios.get(`projects/${id}/inspections`)
-      .then((res) => setInspections(res.data.data))
-      .catch((err) => {
-        console.error(err);
-        toast.error('❌ Failed to load inspections.');
+      .then((res) => {
+        console.log("✅ Inspections loaded from API:", res.data.data);
+        setInspections(res.data.data);
+        saveInspectionsByProject(id.toString(), res.data.data) // 💾 кешуємо
+      })
+      .catch(async (err) => {
+        console.error("❌ Failed to load from API, trying IndexedDB...");
+        try {
+          const cached = await getInspectionsByProject(id.toString());
+          setInspections(cached);
+          toast.success("📦 Loaded inspections from offline cache");
+        } catch (e) {
+          toast.error("❌ Cannot load inspections online or offline.");
+        }
       })
       .finally(() => setLoading(false));
 

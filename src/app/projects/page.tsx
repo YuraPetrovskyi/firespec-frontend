@@ -12,6 +12,7 @@ import SkeletonCard from '@/components/SkeletonCard';
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
 import { handleApiError } from '@/lib/handleApiError';
 import ErrorModal from '@/components/ErrorModal';
+import { getProjects, saveProjects } from '@/lib/indexedDb';
 
 interface Inspection {
   inspection_number: string;
@@ -31,10 +32,11 @@ interface Project {
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
   const [menuOpenId, setMenuOpenId] = useState<number | null>(null);
@@ -44,7 +46,6 @@ export default function ProjectsPage() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'in_progress' | 'completed' | 'all'>('in_progress');
-
 
   useEffect(() => {
     setLoading(true);
@@ -64,17 +65,25 @@ export default function ProjectsPage() {
     };
   }, []);
 
-
-  const fetchProjects = () => {
-    axios.get('projects')
-      .then((res) => {
-        setProjects(res.data.data)
-        setLoading(false);
-      })
-      .catch((err) => {
-        setLoading(false);
-        setErrorMessage(handleApiError(err));
-      });
+  const fetchProjects = async () => {
+    try {
+      const res = await axios.get('projects');
+      const data: Project[] = res.data.data;
+      setProjects(data);
+      await saveProjects(data);
+    } catch (err) {
+      console.warn('🌐 API недоступний, пробую завантажити з IndexedDB...');
+      try {
+        const offlineProjects = await getProjects();
+        setProjects(offlineProjects);
+        toast.success('📦 Loaded projects from offline cache');
+      } catch (e) {
+        console.error('❌ Cannot load projects at all');
+        setErrorMessage('Cannot load projects online or offline.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const confirmDelete = (id: number) => {
@@ -90,6 +99,7 @@ export default function ProjectsPage() {
       fetchProjects();
     } catch (err) {
       toast.error('❌ Failed to delete project.');
+      setErrorMessage(handleApiError(err));
     } finally {
       setModalOpen(false);
       setProjectToDelete(null);
