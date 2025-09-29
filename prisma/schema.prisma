@@ -173,8 +173,14 @@ model users {
   name       String    @db.VarChar(255)
   email      String    @unique(map: "users_email_unique") @db.VarChar(255)
   password   String    @db.VarChar(255)
+  role       Role      @default(USER)
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @db.Timestamp(0)
+}
+
+enum Role {
+  ADMIN
+  USER
 }
 
 enum site_inspections_checked_status {
