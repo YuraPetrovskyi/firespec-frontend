@@ -1,0 +1,204 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model cache {
+  key        String @id @db.VarChar(255)
+  value      String @db.MediumText
+  expiration Int
+}
+
+model cache_locks {
+  key        String @id @db.VarChar(255)
+  owner      String @db.VarChar(255)
+  expiration Int
+}
+
+model clients {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  name       String    @unique(map: "clients_name_unique") @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+}
+
+model inspection_details {
+  id                        BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
+  inspection_id             BigInt      @db.UnsignedBigInt
+  inspection_date           DateTime?   @db.Date
+  project_name              String      @db.VarChar(255)
+  client                    String?     @db.VarChar(255)
+  project_reference         String?     @db.VarChar(255)
+  client_contact            String?     @db.VarChar(255)
+  client_rep                String?     @db.VarChar(255)
+  installer                 String?     @db.VarChar(255)
+  barrier_materials_raf     String?     @db.VarChar(255)
+  barrier_materials_ceiling String?     @db.VarChar(255)
+  third_party_acr           String?     @db.VarChar(255)
+  digital_recording         Boolean     @default(false)
+  storeys                   Int?
+  structural_frame          String?     @db.VarChar(255)
+  fa_ade                    String?     @map("façade") @db.VarChar(255)
+  floor_type                String?     @db.VarChar(255)
+  internal_walls            String?     @db.VarChar(255)
+  fire_stopping_materials   String?     @db.VarChar(255)
+  barrier_materials         String?     @db.VarChar(255)
+  dampers                   String?     @db.VarChar(255)
+  encasements               String?     @db.VarChar(255)
+  created_at                DateTime?   @db.Timestamp(0)
+  updated_at                DateTime?   @db.Timestamp(0)
+  inspections               inspections @relation(fields: [inspection_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "inspection_details_inspection_id_foreign")
+
+  @@index([inspection_id], map: "inspection_details_inspection_id_foreign")
+}
+
+model inspection_logs {
+  id            BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
+  inspection_id BigInt      @db.UnsignedBigInt
+  new_value     String?     @db.Text
+  changed_at    DateTime    @db.Timestamp(0)
+  changed_by    String?     @db.VarChar(255)
+  created_at    DateTime?   @db.Timestamp(0)
+  updated_at    DateTime?   @db.Timestamp(0)
+  inspections   inspections @relation(fields: [inspection_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "inspection_logs_inspection_id_foreign")
+
+  @@index([inspection_id], map: "inspection_logs_inspection_id_foreign")
+}
+
+model inspection_options {
+  id                 BigInt                    @id @default(autoincrement()) @db.UnsignedBigInt
+  site_inspection_id BigInt                    @db.UnsignedBigInt
+  option_name        String                    @db.VarChar(255)
+  status             inspection_options_status @default(not_selected)
+  created_at         DateTime?                 @db.Timestamp(0)
+  updated_at         DateTime?                 @db.Timestamp(0)
+  site_inspections   site_inspections          @relation(fields: [site_inspection_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "inspection_options_site_inspection_id_foreign")
+
+  @@index([site_inspection_id], map: "inspection_options_site_inspection_id_foreign")
+}
+
+model inspections {
+  id                 BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  project_id         BigInt               @db.UnsignedBigInt
+  inspection_number  Int                  @db.UnsignedInt
+  version            Int                  @default(1) @db.UnsignedInt
+  inspection_date    DateTime?            @db.Date
+  inspector_name     String?              @db.VarChar(255)
+  status             inspections_status   @default(in_progress)
+  created_at         DateTime?            @db.Timestamp(0)
+  updated_at         DateTime?            @db.Timestamp(0)
+  inspection_details inspection_details[]
+  inspection_logs    inspection_logs[]
+  projects           projects             @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "inspections_project_id_foreign")
+  post_inspections   post_inspections[]
+  pre_inspections    pre_inspections[]
+  site_inspections   site_inspections[]
+
+  @@index([project_id], map: "inspections_project_id_foreign")
+}
+
+model post_inspections {
+  id                   BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
+  inspection_id        BigInt      @db.UnsignedBigInt
+  client_meeting_done  String?     @db.Text
+  urgent_matters       String?     @db.Text
+  next_inspection_date DateTime?   @db.Date
+  bolster_notes        String?     @db.Text
+  comment              String?     @db.Text
+  created_at           DateTime?   @db.Timestamp(0)
+  updated_at           DateTime?   @db.Timestamp(0)
+  inspections          inspections @relation(fields: [inspection_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "post_inspections_inspection_id_foreign")
+
+  @@index([inspection_id], map: "post_inspections_inspection_id_foreign")
+}
+
+model pre_inspections {
+  id                      BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
+  inspection_id           BigInt      @db.UnsignedBigInt
+  rams_info_submitted     Boolean     @default(false)
+  wall_type_drawings      Boolean     @default(false)
+  induction_arranged      Boolean     @default(false)
+  induction_attended      Boolean     @default(false)
+  ppe_checked             Boolean     @default(false)
+  client_meeting          Boolean     @default(false)
+  fire_drawings_available Boolean     @default(false)
+  bolster_uploads         Boolean     @default(false)
+  bolster_synced          Boolean     @default(false)
+  latest_eta_available    Boolean     @default(false)
+  walkthrough_done        Boolean     @default(false)
+  created_at              DateTime?   @db.Timestamp(0)
+  updated_at              DateTime?   @db.Timestamp(0)
+  inspections             inspections @relation(fields: [inspection_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "pre_inspections_inspection_id_foreign")
+
+  @@index([inspection_id], map: "pre_inspections_inspection_id_foreign")
+}
+
+model projects {
+  id                BigInt          @id @default(autoincrement()) @db.UnsignedBigInt
+  project_name      String          @db.VarChar(255)
+  project_reference String?         @db.VarChar(255)
+  client            String?         @db.VarChar(255)
+  status            projects_status @default(in_progress)
+  created_at        DateTime?       @db.Timestamp(0)
+  updated_at        DateTime?       @db.Timestamp(0)
+  inspections       inspections[]
+}
+
+model site_inspections {
+  id                 BigInt                          @id @default(autoincrement()) @db.UnsignedBigInt
+  inspection_id      BigInt                          @db.UnsignedBigInt
+  category_name      String                          @db.VarChar(255)
+  checked_status     site_inspections_checked_status @default(not_checked)
+  created_at         DateTime?                       @db.Timestamp(0)
+  updated_at         DateTime?                       @db.Timestamp(0)
+  inspection_options inspection_options[]
+  inspections        inspections                     @relation(fields: [inspection_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "site_inspections_inspection_id_foreign")
+
+  @@index([inspection_id], map: "site_inspections_inspection_id_foreign")
+}
+
+model users {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  name       String    @db.VarChar(255)
+  email      String    @unique(map: "users_email_unique") @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+}
+
+enum site_inspections_checked_status {
+  checked
+  not_checked
+}
+
+enum inspection_options_status {
+  checked
+  not_checked
+  absent
+  not_required
+  not_applicable
+  yes
+  no
+  not_selected
+}
+
+enum projects_status {
+  in_progress
+  completed
+}
+
+enum inspections_status {
+  in_progress
+  completed
+}
