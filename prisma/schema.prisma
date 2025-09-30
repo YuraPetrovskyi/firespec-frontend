@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -25,6 +24,61 @@ model cache_locks {
   owner      String @db.VarChar(255)
   expiration Int
 }
+
+model User {
+  id            String    @id @default(cuid())   // міняємо на string id (як очікує NextAuth)
+  name          String?   
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // робимо опціональним (бо magic link не завжди має пароль)
+  role          Role      @default(USER)
+
+  accounts      Account[]
+  sessions      Session[]
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
 
 model clients {
   id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
@@ -166,21 +220,6 @@ model site_inspections {
   inspections        inspections                     @relation(fields: [inspection_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "site_inspections_inspection_id_foreign")
 
   @@index([inspection_id], map: "site_inspections_inspection_id_foreign")
-}
-
-model users {
-  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  name       String    @db.VarChar(255)
-  email      String    @unique(map: "users_email_unique") @db.VarChar(255)
-  password   String    @db.VarChar(255)
-  role       Role      @default(USER)
-  created_at DateTime? @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
-}
-
-enum Role {
-  ADMIN
-  USER
 }
 
 enum site_inspections_checked_status {
