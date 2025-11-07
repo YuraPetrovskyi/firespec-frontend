@@ -34,19 +34,21 @@ export const inspectionSchema = {
     { name: 'client_contact', label: 'Client Contact & Title', order: 6 },
     { name: 'client_rep', label: 'Client Site Rep & Title', order: 7 },
     { name: 'installer', label: 'Installer/contractor', order: 8 },
-    { name: 'barrier_materials_ceiling', label: 'Barrier materials - Ceiling void', order: 9 },
-    { name: 'third_party_acr', label: '3rd Party Acr. Body', order: 10 },
+    { name: 'barrier_materials_ceiling', label: 'Barrier materials - Ceiling void', order: 9, options: ['N/A', 'TBA Firefly', 'Rockwool'] },
+    { name: 'third_party_acr', label: '3rd Party Acc. Body', order: 10 },
     { name: 'digital_recording', label: 'Digital Recording', order: 11 },
     { name: 'storeys', label: 'Storeys', order: 12, type: 'number' },
-    { name: 'structural_frame', label: 'Structural Frame', order: 13 },
-    { name: 'façade', label: 'Façade', order: 14 },
-    { name: 'floor_type', label: 'Floor Type',  order: 15 },
-    { name: 'internal_walls', label: 'Internal Walls Types', order: 16 },
-    { name: 'fire_stopping_materials', label: 'Fire Stopping Materials', order: 17 },
-    { name: 'barrier_materials', label: 'Barrier materials - external', order: 18 },
-    { name: 'barrier_materials_raf', label: 'Barrier materials - RAF external', order: 19 },
-    { name: 'dampers', label: 'Dampers', order: 20 },
-    { name: 'encasements', label: 'Encasements', order: 21 },
+    { name: 'structural_frame', label: 'Structural Frame', order: 13, options: ['Structural Steel', 'SFS', 'Concrete'] },
+    { name: 'facade', label: 'Façade', order: 14, options: ['Brick', 'Glazing', 'Swiss Pearl', 'Curtain Wall', 'Rain Screen Cladding', 'SFS framed internal leaf'] },
+    { name: 'floor_type', label: 'Floor Type',  order: 15, options: ['Hollowcore', 'Pre-cast Concrete planks', 'Composite concrete decking', 'timber', 'CLT'] },
+    { name: 'internal_walls', label: 'Internal Walls Types', order: 16, options: ['Blockwork', 'Flexible Wall', 'Concrete'] },
+    { name: 'encasements', label: 'Encasements', order: 17, options: ['Knauf', 'British Gypsum', 'Promat', 'Siniat'] },
+    { name: 'flexible_wall_manufacturer', label: 'Flexible Wall Manufacturer', order: 18, options: ['British Gypsum', 'Knauf', 'Sinat'] },
+    { name: 'fire_stopping_materials', label: 'Fire Stopping Materials', order: 19, options: ['Quelfire', 'Nullifire', 'Hilti', 'Protecta', 'Rockwool', 'FSi'] },
+    { name: 'barrier_materials', label: 'Barrier materials - external', order: 20, options: ['N/A', 'Siderise', 'Rockwool', 'Nullifire', 'FSi', 'Tenmat', 'AIM'] },
+    { name: 'barrier_materials_raf', label: 'Barrier materials - RAF external', order: 21, options: ['N/A', 'Siderise', 'Quelfire', 'AIM', 'Protecta'] },
+    { name: 'dampers', label: 'Dampers', order: 22, options: ['Trox', 'BSB', 'Swegon ActionAir', 'Advanced Air', 'Lindab', 'NCA'] },
+    { name: 'fire_rated_ductwork', label: 'Fire Rated Ductwork', order: 23, options: ['Caswell', 'Firemac', 'Thorduct'] },
   ],
 
   postInspection: [
@@ -83,19 +85,32 @@ export const inspectionSchema = {
       ]
     },
     {
-      name: 'letterbox_openings',
-      label: 'Letterbox Openings',
+      name: '3_sided_bwic',
+      label: '3-sided BWIC',
       order: 3,
       options: [
         { name: 'framing', label: 'framing' },
         { name: 'lining', label: 'lining' },
         { name: 'tape_jointing', label: 'tape & jointing' },
+        { name: 'fixings', label: 'fixings' },
+        { name: 'сompressible_fire', label: 'сompressible fire seal if deflection required' },
+      ]
+    },
+    {
+      name: '4_sided_bwic',
+      label: '4-sided BWIC',
+      order: 4,
+      options: [
+        { name: 'framing', label: 'framing' },
+        { name: 'lining', label: 'lining' },
+        { name: 'tape_jointing', label: 'tape & jointing' },
+        { name: 'fixings', label: 'fixings' },
       ]
     },
     {
       name: 'linear_joint_seals',
       label: 'Linear Joint Seals',
-      order: 4,
+      order: 5,
       options: [
         { name: 'compression', label: 'compression' },
         { name: 'gap_size', label: 'gap size' },
@@ -107,7 +122,7 @@ export const inspectionSchema = {
     {
       name: 'trapezoidal_voids',
       label: 'Trapezoidal Voids',
-      order: 5,
+      order: 6,
       options: [
         { name: 'infilled', label: 'infilled' },
         { name: 'sealant', label: 'sealant' },
@@ -116,7 +131,7 @@ export const inspectionSchema = {
     {
       name: 'fire_stopping_friction_fitted',
       label: 'Fire Stopping, Friction Fitted',
-      order: 6,
+      order: 7,
       options: [
         { name: 'opening', label: 'opening (size/spacing etc)' },
         { name: 'service_spacing', label: 'service spacing' },
@@ -127,12 +142,13 @@ export const inspectionSchema = {
         { name: 'service_supports', label: 'service supports' },
         { name: 'fitted_es', label: 'fitted e/s' },
         { name: 'fixings', label: 'fixings' },
+        { name: 'compression', label: 'compression' },
       ]
     },
     {
       name: 'fire_stopping_horizontal',
       label: 'Fire Stopping, Horizontal',
-      order: 7,
+      order: 8,
       options: [
         { name: 'substrate', label: 'substrate' },
         { name: 'shutter', label: 'shutter' },
@@ -140,12 +156,14 @@ export const inspectionSchema = {
         { name: 'depth', label: 'depth' },
         { name: 'closure_devices', label: 'closure devices' },
         { name: 'fixings', label: 'fixings' },
+        { name: 'lagging', label: 'lagging' },
+        { name: 'supports', label: 'supports' },
       ]
     },
     {
       name: 'fire_stopping_face_fixed',
       label: 'Fire Stopping, Face Fixed',
-      order: 8,
+      order: 9,
       options: [
         { name: 'fixings', label: 'fixings' },
         { name: 'overlaps', label: 'overlaps' },
@@ -159,7 +177,7 @@ export const inspectionSchema = {
     {
       name: 'fire_stopping_direct_seal',
       label: 'Fire Stopping, Direct Seal',
-      order: 9,
+      order: 10,
       options: [
         { name: 'size', label: 'size' },
         { name: 'annulus', label: 'annulus' },
@@ -169,7 +187,7 @@ export const inspectionSchema = {
     {
       name: 'fire_stopping_closure_devices',
       label: 'Fire Stopping, Closure Devices',
-      order: 10,
+      order: 11,
       options: [
         { name: 'pipe_type', label: 'pipe/insulation type/diameter' },
         { name: 'annulus', label: 'annulus' },
@@ -183,7 +201,7 @@ export const inspectionSchema = {
     {
       name: 'dampers',
       label: 'Dampers',
-      order: 11,
+      order: 12,
       options: [
         { name: 'opening', label: 'opening (size/spacing etc)' },
         { name: 'opening_infill', label: 'opening infill' },
@@ -196,17 +214,19 @@ export const inspectionSchema = {
     {
       name: 'putty_pads',
       label: 'Putty Pads',
-      order: 12,
+      order: 13,
       options: [
         { name: 'sealed', label: 'sealed' },
         { name: 'suitable_openings_size', label: 'suitable openings size' },
         { name: 'spacing_of_opening', label: 'spacing of opening' },
+        { name: 'in_line_with_plasterboard', label: 'in line with plasterboard' },
+        { name: 'plasterboard_sealed', label: 'plasterboard sealed' },
       ]
     },
     {
       name: 'cavity_barriers_ceiling_void',
       label: 'Cavity Barriers, Ceiling Void',
-      order: 13,
+      order: 14,
       options: [
         { name: 'substrate', label: 'substrate' },
         { name: 'brackets', label: 'brackets' },
@@ -216,12 +236,13 @@ export const inspectionSchema = {
         { name: 'stitching', label: 'stitching' },
         { name: 'stapling', label: 'stapling' },
         { name: 'penetrations', label: 'penetrations' },
+        { name: 'collars_sleeves', label: 'collars/ sleeves' },
       ]
     },
     {
       name: 'cavity_barriers_raf',
       label: 'Cavity Barriers, RAF',
-      order: 14,
+      order: 15,
       options: [
         { name: 'compression', label: 'compression' },
         { name: 'brackets', label: 'brackets' },
@@ -229,12 +250,13 @@ export const inspectionSchema = {
         { name: 'joints', label: 'joints' },
         { name: 'sealants', label: 'sealants' },
         { name: 'tapes', label: 'tapes' },
+        { name: 'penetration_seals', label: 'penetration seals' },
       ]
     },
     {
       name: 'cavity_barriers_external',
       label: 'Cavity Barriers External',
-      order: 15,
+      order: 16,
       options: [
         { name: 'substrate', label: 'substrate' },
         { name: 'compression', label: 'compression' },
@@ -248,7 +270,7 @@ export const inspectionSchema = {
     {
       name: 'destructive_tests',
       label: 'Destructive Tests',
-      order: 16,
+      order: 17,
       options: [
         { name: 'carried_out', label: 'carried out?' },
       ]
