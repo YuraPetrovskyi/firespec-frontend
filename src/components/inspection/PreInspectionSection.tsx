@@ -8,9 +8,13 @@ interface PreInspectionSectionProps {
 }
 
 export default function PreInspectionSection({ data, onChange }: PreInspectionSectionProps) {
+  // Захист від null/undefined
+  const safeData = data || {};
+  
   const handleSelect = (field: string, value: boolean) => {
-    onChange({ ...data, [field]: value ? 1 : 0 });
+    onChange({ ...safeData, [field]: value ? 1 : 0 });
   };
+  
   const sortedFields = [...inspectionSchema.preInspection].sort((a, b) => a.order - b.order);
 
   const midpoint = Math.ceil(sortedFields.length / 2);
@@ -27,7 +31,7 @@ export default function PreInspectionSection({ data, onChange }: PreInspectionSe
               <div key={name} className="flex flex-col">
                 <label className="font-extrabold text-base">{label}</label>
                 <select
-                  value={data[name] ?? ''}
+                  value={safeData[name] ?? ''}
                   onChange={(e) => handleSelect(name, e.target.value === '1')}
                   className="border p-2 rounded bg-slate-50 font-extrabold text-gray-500"
                 >
