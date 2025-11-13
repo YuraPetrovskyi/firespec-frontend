@@ -152,12 +152,22 @@ export default function ViewInspectionPage() {
                       name === 'inspection_number'
                         ? inspection.inspection_number
                         : project_information?.[name];
+                    // const displayValue =
+                    //   type === 'date' && value
+                    //     ? new Date(value).toLocaleDateString()
+                    //     : typeof value === 'boolean' || value === 1 || value === 0
+                    //       ? value ? 'Yes' : 'No'
+                    //       : value ?? 'N/A';
                     const displayValue =
                       type === 'date' && value
                         ? new Date(value).toLocaleDateString()
                         : typeof value === 'boolean' || value === 1 || value === 0
                           ? value ? 'Yes' : 'No'
-                          : value ?? 'N/A';
+                          : Array.isArray(value) 
+                            ? value.length > 0 
+                              ? value.join(', ') 
+                              : 'N/A'
+                            : value ?? 'N/A';
 
                     return (
                       <div key={name} className="flex flex-row border-b py-2 mx-2 gap-4">

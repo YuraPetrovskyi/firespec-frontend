@@ -157,17 +157,44 @@ export default function EditInspectionPage() {
       to: any;
     }[] = [];
   
+    // const compare = (category: string, field: string, oldVal: any, newVal: any, label?: string) => {
+    //   if (String(oldVal ?? '') !== String(newVal ?? '')) {
+    //     changes.push({
+    //       category,
+    //       field,
+    //       from: oldVal,
+    //       to: newVal,
+    //       label,
+    //     });
+    //   }
+    // };
     const compare = (category: string, field: string, oldVal: any, newVal: any, label?: string) => {
-      if (String(oldVal ?? '') !== String(newVal ?? '')) {
-        changes.push({
-          category,
-          field,
-          from: oldVal,
-          to: newVal,
-          label,
-        });
+    // Правильне порівняння масивів та інших типів
+    const normalizeValue = (val: any) => {
+      if (Array.isArray(val)) {
+        return JSON.stringify(val.sort()); // Сортуємо для консистентності
       }
+      return String(val ?? '');
     };
+
+    if (normalizeValue(oldVal) !== normalizeValue(newVal)) {
+      // Форматування для відображення в логах
+      const formatForDisplay = (val: any) => {
+        if (Array.isArray(val) && val.length > 0) {
+          return val.join(', ');
+        }
+        return val ?? '';
+      };
+
+      changes.push({
+        category,
+        field,
+        from: formatForDisplay(oldVal),
+        to: formatForDisplay(newVal),
+        label,
+      });
+    }
+  };
   
     // Project Info
     inspectionSchema.projectInformation.forEach(({ name, label }) => {
