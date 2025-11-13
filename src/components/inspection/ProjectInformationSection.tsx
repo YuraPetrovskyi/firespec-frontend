@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { inspectionSchema } from '@/config/inspectionSchema';
 
 interface ProjectInformationSectionProps {
@@ -13,6 +13,58 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
   const [customInputs, setCustomInputs] = useState<{ [key: string]: string }>({});
   const [showCustomInput, setShowCustomInput] = useState<{ [key: string]: boolean }>({});
   const [expandedDropdowns, setExpandedDropdowns] = useState<{ [key: string]: boolean }>({});
+  
+  // 🆕 Зберігаємо custom опції окремо для кожного поля
+  const [customOptions, setCustomOptions] = useState<{ [key: string]: string[] }>({});
+
+  // 🆕 Автоматично відновлюємо custom опції з існуючих даних (тільки один раз при завантаженні)
+  useEffect(() => {
+    const discoveredCustomOptions: { [key: string]: string[] } = {};
+    
+    // Проходимо по всіх полях з опціями
+    inspectionSchema.projectInformation
+      .filter(field => field.options && field.options.length > 0)
+      .forEach(field => {
+        const fieldName = field.name;
+        const standardOptions = field.options || [];
+        const currentValues = data[fieldName] || [];
+        
+        // Перетворюємо на масив, якщо потрібно
+        const valuesArray = Array.isArray(currentValues) 
+          ? currentValues 
+          : (currentValues ? [String(currentValues)] : []);
+        
+        // Знаходимо custom опції (які не є в стандартному списку)
+        const customValues = valuesArray.filter(value => 
+          !standardOptions.includes(value) && 
+          typeof value === 'string' && 
+          value.trim() !== ''
+        );
+        
+        if (customValues.length > 0) {
+          discoveredCustomOptions[fieldName] = customValues;
+        }
+      });
+    
+    // Оновлюємо стан custom опцій тільки якщо вони ще не були встановлені
+    setCustomOptions(prev => {
+      const hasExistingOptions = Object.keys(prev).length > 0;
+      if (hasExistingOptions) {
+        // Якщо вже є custom опції, додаємо тільки нові (merge)
+        const merged = { ...prev };
+        Object.keys(discoveredCustomOptions).forEach(fieldName => {
+          const existing = merged[fieldName] || [];
+          const discovered = discoveredCustomOptions[fieldName] || [];
+          // Об'єднуємо, уникаючи дублікатів
+          merged[fieldName] = [...new Set([...existing, ...discovered])];
+        });
+        return merged;
+      } else {
+        // Перший раз встановлюємо
+        return discoveredCustomOptions;
+      }
+    });
+  }, []); // 🆕 Видаляємо залежність від data - викликається тільки при монтуванні
 
   const handleChange = (field: string, value: any) => {
     onChange({
@@ -39,7 +91,6 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
   const handleMultiSelectChange = (fieldName: string, optionValue: string, checked: boolean) => {
     const currentValues = data[fieldName] || [];
     
-    // const valuesArray = Array.isArray(currentValues) ? currentValues : [currentValues].filter(Boolean);
     const valuesArray = Array.isArray(currentValues) 
       ? currentValues 
       : (currentValues ? [String(currentValues)] : []);
@@ -48,28 +99,44 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
       handleChange(fieldName, [...valuesArray, optionValue]);
     } else {
       handleChange(fieldName, valuesArray.filter(v => v !== optionValue));
+      // 🆕 НЕ видаляємо опцію з customOptions при знятті галочки
     }
   };
 
-  // Додавання custom опції
+  // 🆕 Покращене додавання custom опції
   const handleAddCustomOption = (fieldName: string) => {
     const customValue = customInputs[fieldName]?.trim();
     if (!customValue) return;
 
-    const currentValues = data[fieldName] || [];
-    const valuesArray = Array.isArray(currentValues) ? currentValues : [currentValues].filter(Boolean);
     const customOption = `Other: ${customValue}`;
     
-    handleChange(fieldName, [...valuesArray, customOption]);
-    setCustomInputs(prev => ({ ...prev, [fieldName]: '' }));
-    setShowCustomInput(prev => ({ ...prev, [fieldName]: false }));
-  };
-
-  // Видалення опції
-  const handleRemoveOption = (fieldName: string, optionToRemove: string) => {
+    // Перевіряємо існуючі custom опції
+    const existingCustomOptions = customOptions[fieldName] || [];
+    const standardOptions = inspectionSchema.projectInformation
+      .find(field => field.name === fieldName)?.options || [];
+    
+    // Перевіряємо, чи опція вже існує
+    const alreadyExists = existingCustomOptions.includes(customOption) || 
+                        standardOptions.includes(customOption);
+    
+    if (!alreadyExists) {
+      // 🆕 Додаємо нову custom опцію до списку (постійно зберігається)
+      setCustomOptions(prev => ({
+        ...prev,
+        [fieldName]: [...existingCustomOptions, customOption]
+      }));
+    }
+    
+    // Автоматично вибираємо опцію
     const currentValues = data[fieldName] || [];
     const valuesArray = Array.isArray(currentValues) ? currentValues : [currentValues].filter(Boolean);
-    handleChange(fieldName, valuesArray.filter(v => v !== optionToRemove));
+    if (!valuesArray.includes(customOption)) {
+      handleChange(fieldName, [...valuesArray, customOption]);
+    }
+    
+    // Очищуємо input і ховаємо форму
+    setCustomInputs(prev => ({ ...prev, [fieldName]: '' }));
+    setShowCustomInput(prev => ({ ...prev, [fieldName]: false }));
   };
 
   const renderField = (field: any) => {
@@ -129,20 +196,42 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
           {/* Розгорнутий dropdown */}
           {isExpanded && (
             <div className="border rounded-lg p-3 bg-white shadow-sm">
-              {/* Checkbox опції */}
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {options.map((option: string) => (
-                  <label key={option} className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                    <input
-                      type="checkbox"
-                      checked={valuesArray.includes(option)}
-                      onChange={(e) => handleMultiSelectChange(name, option, e.target.checked)}
-                      className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    />
-                    <span className="text-sm text-gray-700">{option}</span>
-                  </label>
-                ))}
-              </div>
+              {/* Базові опції */}
+              {options && options.length > 0 && (
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Standard Options</div>
+                  {options.map((option: string) => (
+                    <label key={option} className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                      <input
+                        type="checkbox"
+                        checked={valuesArray.includes(option)}
+                        onChange={(e) => handleMultiSelectChange(name, option, e.target.checked)}
+                        className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      />
+                      <span className="text-sm text-gray-700">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+              
+              {/* Custom опції (завжди показуємо, якщо є) */}
+              {customOptions[name] && customOptions[name].length > 0 && (
+                <div className="space-y-2 max-h-40 overflow-y-auto border-t pt-3 mt-3">
+                  <div className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-2">Custom Options</div>
+                  {customOptions[name].map((option: string) => (
+                    <label key={option} className="flex items-center space-x-3 cursor-pointer hover:bg-blue-50 p-1 rounded">
+                      <input
+                        type="checkbox"
+                        checked={valuesArray.includes(option)}
+                        onChange={(e) => handleMultiSelectChange(name, option, e.target.checked)}
+                        className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      />
+                      <span className="text-sm text-blue-700 font-medium">{option}</span>
+                      <span className="text-xs text-blue-500">(custom)</span>
+                    </label>
+                  ))}
+                </div>
+              )}
               
               {/* Custom "Other" секція */}
               <div className="border-t pt-3 mt-3">
@@ -151,9 +240,9 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
                     type="checkbox"
                     checked={showCustomInput[name] || false}
                     onChange={(e) => setShowCustomInput(prev => ({ ...prev, [name]: e.target.checked }))}
-                    className="rounded border-gray-300 text-blue-600 shadow-sm"
+                    className="rounded border-gray-300 text-green-600 shadow-sm"
                   />
-                  <span className="text-sm font-medium text-blue-600">+ Add Custom Option</span>
+                  <span className="text-sm font-medium text-green-600">+ Add Custom Option</span>
                 </label>
                 
                 {showCustomInput[name] && (
@@ -163,7 +252,7 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
                       value={customInputs[name] || ''}
                       onChange={(e) => setCustomInputs(prev => ({ ...prev, [name]: e.target.value }))}
                       placeholder={`Enter custom ${label.toLowerCase()}...`}
-                      className="flex-1 border rounded-lg px-3 py-2 text-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      className="flex-1 border rounded-lg px-3 py-2 text-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
                           e.preventDefault();
@@ -174,7 +263,7 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
                     <button
                       type="button"
                       onClick={() => handleAddCustomOption(name)}
-                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
+                      className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-medium transition-colors"
                     >
                       Add
                     </button>
@@ -192,28 +281,6 @@ export default function ProjectInformationSection({ data, onChange }: ProjectInf
                   Close
                 </button>
               </div>              
-            </div>
-          )}
-
-          {/* Вибрані значення з можливістю видалення (завжди видимі) */}
-          {valuesArray.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {valuesArray.map((value, idx) => (
-                <span
-                  key={idx}
-                  className="inline-flex items-center px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-full text-sm transition-colors"
-                >
-                  <span className="max-w-32 truncate">{value}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveOption(name, value)}
-                    className="ml-2 text-blue-600 hover:text-blue-800 font-bold"
-                    title="Remove"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
             </div>
           )}
         </div>
