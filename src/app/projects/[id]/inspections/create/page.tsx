@@ -137,7 +137,7 @@ export default function CreateInspectionPage() {
     };
     
 
-    // console.log('📦 Creating inspection with payload:', payload);
+    console.log('📦 Creating inspection with payload:', payload);
 
     try {
       await axiosInstance.post(`projects/${id}/inspections`, payload);
