@@ -20,16 +20,33 @@ export default function Navbar() {
   if (!user) return null;
 
   return (
-    <nav className="w-full bg-gray-300 shadow-sm px-4 py-2 flex justify-between items-center sticky top-0 z-10">
-      <Link href="/projects">
-        <Image src="/logo.png" alt="Logo" width={100} height={40} style={{ width: '100px', height: '40px' }} priority/>
-      </Link>
+    <nav className="w-full bg-gray-300 shadow-sm px-4 py-2 flex justify-between items-center sticky gap-4 top-0 z-10">
+      <div className="flex items-center gap-4">
+        <Link href="/projects">
+          <Image src="/logo.png" alt="Logo" width={100} height={40} style={{ width: '100px', height: '40px' }} priority/>
+        </Link>
+        <Link 
+          href="/projects"
+          className="bg-gray-600 hover:bg-gray-400 text-white text-center px-2 sm:px-4 py-2 rounded-lg font-medium transition"
+        >
+          All Projects
+        </Link>
+        
+        {user.role === 'admin' && (
+          <Link 
+            href="/admin" 
+            className="bg-red-600 hover:bg-red-700 text-white text-center px-2 sm:px-4 py-2 rounded-lg font-medium transition"
+          >
+            Admin Panel
+          </Link>
+        )}
+      </div>
       {/* <p className="text-sm text-gray-600 text-center">Token expires at: {expiryTime}</p> */}
 
       <div className="relative">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="bg-white px-2 py-2 rounded hover:bg-gray-400 text-gray-600 font-semibold"
+          className="bg-white px-2 sm:px-4 py-2 rounded hover:bg-gray-400 text-gray-600 font-semibold"
         >
           {user.name}
         </button>
