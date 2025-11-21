@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
+import Link from "next/link";
 // import axios from "axios";
 import axios from "@/lib/axios";
 import toast from "react-hot-toast";
@@ -96,6 +97,18 @@ export default function LoginModal() {
         >
           {isRegistering ? "Register" : "Login"}
         </button>
+
+        {!isRegistering && (
+          <div className="text-center mt-3">
+            <Link 
+              href="/forgot-password" 
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        )}
+
         <button
           type="button"
           className="text-sm text-center w-full mt-8 text-cyan-600 my-4
