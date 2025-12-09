@@ -258,6 +258,7 @@ export default function ProjectInspectionsPage() {
             }}
             onDelete={() => {
               setActionsModalOpen(false);
+              // НЕ обнуляємо selectedInspection тут, бо він потрібен для видалення
               setModalOpen(true);
             }}
             onExportInspection={async () => {
@@ -279,6 +280,7 @@ export default function ProjectInspectionsPage() {
               );
             }}
             inspectionNumber={selectedInspection.inspection_number}
+            version={selectedInspection.version}
           />
         )}
       </div>

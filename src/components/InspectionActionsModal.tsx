@@ -10,6 +10,7 @@ interface InspectionActionsModalProps {
   onExportInspection: () => void;
   onGenerateReport: () => void;
   inspectionNumber: string;
+  version: number;
 }
 
 export default function InspectionActionsModal({
@@ -20,6 +21,7 @@ export default function InspectionActionsModal({
   onExportInspection,
   onGenerateReport,
   inspectionNumber,
+  version,
 }: InspectionActionsModalProps) {
   const [isExportingInspection, setIsExportingInspection] = useState(false);
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
@@ -77,7 +79,7 @@ export default function InspectionActionsModal({
             Inspection Actions
           </h3>
           <p className="text-sm text-gray-600 mt-1">
-            Inspection {inspectionNumber}
+            Inspection {inspectionNumber} (Version {version})
           </p>
         </div>
 
@@ -86,7 +88,8 @@ export default function InspectionActionsModal({
           <button
             onClick={() => {
               onEdit();
-              handleClose();
+              // Не використовуємо handleClose тут, щоб не було затримки
+              onClose();
             }}
             className="w-full bg-yellow-500 text-white font-semibold py-3 px-4 rounded-lg
               hover:bg-yellow-600 hover:scale-105 active:scale-95 transition-transform duration-200
@@ -216,10 +219,7 @@ export default function InspectionActionsModal({
 
           {/* Delete Button */}
           <button
-            onClick={() => {
-              onDelete();
-              handleClose();
-            }}
+            onClick={onDelete}
             className="w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-lg
               hover:bg-red-700 hover:scale-105 active:scale-95 transition-transform duration-200
               flex items-center justify-center gap-2"
