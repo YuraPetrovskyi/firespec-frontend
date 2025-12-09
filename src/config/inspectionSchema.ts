@@ -59,31 +59,36 @@ export const inspectionSchema = {
 
   projectInformation: [
     { name: "project_name", label: "Project Name", order: 1 },
-    { name: "project_reference", label: "Project Reference", order: 2 },
+    {
+      name: "project_address",
+      label: "Project Address",
+      order: 2,
+    },
+    { name: "project_reference", label: "Project Reference", order: 3 },
     {
       name: "inspection_date",
       label: "Inspection Date",
-      order: 3,
+      order: 4,
       type: "date",
     },
-    { name: "inspection_number", label: "Inspection Number", order: 4 },
-    { name: "client", label: "Client", order: 5 },
-    { name: "client_contact", label: "Client Contact & Title", order: 6 },
-    { name: "client_rep", label: "Client Site Rep & Title", order: 7 },
-    { name: "installer", label: "Installer/contractor", order: 8 },
-    { name: "third_party_acr", label: "3rd Party Acc. Body", order: 9 },
-    { name: "digital_recording", label: "Digital Recording", order: 10 },
-    { name: "storeys", label: "Storeys", order: 11, type: "number" },
+    { name: "inspection_number", label: "Inspection Number", order: 5 },
+    { name: "client", label: "Client", order: 6 },
+    { name: "client_contact", label: "Client Contact & Title", order: 7 },
+    { name: "client_rep", label: "Client Site Rep & Title", order: 8 },
+    { name: "installer", label: "Installer/contractor", order: 9 },
+    { name: "third_party_acr", label: "3rd Party Acc. Body", order: 10 },
+    { name: "digital_recording", label: "Digital Recording", order: 11 },
+    { name: "storeys", label: "Storeys", order: 12, type: "number" },
     {
       name: "structural_frame",
       label: "Structural Frame",
-      order: 12,
+      order: 13,
       options: ["Structural Steel", "SFS", "Concrete"],
     },
     {
       name: "facade",
       label: "Façade",
-      order: 13,
+      order: 14,
       options: [
         "Brick",
         "Glazing",
@@ -96,7 +101,7 @@ export const inspectionSchema = {
     {
       name: "floor_type",
       label: "Floor Type",
-      order: 14,
+      order: 15,
       options: [
         "Hollowcore",
         "Pre-cast Concrete planks",
@@ -108,25 +113,25 @@ export const inspectionSchema = {
     {
       name: "internal_walls",
       label: "Internal Walls Types",
-      order: 15,
+      order: 16,
       options: ["Blockwork", "Flexible Wall", "Concrete"],
     },
     {
       name: "encasements",
       label: "Encasements",
-      order: 16,
+      order: 17,
       options: ["Knauf", "British Gypsum", "Promat", "Siniat"],
     },
     {
       name: "flexible_wall_manufacturer",
       label: "Flexible Wall Manufacturer",
-      order: 17,
+      order: 18,
       options: ["British Gypsum", "Knauf", "Sinat"],
     },
     {
       name: "fire_stopping_materials",
       label: "Fire Stopping Materials",
-      order: 18,
+      order: 19,
       options: [
         "Quelfire",
         "Nullifire",
@@ -139,7 +144,7 @@ export const inspectionSchema = {
     {
       name: "barrier_materials",
       label: "Barrier materials - external",
-      order: 19,
+      order: 20,
       options: [
         "N/A",
         "Siderise",
@@ -153,19 +158,19 @@ export const inspectionSchema = {
     {
       name: "barrier_materials_raf",
       label: "Barrier materials - RAF",
-      order: 20,
+      order: 21,
       options: ["N/A", "Siderise", "Quelfire", "AIM", "Protecta"],
     },
     {
       name: "barrier_materials_ceiling",
       label: "Barrier materials - Ceiling void",
-      order: 21,
+      order: 22,
       options: ["N/A", "TBA Firefly", "Rockwool"],
     },
     {
       name: "dampers",
       label: "Dampers",
-      order: 22,
+      order: 23,
       options: [
         "Trox",
         "BSB",
@@ -178,8 +183,25 @@ export const inspectionSchema = {
     {
       name: "fire_rated_ductwork",
       label: "Fire Rated Ductwork",
-      order: 23,
+      order: 24,
       options: ["Caswell", "Firemac", "Thorduct"],
+    },
+    {
+      name: "architect",
+      label: "Architect",
+      order: 25,
+    },
+    {
+      name: "spoke_on_arrival",
+      label: "Spoke to on arrival to site",
+      order: 26,
+      type: "textarea",
+    },
+    {
+      name: "notable_discussion",
+      label: "Any notable discussion on arrival",
+      order: 27,
+      type: "textarea",
     },
   ],
 
