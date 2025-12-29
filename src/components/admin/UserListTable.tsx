@@ -9,7 +9,7 @@ type User = {
   id: number;
   name: string;
   email: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
   is_active: boolean;
   created_at: string;
   invited_at: string | null;
@@ -29,8 +29,10 @@ export default function UserListTable({ token, onUserChange }: Props) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'user'>('all');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "user">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all");
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -39,22 +41,22 @@ export default function UserListTable({ token, onUserChange }: Props) {
 
   const fetchUsers = async () => {
     if (!token) return;
-    
+
     setLoading(true);
     try {
       const params: any = {};
       if (search) params.search = search;
-      if (roleFilter !== 'all') params.role = roleFilter;
-      if (statusFilter !== 'all') params.is_active = statusFilter === 'active';
+      if (roleFilter !== "all") params.role = roleFilter;
+      if (statusFilter !== "all") params.is_active = statusFilter === "active";
 
-      const res = await axios.get('/admin/users', {
+      const res = await axios.get("/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
-        params
+        params,
       });
 
       setUsers(res.data.data.data); // Paginated response
     } catch (err) {
-      toast.error('Failed to load users');
+      toast.error("Failed to load users");
       console.error(err);
     } finally {
       setLoading(false);
@@ -63,39 +65,51 @@ export default function UserListTable({ token, onUserChange }: Props) {
 
   const handleToggleActive = async (userId: number) => {
     try {
-      await axios.post(`/admin/users/${userId}/toggle-active`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      toast.success('User status updated');
+      await axios.post(
+        `/admin/users/${userId}/toggle-active`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast.success("User status updated");
       fetchUsers();
       onUserChange();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to update status');
+      toast.error(err.response?.data?.message || "Failed to update status");
     }
   };
 
-  const handleChangeRole = async (userId: number, newRole: 'admin' | 'user') => {
+  const handleChangeRole = async (
+    userId: number,
+    newRole: "admin" | "user"
+  ) => {
     try {
-      await axios.put(`/admin/users/${userId}/role`, 
+      await axios.put(
+        `/admin/users/${userId}/role`,
         { role: newRole },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success('User role updated');
+      toast.success("User role updated");
       fetchUsers();
       onUserChange();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to update role');
+      toast.error(err.response?.data?.message || "Failed to update role");
     }
   };
 
   const handleResendInvitation = async (userId: number) => {
     try {
-      await axios.post(`/admin/users/${userId}/resend-invitation`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      toast.success('Invitation resent');
+      await axios.post(
+        `/admin/users/${userId}/resend-invitation`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast.success("Invitation resent");
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to resend invitation');
+      toast.error(err.response?.data?.message || "Failed to resend invitation");
     }
   };
 
@@ -104,14 +118,14 @@ export default function UserListTable({ token, onUserChange }: Props) {
 
     try {
       await axios.delete(`/admin/users/${deleteUserId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success('User deleted');
+      toast.success("User deleted");
       setDeleteUserId(null);
       fetchUsers();
       onUserChange();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to delete user');
+      toast.error(err.response?.data?.message || "Failed to delete user");
     }
   };
 
@@ -129,7 +143,7 @@ export default function UserListTable({ token, onUserChange }: Props) {
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        
+
         <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value as any)}
@@ -151,7 +165,8 @@ export default function UserListTable({ token, onUserChange }: Props) {
         </select>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* Desktop Table View */}
+      <div className="hidden lg:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -177,14 +192,18 @@ export default function UserListTable({ token, onUserChange }: Props) {
               <tr key={user.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex flex-col">
-                    <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {user.name}
+                    </div>
                     <div className="text-sm text-gray-500">{user.email}</div>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <select
                     value={user.role}
-                    onChange={(e) => handleChangeRole(user.id, e.target.value as any)}
+                    onChange={(e) =>
+                      handleChangeRole(user.id, e.target.value as any)
+                    }
                     className="text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="user">User</option>
@@ -192,16 +211,18 @@ export default function UserListTable({ token, onUserChange }: Props) {
                   </select>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    user.is_active 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {user.is_active ? 'Active' : 'Inactive'}
+                  <span
+                    className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      user.is_active
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {user.is_active ? "Active" : "Inactive"}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {user.invited_by ? user.invited_by.name : '-'}
+                  {user.invited_by ? user.invited_by.name : "-"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex justify-end gap-2">
@@ -209,11 +230,11 @@ export default function UserListTable({ token, onUserChange }: Props) {
                       onClick={() => handleToggleActive(user.id)}
                       className={`px-3 py-1 rounded ${
                         user.is_active
-                          ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
-                          : 'bg-green-100 text-green-800 hover:bg-green-200'
+                          ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                          : "bg-green-100 text-green-800 hover:bg-green-200"
                       }`}
                     >
-                      {user.is_active ? 'Deactivate' : 'Activate'}
+                      {user.is_active ? "Deactivate" : "Activate"}
                     </button>
 
                     {!user.is_active && (
@@ -237,13 +258,102 @@ export default function UserListTable({ token, onUserChange }: Props) {
             ))}
           </tbody>
         </table>
-
-        {users.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            No users found
-          </div>
-        )}
       </div>
+
+      {/* Mobile & Tablet Card View */}
+      <div className="lg:hidden space-y-4">
+        {users.map((user) => (
+          <div
+            key={user.id}
+            className="bg-white rounded-lg shadow-md p-4 border border-gray-200"
+          >
+            {/* User Info */}
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900">
+                      {user.name}
+                    </h3>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
+                </div>
+              </div>
+              <span
+                className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                  user.is_active
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {user.is_active ? "Active" : "Inactive"}
+              </span>
+            </div>
+
+            {/* Role Selector */}
+            <div className="mb-3">
+              <label className="text-xs font-medium text-gray-600 block mb-1">
+                Role
+              </label>
+              <select
+                value={user.role}
+                onChange={(e) =>
+                  handleChangeRole(user.id, e.target.value as any)
+                }
+                className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            {/* Invited By */}
+            {user.invited_by && (
+              <div className="mb-3 text-xs text-gray-500">
+                <span className="font-medium">Invited by:</span>{" "}
+                {user.invited_by.name}
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => handleToggleActive(user.id)}
+                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                  user.is_active
+                    ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                    : "bg-green-100 text-green-800 hover:bg-green-200"
+                }`}
+              >
+                {user.is_active ? "Deactivate" : "Activate"}
+              </button>
+
+              {!user.is_active && (
+                <button
+                  onClick={() => handleResendInvitation(user.id)}
+                  className="flex-1 px-3 py-2 rounded-lg text-sm font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition"
+                >
+                  Resend
+                </button>
+              )}
+
+              <button
+                onClick={() => setDeleteUserId(user.id)}
+                className="px-4 py-2 rounded-lg text-sm font-medium bg-red-100 text-red-800 hover:bg-red-200 transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {users.length === 0 && (
+        <div className="text-center py-8 text-gray-500">No users found</div>
+      )}
 
       {deleteUserId !== null && (
         <ModalConfirm
