@@ -95,21 +95,19 @@ export default function LoginModal() {
             >
               {showPassword ? (
                 <Image
-                  src="eye.svg"
+                  src="/eye.svg"
                   alt="Logo"
                   width={20}
                   height={20}
                   className="cursor-pointer h-auto"
-                  priority
                 />
               ) : (
                 <Image
-                  src="eye-off.svg"
+                  src="/eye-off.svg"
                   alt="Logo"
                   width={20}
                   height={20}
                   className="cursor-pointer h-auto"
-                  priority
                 />
               )}
             </button>
