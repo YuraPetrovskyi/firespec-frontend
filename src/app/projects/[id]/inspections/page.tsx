@@ -14,6 +14,7 @@ import { loadInspectionFromLocal } from "@/lib/inspectionLocalStorage";
 import { loadEditInspectionFromLocal } from "@/lib/inspectionLocalStorage";
 import { exportInspectionToExcel } from "@/lib/exportInspectionToExcel";
 import { exportReportToExcel } from "@/lib/exportReportToExcel";
+import { useNetworkStatus } from "@/context/NetworkStatusContext";
 import {
   saveInspectionsByProject,
   getInspectionsByProject,
@@ -32,6 +33,7 @@ interface Inspection {
 
 export default function ProjectInspectionsPage() {
   const { id } = useParams();
+  const { isOnline } = useNetworkStatus();
   const [inspections, setInspections] = useState<Inspection[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -47,16 +49,34 @@ export default function ProjectInspectionsPage() {
 
     setLoading(true);
 
-    // Загрузка списку інспекцій
+    // Якщо offline - одразу завантажуємо з IndexedDB
+    if (!isOnline) {
+      getInspectionsByProject(id.toString())
+        .then((cached) => {
+          setInspections(cached);
+          toast.success("📦 Loaded inspections from offline cache");
+        })
+        .catch((e) => {
+          toast.error("❌ No cached data available offline.");
+        })
+        .finally(() => setLoading(false));
+
+      // Перевірка чернетки
+      const saved = loadInspectionFromLocal(id as string);
+      const isValidDraft =
+        saved && Object.keys(saved.projectInformation || {}).length > 1;
+      setHasDraft(isValidDraft);
+      return;
+    }
+
+    // Online - завантажуємо з API
     axios
       .get(`projects/${id}/inspections`)
       .then((res) => {
-        console.log("✅ Inspections loaded from API:", res.data.data);
         setInspections(res.data.data);
         saveInspectionsByProject(id.toString(), res.data.data); // 💾 кешуємо
       })
       .catch(async (err) => {
-        console.error("❌ Failed to load from API, trying IndexedDB...");
         try {
           const cached = await getInspectionsByProject(id.toString());
           setInspections(cached);
@@ -72,10 +92,16 @@ export default function ProjectInspectionsPage() {
     const isValidDraft =
       saved && Object.keys(saved.projectInformation || {}).length > 1;
     setHasDraft(isValidDraft);
-  }, [id]);
+  }, [id, isOnline]);
 
   const handleDeleteInspection = async () => {
     if (!selectedInspection) return;
+
+    if (!isOnline) {
+      toast.error("❌ Cannot delete inspection while offline");
+      setModalOpen(false);
+      return;
+    }
 
     try {
       await axios.delete(`projects/${id}/inspections/${selectedInspection.id}`);
@@ -84,7 +110,6 @@ export default function ProjectInspectionsPage() {
         prev.filter((i) => i.id !== selectedInspection.id)
       );
     } catch (error) {
-      console.error(error);
       toast.error("❌ Failed to delete inspection.");
     } finally {
       setModalOpen(false);

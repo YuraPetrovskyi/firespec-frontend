@@ -4,14 +4,16 @@ import Link from "next/link";
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useOnlineStatus } from "@/hooks/useOnlineStatus";
+import { useNetworkStatus } from "@/context/NetworkStatusContext";
+import { useQueueStatus } from "@/hooks/useQueueStatus";
 // import { parseJwt } from "@/lib/parseJwt";
 import UserMenu from "./UserMenu";
 
 export default function Navbar() {
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
-  const isOnline = useOnlineStatus();
+  const { isOnline } = useNetworkStatus();
+  const queueCount = useQueueStatus();
   // const { token } = useAuth();
   // const payload = token ? parseJwt(token) : null;
 
@@ -40,6 +42,7 @@ export default function Navbar() {
             />
           </svg>
           📡 Offline mode - Changes will sync when online
+          {queueCount > 0 && ` (${queueCount} pending)`}
         </div>
       )}
 
@@ -101,6 +104,11 @@ export default function Navbar() {
               <>
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                 <span className="text-gray-700">Offline</span>
+                {queueCount > 0 && (
+                  <span className="ml-1 px-1.5 py-0.5 bg-orange-500 text-white rounded-full text-xs font-bold">
+                    {queueCount}
+                  </span>
+                )}
               </>
             )}
           </div>

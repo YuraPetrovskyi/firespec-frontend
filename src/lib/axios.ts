@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 import { refreshToken } from "./auth"; // окремий модуль з логікою оновлення токена
 
 // 📦 Створюємо інстанс axios з базовими налаштуваннями
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL, // http://127.0.0.1:8000/api
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -15,10 +15,19 @@ axiosInstance.interceptors.request.use(
     // console.log('config', config); // Дебаг
     // const token = localStorage.getItem('token');
     // Захист: код виконується лише в браузері
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Вимикаємо HTTP кеш браузера для коректної роботи offline режиму
+    // Інакше браузер може повертати кешовані відповіді замість помилки мережі
+    if (config.method === "get") {
+      config.headers["Cache-Control"] = "no-cache";
+      config.headers["Pragma"] = "no-cache";
+    }
+
     return config;
   },
   (error) => {

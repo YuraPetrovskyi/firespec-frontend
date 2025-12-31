@@ -12,12 +12,14 @@ import LoadSpinner from "@/components/LoadSpinner";
 import { loadEditInspectionFromLocal } from "@/lib/inspectionLocalStorage";
 import { exportInspectionToExcel } from "@/lib/exportInspectionToExcel";
 import { exportReportToExcel } from "@/lib/exportReportToExcel";
+import { useNetworkStatus } from "@/context/NetworkStatusContext";
 
 import { saveInspectionDetail, getInspectionDetail } from "@/lib/indexedDb";
 
 export default function ViewInspectionPage() {
   const { id, inspectionId } = useParams();
   const router = useRouter();
+  const { isOnline } = useNetworkStatus();
 
   const [inspection, setInspection] = useState<any>(null);
   // const [modalOpen, setModalOpen] = useState(false);
@@ -37,6 +39,28 @@ export default function ViewInspectionPage() {
     setHasUnsavedEdit(isValidDraft);
 
     setInspection(null); // починаємо з порожнього
+
+    // Якщо offline - одразу завантажуємо з IndexedDB
+    if (!isOnline) {
+      console.log("🔴 Offline mode - loading inspection from IndexedDB...");
+      getInspectionDetail(Number(inspectionId))
+        .then((cached) => {
+          if (cached) {
+            setInspection(cached);
+            console.log("✅ Loaded inspection from IndexedDB:", cached);
+            toast.success("📦 Loaded inspection from offline cache 1");
+          } else {
+            toast.error("❌ Inspection not available offline");
+          }
+        })
+        .catch((err) => {
+          console.error("❌ IndexedDB error:", err);
+          toast.error("❌ Failed to load inspection");
+        });
+      return;
+    }
+
+    // Online - завантажуємо з API
     axios
       .get(`projects/${id}/inspections/${inspectionId}`)
       .then((res) => {
@@ -55,14 +79,8 @@ export default function ViewInspectionPage() {
           toast.error("❌ Failed to load inspection online or offline");
         }
       });
-  }, [id, inspectionId]);
+  }, [id, inspectionId, isOnline]);
 
-  console.log(
-    "Rendering ViewInspectionPage, inspection:",
-    inspection,
-    "hasUnsavedEdit:",
-    hasUnsavedEdit
-  );
   if (!inspection) {
     return (
       <ProtectedLayout>
@@ -374,14 +392,30 @@ export default function ViewInspectionPage() {
           >
             {isExportingInspection ? (
               <>
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Exporting...
               </>
             ) : (
-              'Export to Excel'
+              "Export to Excel"
             )}
           </button>
 
@@ -402,14 +436,30 @@ export default function ViewInspectionPage() {
           >
             {isExportingReport ? (
               <>
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Generating...
               </>
             ) : (
-              'Generate Report'
+              "Generate Report"
             )}
           </button>
         </div>
