@@ -1,25 +1,27 @@
-'use client';
+"use client";
 
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
 
-import axiosInstance from '@/lib/axios';
-import { AxiosError } from 'axios';
+import axiosInstance from "@/lib/axios";
+import { AxiosError } from "axios";
 // import axios from '@/lib/axios';
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthContext";
-import PreInspectionSection from '@/components/inspection/PreInspectionSection';
-import ProjectInformationSection from '@/components/inspection/ProjectInformationSection';
-import SiteInspectionsSection from '@/components/inspection/SiteInspectionsSection';
-import PostInspectionSection from '@/components/inspection/PostInspectionSection';
+import { useNetworkStatus } from "@/context/NetworkStatusContext";
+import { addToQueue } from "@/lib/offlineQueue";
+import PreInspectionSection from "@/components/inspection/PreInspectionSection";
+import ProjectInformationSection from "@/components/inspection/ProjectInformationSection";
+import SiteInspectionsSection from "@/components/inspection/SiteInspectionsSection";
+import PostInspectionSection from "@/components/inspection/PostInspectionSection";
 import ProtectedLayout from "@/components/layouts/ProtectedLayout";
-import ModalConfirm from '@/components/ModalConfirm';
+import ModalConfirm from "@/components/ModalConfirm";
 
 import {
   saveInspectionToLocal,
   loadInspectionFromLocal,
-  clearInspectionLocal
-} from '@/lib/inspectionLocalStorage';
+  clearInspectionLocal,
+} from "@/lib/inspectionLocalStorage";
 
 type SectionData = {
   [key: string]: any;
@@ -38,13 +40,15 @@ export default function CreateInspectionPage() {
   const [siteInspections, setSiteInspections] = useState<SectionData>({});
   const [postInspection, setPostInspection] = useState<SectionData>({});
   const { user } = useAuth();
+  const { isOnline } = useNetworkStatus();
   const [cancelAgree, setCancelAgree] = useState(false);
   const [saveAgree, setSaveAgree] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showOfflineSuccess, setShowOfflineSuccess] = useState(false);
 
   // утиліта для очищення службових полів
   const clean = (obj: any) => {
-    if (!obj || typeof obj !== 'object') return {};
+    if (!obj || typeof obj !== "object") return {};
     const { id, created_at, updated_at, inspection_id, ...rest } = obj;
     return rest;
   };
@@ -57,13 +61,14 @@ export default function CreateInspectionPage() {
     const saved = loadInspectionFromLocal(id as string);
 
     const isValidDraft =
-      saved &&
-      Object.keys(saved.projectInformation || {}).length > 1; // project_name + client + щось іще
-      
+      saved && Object.keys(saved.projectInformation || {}).length > 1; // project_name + client + щось іще
+
     if (isValidDraft) {
       didLoadFromStorage.current = true;
       // console.log("📦 Restored valid draft from localStorage");
-      toast.success('Restored your last unsaved inspection draft for this project.');
+      toast.success(
+        "Restored your last unsaved inspection draft for this project."
+      );
 
       setPreInspection(saved.preInspection || {});
       setProjectInformation(saved.projectInformation || {});
@@ -75,21 +80,23 @@ export default function CreateInspectionPage() {
     // console.log("📦 No unsaved draft found, loading from server");
 
     // 2️⃣ Завантажуємо project name / client — Вони завжди актуальні
-    axiosInstance.get(`projects/${id}`)
+    axiosInstance
+      .get(`projects/${id}`)
       .then((res) => {
         const project = res.data.data;
 
         setProjectInformation((prev) => ({
           ...prev,
-          project_name: project.project_name || '',
-          client: project.client || '',
-          project_reference: project.project_reference || '',
+          project_name: project.project_name || "",
+          client: project.client || "",
+          project_reference: project.project_reference || "",
         }));
       })
-      .catch(() => toast.error('❌ Failed to load project'));
+      .catch(() => toast.error("❌ Failed to load project"));
 
     // 3️⃣ Завантажуємо latest інспекцію, якщо не відновлювали чернетку
-    axiosInstance.get(`projects/${id}/inspections/latest`)
+    axiosInstance
+      .get(`projects/${id}/inspections/latest`)
       .then((res) => {
         if (didLoadFromStorage.current) return; // 🔒 захист, щоб не перезаписати чернетку
         // console.log("🧭 Loaded latest inspection from API");
@@ -102,7 +109,7 @@ export default function CreateInspectionPage() {
           setProjectInformation((prev) => ({
             ...prev,
             ...clean(data.project_information),
-            inspection_date: '', // очищаємо дату, щоб користувач міг ввести нову
+            inspection_date: "", // очищаємо дату, щоб користувач міг ввести нову
           }));
         }
       })
@@ -117,7 +124,7 @@ export default function CreateInspectionPage() {
       preInspection,
       projectInformation,
       siteInspections,
-      postInspection
+      postInspection,
     };
     saveInspectionToLocal(id as string, data);
   }, [preInspection, projectInformation, siteInspections, postInspection, id]);
@@ -125,7 +132,7 @@ export default function CreateInspectionPage() {
   const handleCreateInspection = async () => {
     setIsSubmitting(true);
     const payload = {
-      inspector_name: user?.name || 'Unknown777',
+      inspector_name: user?.name || "Unknown777",
       project_name: projectInformation.project_name,
       client: projectInformation.client,
       project_reference: projectInformation.project_reference,
@@ -135,13 +142,40 @@ export default function CreateInspectionPage() {
       project_information: clean(projectInformation),
       site_inspections: siteInspections,
     };
-    
 
-    console.log('📦 Creating inspection with payload:', payload);
+    // Check if offline - queue the request instead
+    if (!isOnline) {
+      try {
+        const token = localStorage.getItem("token");
+        await addToQueue(`projects/${id}/inspections`, "POST", payload, {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        });
 
+        // Clear draft from localStorage (it's now in queue)
+        clearInspectionLocal(id as string);
+
+        // Close the save confirmation modal
+        setSaveAgree(false);
+
+        // DON'T reset form - keep data so user can continue working
+        // The form data remains intact for further edits or review
+
+        // Show success modal
+        setShowOfflineSuccess(true);
+      } catch (error) {
+        console.error("Failed to queue inspection:", error);
+        toast.error("❌ Failed to save offline");
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
+    // Online flow - normal API request
     try {
       await axiosInstance.post(`projects/${id}/inspections`, payload);
-      toast.success('Inspection created!');
+      toast.success("Inspection created!");
 
       clearInspectionLocal(id as string);
 
@@ -151,26 +185,40 @@ export default function CreateInspectionPage() {
 
       if (error.response?.data?.errors) {
         const messages = Object.values(error.response.data.errors).flat();
-        toast.error(messages[0] || '❌ Validation error');
+        toast.error(messages[0] || "❌ Validation error");
       } else {
-        toast.error('❌ Failed to create inspection');
+        toast.error("❌ Failed to create inspection");
       }
     } finally {
-      setIsSubmitting(false); // 🔚 Розблокувати кнопку
+      setIsSubmitting(false);
     }
   };
 
   return (
     <ProtectedLayout>
       <div className="p-4 bg-gray-100 min-h-screen flex flex-col gap-6 max-w-[1250px] mx-auto">
-        <h1 className="text-xl font-bold text-gray-800 text-center">FIRE STOPPING INSPECTION PROCEDURE</h1>
-  
-        <PreInspectionSection data={preInspection} onChange={setPreInspection} />
-        <ProjectInformationSection data={projectInformation} onChange={setProjectInformation} />
-        <SiteInspectionsSection data={siteInspections} onChange={setSiteInspections} />
-        <PostInspectionSection data={postInspection} onChange={setPostInspection} />
-  
-        <div className='flex justify-between items-center mb-6'>
+        <h1 className="text-xl font-bold text-gray-800 text-center">
+          FIRE STOPPING INSPECTION PROCEDURE
+        </h1>
+
+        <PreInspectionSection
+          data={preInspection}
+          onChange={setPreInspection}
+        />
+        <ProjectInformationSection
+          data={projectInformation}
+          onChange={setProjectInformation}
+        />
+        <SiteInspectionsSection
+          data={siteInspections}
+          onChange={setSiteInspections}
+        />
+        <PostInspectionSection
+          data={postInspection}
+          onChange={setPostInspection}
+        />
+
+        <div className="flex justify-between items-center mb-6">
           <button
             onClick={() => setCancelAgree(true)}
             className="bg-gray-700 text-white py-2 px-4 rounded
@@ -191,7 +239,6 @@ export default function CreateInspectionPage() {
           </button>
         </div>
       </div>
-
       {cancelAgree && (
         <ModalConfirm
           title="Cancel Inspection"
@@ -214,6 +261,21 @@ export default function CreateInspectionPage() {
           onCancel={() => setSaveAgree(false)}
           loadingText="Saving..."
           isAsync // обов’язково!
+        />
+      )}
+      {showOfflineSuccess && (
+        <ModalConfirm
+          title="✅ Saved Offline"
+          message="Your inspection data has been saved and queued for sync. Changes will automatically sync when you're back online."
+          nameAction="Continue Working"
+          confirmColor="blue"
+          onConfirm={() => setShowOfflineSuccess(false)}
+          onCancel={() => {
+            setShowOfflineSuccess(false);
+            // Redirect to inspections list (will show "No internet" if still offline, but will be fixed in Phase 2)
+            router.push(`/projects/${id}/inspections`);
+          }}
+          isAsync={false}
         />
       )}
     </ProtectedLayout>
