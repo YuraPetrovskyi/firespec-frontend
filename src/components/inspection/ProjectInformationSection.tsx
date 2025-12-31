@@ -30,7 +30,7 @@ export default function ProjectInformationSection({
     [key: string]: string[];
   }>({});
 
-  // 🆕 Автоматично відновлюємо custom опції з існуючих даних (тільки один раз при завантаженні)
+  // 🆕 Автоматично відновлюємо custom опції з існуючих даних
   useEffect(() => {
     const discoveredCustomOptions: { [key: string]: string[] } = {};
 
@@ -62,25 +62,19 @@ export default function ProjectInformationSection({
         }
       });
 
-    // Оновлюємо стан custom опцій тільки якщо вони ще не були встановлені
+    // Оновлюємо стан custom опцій
     setCustomOptions((prev) => {
-      const hasExistingOptions = Object.keys(prev).length > 0;
-      if (hasExistingOptions) {
-        // Якщо вже є custom опції, додаємо тільки нові (merge)
-        const merged = { ...prev };
-        Object.keys(discoveredCustomOptions).forEach((fieldName) => {
-          const existing = merged[fieldName] || [];
-          const discovered = discoveredCustomOptions[fieldName] || [];
-          // Об'єднуємо, уникаючи дублікатів
-          merged[fieldName] = [...new Set([...existing, ...discovered])];
-        });
-        return merged;
-      } else {
-        // Перший раз встановлюємо
-        return discoveredCustomOptions;
-      }
+      // Merge: зберігаємо існуючі та додаємо нові (уникаючи дублікатів)
+      const merged = { ...prev };
+      Object.keys(discoveredCustomOptions).forEach((fieldName) => {
+        const existing = merged[fieldName] || [];
+        const discovered = discoveredCustomOptions[fieldName] || [];
+        // Об'єднуємо, уникаючи дублікатів
+        merged[fieldName] = [...new Set([...existing, ...discovered])];
+      });
+      return merged;
     });
-  }, []); // 🆕 Видаляємо залежність від data - викликається тільки при монтуванні
+  }, [data]); // 🔥 Додали залежність від data - тепер спрацьовує коли data змінюється
 
   const handleChange = (field: string, value: any) => {
     onChange({
